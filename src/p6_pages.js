@@ -113,7 +113,7 @@ const pages={
  search(q){q=decodeURIComponent(q||'');const r=searchP(q);return `<section class="section wrap">${sectionHead('SEARCH',`${r.length} result${r.length===1?'':'s'} for “${q}”`)}${grid(r)}</section>`;},
  shipping(){return `<section class="section wrap"><div class="prose">${sectionHead('POLICY','Shipping and returns')}<p>Orders ship within two business days in sealed ASTRAEUS issue packaging. Shipping is free and insured on orders over $250, otherwise $12 flat. Expedited delivery is available at checkout.</p><p>Returns are accepted within 30 days on unworn equipment in original packaging. Watches and hard cases carry a five year warranty; everything else carries two years. Transferred firearms are not returnable; contact Frontier Operations for warranty service.</p></div></section>`;},
  gate(){return `<section class="gatep"><div class="gatemark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="rule"></div><div class="tag">EQUIPMENT FOR EARTH AND BEYOND</div><button type="button" class="btn primary enterbtn" id="enterBtn">ENTER</button><button type="button" class="quiet" id="enterQuiet">ENTER WITHOUT SOUND</button></div></section>`;},
- intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div><a class="btn enter" href="#home">ENTER ASTRAEUS</a></div><a class="skip" href="#home">SKIP →</a></section>`;},
+ intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div></div><a class="skip" href="#home">SKIP →</a></section>`;},
  notfound(){return `<section class="section wrap"><div class="empty"><div class="eyebrow">REF 404</div><h2>Nothing at this coordinate</h2><a class="btn" href="#home">RETURN HOME</a></div></section>`;}
 };
 const shopState={cats:[],missions:[],divs:[],types:[],series:[],max:3500,instock:false,sort:'featured'};
@@ -155,7 +155,7 @@ function bind(h){
    else if(t<4.6){const k=(t-3)/1.6;warpSpeed=3.6*(1-k)*(1-k)+0.04;}  // decelerate
    else{clearInterval(window._iw);mode='drift';document.getElementById('imark')?.classList.add('on');}
   },40);
-  window._it=setTimeout(()=>{if(location.hash==='#intro')location.hash='#home';},10500);return;}
+  window._it=setTimeout(()=>{if(location.hash==='#intro')location.hash='#home';},8400);return;}
  mode='drift';clearInterval(window._iw);
  // shop filters
  const F=document.getElementById('filters');
