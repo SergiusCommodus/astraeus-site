@@ -38,6 +38,17 @@ p{margin:0}
 #stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 #veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 120%,rgba(14,115,179,.18),transparent 60%)}
 
+.gatep{min-height:100vh;display:grid;place-items:center;padding:40px var(--gutter);position:relative}
+.gatemark{display:grid;justify-items:center;gap:0;animation:gatein 1.4s ease both}
+@keyframes gatein{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.gatemark .logo{width:min(32vw,150px);height:min(32vw,150px)}
+.gatemark .word{font-family:var(--display);font-weight:600;font-size:clamp(26px,4.6vw,48px);letter-spacing:.42em;padding-left:.42em;margin-top:24px}
+.gatemark .rule{width:min(60vw,320px);height:1px;background:var(--line);margin:22px 0}
+.gatemark .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;color:var(--silver);text-align:center}
+.gatemark .enterbtn{margin-top:34px;min-width:200px;letter-spacing:.3em}
+.gatemark .quiet{margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--silver-dim);padding:8px;text-decoration:underline;text-underline-offset:4px}
+.gatemark .quiet:hover{color:var(--silver)}
+
 /* intro page */
 .introp{min-height:100vh;display:grid;place-items:center;position:relative;padding:40px var(--gutter)}
 .introp .mark{display:grid;justify-items:center;gap:22px;opacity:0;transform:scale(.94);transition:opacity 2.2s ease,transform 2.2s ease}
@@ -49,8 +60,6 @@ p{margin:0}
 .introp .mark.on .sub{opacity:1}
 .introp .enter{margin-top:18px;opacity:0;transition:opacity 1.2s ease 2s}
 .introp .mark.on .enter{opacity:1}
-.introp .sound-hint{position:absolute;left:var(--gutter);bottom:calc(28px + env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--silver);opacity:.6;animation:pulse 3s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.35}50%{opacity:.75}}
 .introp .skip{position:absolute;right:var(--gutter);bottom:calc(28px + env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--silver);opacity:.7}
 .introp .skip:hover{opacity:1}
 body.introview #nav,body.introview footer{display:none}
@@ -1058,6 +1067,9 @@ function playAudible(fromStart){
 }
 /* silent autoplay is permitted, so keep the track running and ready */
 function playSilent(){theme.muted=true;const pr=theme.play();if(pr&&pr.catch)pr.catch(()=>{});}
+/* the gate's ENTER click is the user gesture that unlocks sound */
+window.enterWithSound=function(){userMuted=false;store.set('muted',false);playAudible(true).then(()=>paintSound());};
+window.enterSilent=function(){userMuted=true;store.set('muted',true);theme.muted=true;paintSound();};
 const EVTS=['pointerdown','mousedown','touchstart','keydown','click'];
 function onFirstGesture(){
  if(userMuted||audible)return;
@@ -1193,7 +1205,8 @@ const pages={
  wishlist(){const l=wish.map(i=>BYID[i]).filter(Boolean);return `<section class="section wrap">${sectionHead('SAVED','Wishlist')}${l.length?grid(l):`<div class="empty"><p>Nothing saved yet.</p><a class="btn" href="#shop">SHOP EQUIPMENT</a></div>`}</section>`;},
  search(q){q=decodeURIComponent(q||'');const r=searchP(q);return `<section class="section wrap">${sectionHead('SEARCH',`${r.length} result${r.length===1?'':'s'} for “${q}”`)}${grid(r)}</section>`;},
  shipping(){return `<section class="section wrap"><div class="prose">${sectionHead('POLICY','Shipping and returns')}<p>Orders ship within two business days in sealed ASTRAEUS issue packaging. Shipping is free and insured on orders over $250, otherwise $12 flat. Expedited delivery is available at checkout.</p><p>Returns are accepted within 30 days on unworn equipment in original packaging. Watches and hard cases carry a five year warranty; everything else carries two years. Transferred firearms are not returnable; contact Frontier Operations for warranty service.</p></div></section>`;},
- intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div><a class="btn enter" href="#home">ENTER ASTRAEUS</a></div><span class="sound-hint" id="soundHint" hidden>CLICK ANYWHERE FOR SOUND</span><a class="skip" href="#home">SKIP →</a></section>`;},
+ gate(){return `<section class="gatep"><div class="gatemark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="rule"></div><div class="tag">EQUIPMENT FOR EARTH AND BEYOND</div><button type="button" class="btn primary enterbtn" id="enterBtn">ENTER</button><button type="button" class="quiet" id="enterQuiet">ENTER WITHOUT SOUND</button></div></section>`;},
+ intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div><a class="btn enter" href="#home">ENTER ASTRAEUS</a></div><a class="skip" href="#home">SKIP →</a></section>`;},
  notfound(){return `<section class="section wrap"><div class="empty"><div class="eyebrow">REF 404</div><h2>Nothing at this coordinate</h2><a class="btn" href="#home">RETURN HOME</a></div></section>`;}
 };
 const shopState={cats:[],missions:[],divs:[],types:[],series:[],max:3500,instock:false,sort:'featured'};
@@ -1201,9 +1214,10 @@ const shopState={cats:[],missions:[],divs:[],types:[],series:[],max:3500,instock
 /* ---------- router ---------- */
 const app=document.getElementById('app');
 function render(){
- const h=(location.hash||'#intro').slice(1);let html='',route=h;
- document.body.classList.toggle('introview',h==='intro');
- if(h==='intro')html=pages.intro();
+ const h=(location.hash||'#gate').slice(1);let html='',route=h;
+ document.body.classList.toggle('introview',h==='intro'||h==='gate');
+ if(h==='gate')html=pages.gate();
+ else if(h==='intro')html=pages.intro();
  else if(h==='home')html=pages.home();
  else if(h==='shop')html=pages.shop();
  else if(CATS[h])html=pages.shop(h),route=['storage','everyday','strength'].includes(h)?'equipment':h;
@@ -1220,6 +1234,11 @@ function render(){
  bind(h);
 }
 function bind(h){
+ if(h==='gate'){
+  const go=withSound=>{if(withSound&&window.enterWithSound)window.enterWithSound();else if(window.enterSilent)window.enterSilent();location.hash='#intro';};
+  document.getElementById('enterBtn').onclick=()=>go(true);
+  document.getElementById('enterQuiet').onclick=()=>go(false);
+  return;}
  if(h==='intro'){clearTimeout(window._it);clearInterval(window._iw);window.paintSound&&window.paintSound();
   if(reduced){mode='drift';document.getElementById('imark')?.classList.add('on');window._it=setTimeout(()=>{if(location.hash==='#intro')location.hash='#home';},2500);return;}
   mode='warp';warpSpeed=0.2;const t0=performance.now();

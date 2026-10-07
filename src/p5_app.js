@@ -124,6 +124,9 @@ function playAudible(fromStart){
 }
 /* silent autoplay is permitted, so keep the track running and ready */
 function playSilent(){theme.muted=true;const pr=theme.play();if(pr&&pr.catch)pr.catch(()=>{});}
+/* the gate's ENTER click is the user gesture that unlocks sound */
+window.enterWithSound=function(){userMuted=false;store.set('muted',false);playAudible(true).then(()=>paintSound());};
+window.enterSilent=function(){userMuted=true;store.set('muted',true);theme.muted=true;paintSound();};
 const EVTS=['pointerdown','mousedown','touchstart','keydown','click'];
 function onFirstGesture(){
  if(userMuted||audible)return;
