@@ -1048,11 +1048,13 @@ window.paintSound=paintSound;
 /* try to play with sound; resolves false when the browser blocks it */
 function playAudible(fromStart){
  if(userMuted)return Promise.resolve(false);
+ const wasMuted=theme.muted;
  theme.muted=false;
  if(fromStart){try{theme.currentTime=0;}catch(e){}}
  const pr=theme.play();
  if(!pr||!pr.then){audible=true;return Promise.resolve(true);}
- return pr.then(()=>{audible=true;return true;}).catch(()=>false);
+ return pr.then(()=>{audible=true;return true;})
+   .catch(()=>{if(wasMuted||!audible){theme.muted=true;playSilent();}return false;});
 }
 /* silent autoplay is permitted, so keep the track running and ready */
 function playSilent(){theme.muted=true;const pr=theme.play();if(pr&&pr.catch)pr.catch(()=>{});}
