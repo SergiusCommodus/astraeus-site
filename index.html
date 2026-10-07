@@ -648,10 +648,10 @@ T({id:"ap-belt",cat:"apparel",type:"Accessory",name:"Expedition Belt",model:"EB-
  specs:{Buckle:"6061 aluminum, locking, low profile",Colors:"Orbital Navy, Terra Coyote, Shadow Black",Widths:"1.25 inch standard, 1.75 inch tactical",Extras:"D ring, utility keeper, gear pouch"}});
 // watch case line gets photography and board dimensions
 const wc=(id,s,d)=>{const p=P.find(x=>x.id===id);if(p){p.img=I(s);if(d)p.dims=d;}};
-wc("c-w2","wc-closed wc-open wc-2 wc-latch wc-seal wc-cush wc-int","180 × 110 × 80 mm");
-wc("c-w4","wc-open wc-closed wc-4 wc-latch wc-vent wc-cush wc-int wc-lineup","300 × 120 × 90 mm");
-wc("c-w4p","wc-serial wc-closed wc-open wc-4p wc-mat wc-seal wc-cush wc-lineup","300 × 120 × 90 mm");
-wc("c-g4","wc-mod wc-int wc-tech wc-latch wc-lineup","300 × 120 × 120 mm");
+wc("c-w2","wc-2 wc-closed wc-open wc-latch wc-seal wc-cush wc-int","180 × 110 × 80 mm");
+wc("c-w4","wc-4 wc-open wc-closed wc-latch wc-vent wc-cush wc-int wc-lineup","300 × 120 × 90 mm");
+wc("c-w4p","wc-4p wc-closed wc-serial wc-mat wc-open wc-mat wc-seal wc-cush wc-lineup","300 × 120 × 90 mm");
+wc("c-g4","wc-tech wc-mod wc-int wc-latch wc-lineup","300 × 120 × 120 mm");
 CATS.storage.hero="img/afs-case.webp";CATS.watches.hero="img/afs-watch.webp";
 
 
