@@ -1,0 +1,1038 @@
+<title>ASTRAEUS</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: cinematic dark navy field, thin silver instrument lines, products on quiet panels; cart and checkout flip to warm white. Single committed theme. */
+:root{
+  --navy:#01274E; --navy-deep:#011A36; --navy-ink:#021331;
+  --blue:#0E73B3; --blue-soft:#2C8FD0;
+  --silver:#ADAEB1; --silver-dim:#6F7C8C; --line:rgba(173,174,177,.28); --line-soft:rgba(173,174,177,.14);
+  --white:#FBFAFB; --fg:#FBFAFB; --fg-dim:#B9C2CE;
+  --slate:#3F5570; --steel:#8E9AA8;
+  --panel:rgba(1,26,54,.72); --panel-solid:#032047;
+  --display:"Saira","IBM Plex Sans",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --radius:4px; --gutter:clamp(16px,4vw,56px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--navy-ink);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body.locked{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img,svg{max-width:100%;display:block}
+h1,h2,h3,h4{font-family:var(--display);font-weight:500;letter-spacing:.02em;margin:0;text-wrap:balance;line-height:1.1}
+h1{font-size:clamp(34px,6vw,72px);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+h2{font-size:clamp(24px,3.4vw,40px);text-transform:uppercase;letter-spacing:.06em}
+h3{font-size:clamp(18px,2vw,24px)}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--silver)}
+.mono{font-family:var(--mono)}
+.dim{color:var(--fg-dim)}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--blue-soft);outline-offset:2px}
+
+/* star canvas */
+#stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 120%,rgba(14,115,179,.18),transparent 60%)}
+
+/* intro page */
+.introp{min-height:100vh;display:grid;place-items:center;position:relative;padding:40px var(--gutter)}
+.introp .mark{display:grid;justify-items:center;gap:22px;opacity:0;transform:scale(.94);transition:opacity 2.2s ease,transform 2.2s ease}
+.introp .mark.on{opacity:1;transform:none}
+.introp .mark .logo{width:min(40vw,200px);height:min(40vw,200px)}
+.introp .word{font-family:var(--display);font-weight:600;font-size:clamp(28px,5vw,54px);letter-spacing:.42em;padding-left:.42em;opacity:0;transition:opacity 1.2s ease .7s}
+.introp .mark.on .word{opacity:1}
+.introp .sub{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--silver);opacity:0;transition:opacity 1.2s ease 1.2s;text-align:center}
+.introp .mark.on .sub{opacity:1}
+.introp .enter{margin-top:18px;opacity:0;transition:opacity 1.2s ease 2s}
+.introp .mark.on .enter{opacity:1}
+.introp .skip{position:absolute;right:var(--gutter);bottom:calc(28px + env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--silver);opacity:.7}
+.introp .skip:hover{opacity:1}
+body.introview #nav,body.introview footer{display:none}
+.logo{border-radius:50%;overflow:hidden;background:var(--navy);flex:none}
+.logo img{width:100%;height:100%;transform:scale(1.06);object-fit:cover}
+
+/* nav */
+#nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px var(--gutter);background:rgba(2,19,49,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line-soft);transition:background .3s}
+#nav.scrolled{background:rgba(2,19,49,.82)}
+#nav .brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:600;letter-spacing:.34em;font-size:15px;padding-left:.1em}
+#nav .brand .logo{width:34px;height:34px}
+#nav .links{display:flex;gap:28px;font-family:var(--mono);font-size:11px;letter-spacing:.18em}
+#nav .links a{padding:6px 0;border-bottom:1px solid transparent;opacity:.85}
+#nav .links a:hover,#nav .links a.on{opacity:1;border-color:var(--silver)}
+#nav .icons{display:flex;gap:6px;align-items:center}
+#nav .icons button,#nav .icons a{width:40px;height:40px;display:grid;place-items:center;border-radius:2px;position:relative}
+#nav .icons button:hover{background:rgba(255,255,255,.06)}
+#nav .icons svg{width:20px;height:20px;stroke:var(--white);fill:none;stroke-width:1.5}
+.badge{position:absolute;top:4px;right:2px;background:var(--blue);color:#fff;font:500 10px var(--mono);min-width:17px;height:17px;border-radius:9px;display:grid;place-items:center;padding:0 4px}
+#nav .icons #burger{display:none}
+#mnav{display:none;position:fixed;inset:0;z-index:40;background:rgba(1,19,49,.96);padding:calc(24px + env(safe-area-inset-top,0px)) var(--gutter) 40px;flex-direction:column;gap:6px}
+#mnav.open{display:flex}
+#mnav a{font-family:var(--display);font-size:30px;letter-spacing:.14em;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+#mnav .close{align-self:flex-end;font-family:var(--mono);font-size:12px;letter-spacing:.2em;padding:8px 0 18px}
+@media(max-width:900px){#nav .links{display:none}#nav .icons #burger{display:grid}}
+@media(max-width:520px){#nav .icons a[href="#account"],#nav .icons #wbtn{display:none}#nav .brand{letter-spacing:.22em;font-size:13px}#nav .icons button{width:36px}}
+
+/* page */
+#app{position:relative;z-index:1;min-height:70vh;overflow-x:clip}
+.page{animation:pagein .55s ease both}
+@keyframes pagein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wrap{padding-inline:var(--gutter);max-width:1380px;margin:0 auto}
+.section{padding-block:clamp(44px,7vw,96px)}
+.rule{height:1px;background:var(--line-soft)}
+.head{display:flex;align-items:end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:34px}
+.head .eyebrow{margin-bottom:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;padding:15px 26px;border:1px solid var(--silver);border-radius:2px;min-height:48px;transition:background .25s,border-color .25s,transform .15s;position:relative}
+.btn:hover{background:rgba(255,255,255,.06)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-soft);border-color:var(--blue-soft)}
+.btn.small{padding:10px 16px;min-height:40px;font-size:11px}
+.btn.ghost{border-color:var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* hero */
+.hero{min-height:min(78vh,760px);display:grid;align-content:center;padding-block:clamp(60px,10vw,140px);position:relative}
+.hero .eyebrow{margin-bottom:22px}
+.hero p.lead{font-size:clamp(16px,1.6vw,20px);color:var(--fg-dim);max-width:34ch;margin:22px 0 36px;font-weight:300}
+.hero .cta{display:flex;gap:14px;flex-wrap:wrap}
+.hero>*{position:relative;z-index:1}.hero .planet{position:absolute;z-index:0;right:calc(-1 * var(--gutter));bottom:-18%;width:min(44vw,520px);aspect-ratio:1;max-width:100%;pointer-events:none;opacity:.9}
+.ticker{display:flex;gap:40px;overflow:hidden;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--silver);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);padding:12px 0;white-space:nowrap;mask:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.ticker span{flex:none}
+@media(max-width:700px){.hero .planet{width:70vw;right:-20vw;bottom:-6%;opacity:.55}}
+
+/* category tiles */
+.cats{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.cat{grid-column:span 2;min-height:300px;position:relative;border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;background:var(--panel);display:flex;flex-direction:column;justify-content:end;padding:22px;transition:transform .3s,border-color .3s}
+.cat:nth-child(1),.cat:nth-child(2){grid-column:span 3;min-height:380px}
+.cat:hover{transform:translateY(-4px);border-color:var(--line)}
+.cat .art{position:absolute;inset:0;opacity:.9}
+.cat .art svg{width:100%;height:100%}
+.cat .t{position:relative;display:grid;gap:8px}
+.cat h3{font-size:clamp(20px,2.2vw,28px);text-transform:uppercase;letter-spacing:.08em}
+.cat p{color:var(--fg-dim);font-size:13px;max-width:36ch}
+@media(max-width:900px){.cats{grid-template-columns:1fr 1fr}.cat,.cat:nth-child(1),.cat:nth-child(2){grid-column:span 1;min-height:260px}}
+@media(max-width:560px){.cats{grid-template-columns:1fr}}
+
+/* product grid + card */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{border:1px solid var(--line-soft);border-radius:var(--radius);background:var(--panel);display:flex;flex-direction:column;min-width:0;transition:transform .3s,border-color .3s,box-shadow .3s;position:relative}
+.card:hover{transform:translateY(-4px);border-color:var(--line);box-shadow:0 20px 40px -24px rgba(14,115,179,.5)}
+.card .pic{aspect-ratio:1;background:linear-gradient(160deg,#052a57,#011a36);border-bottom:1px solid var(--line-soft);position:relative;overflow:hidden}
+.card .pic svg{width:100%;height:100%}
+.card .tag{position:absolute;bottom:10px;left:10px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--silver);background:rgba(1,19,49,.75);padding:4px 7px;border:1px solid var(--line-soft);border-radius:2px}
+.card .wish{position:absolute;top:8px;right:8px;width:34px;height:34px;display:grid;place-items:center;border-radius:2px;background:rgba(1,19,49,.6)}
+.card .wish svg{width:16px;height:16px;fill:none;stroke:var(--silver);stroke-width:1.6}
+.card .wish.on svg{fill:var(--blue);stroke:var(--blue)}
+.card .body{padding:14px 16px 16px;display:grid;gap:7px}
+.card .model{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--silver);display:flex;justify-content:space-between;gap:8px}
+.card h3{font-size:17px;letter-spacing:.02em}
+.card .desc{font-size:12.5px;color:var(--fg-dim);min-height:2.7em}
+.card .row{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.card .price{font-family:var(--display);font-size:18px;font-weight:500}
+.avail{font-family:var(--mono);font-size:10px;letter-spacing:.14em;display:inline-flex;align-items:center;gap:6px}
+.avail::before{content:"";width:6px;height:6px;border-radius:50%;background:#5BBF8A}
+.avail.low::before{background:#D9B35B}
+.avail.out::before{background:var(--silver-dim)}
+.card .specs{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--silver);letter-spacing:.06em;border-top:1px solid var(--line-soft);padding-top:9px;margin-top:4px}
+.card .add{margin-top:8px}
+
+/* shop filters */
+.shop{display:grid;grid-template-columns:250px 1fr;gap:34px;align-items:start}
+.filters{position:sticky;top:calc(80px + env(safe-area-inset-top,0px));display:grid;gap:22px;border:1px solid var(--line-soft);padding:20px;border-radius:var(--radius);background:var(--panel)}
+.filters h4{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:8px}
+.filters label{display:flex;gap:10px;align-items:center;font-size:13px;padding:4px 0;cursor:pointer}
+.filters input[type=checkbox],.filters input[type=radio]{accent-color:var(--blue);width:15px;height:15px;margin:0}
+.filters input[type=range]{width:100%;accent-color:var(--blue)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--silver)}
+select,input[type=text],input[type=email],input[type=tel],input[type=search],input[type=number],textarea{font:inherit;color:var(--fg);background:rgba(1,19,49,.6);border:1px solid var(--line);border-radius:2px;padding:11px 12px;min-height:44px;width:100%}
+select{appearance:auto}
+.toolbar select{width:auto;min-height:38px;padding:7px 10px;font-family:var(--mono);font-size:11px}
+#ftoggle{display:none}
+@media(max-width:900px){.shop{grid-template-columns:1fr}.filters{position:static;display:none}.filters.open{display:grid}#ftoggle{display:inline-flex}}
+
+/* product page */
+.pdp{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(24px,4vw,64px);align-items:start}
+.gallery{display:grid;gap:10px;position:sticky;top:calc(84px + env(safe-area-inset-top,0px))}
+.gallery .main{aspect-ratio:1;border:1px solid var(--line-soft);border-radius:var(--radius);background:linear-gradient(160deg,#052a57,#011a36);overflow:hidden;position:relative}
+.gallery .main svg{width:100%;height:100%;animation:fadein .4s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.gallery .main .id{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--silver)}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.thumbs button{aspect-ratio:1;border:1px solid var(--line-soft);border-radius:var(--radius);background:linear-gradient(160deg,#052a57,#011a36);overflow:hidden;padding:0}
+.thumbs button.on{border-color:var(--blue-soft)}
+.thumbs svg{width:100%;height:100%}
+.buy{display:grid;gap:18px}
+.buy h1{font-size:clamp(28px,3.6vw,46px);letter-spacing:.03em}
+.buy .price{font-family:var(--display);font-size:30px;font-weight:500}
+.qty{display:inline-flex;border:1px solid var(--line);border-radius:2px;height:48px}
+.qty button{width:46px;font-size:18px}
+.qty input{width:52px;text-align:center;border:0;border-inline:1px solid var(--line);background:transparent;min-height:0;padding:0;font-family:var(--mono)}
+.buyrow{display:flex;gap:12px;flex-wrap:wrap}
+.buyrow .btn.primary{flex:1;min-width:200px}
+.spec{width:100%;border-collapse:collapse;font-size:13px}
+.spec th,.spec td{text-align:left;padding:10px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.spec th{font-family:var(--mono);font-weight:400;font-size:10.5px;letter-spacing:.14em;color:var(--silver);width:42%;text-transform:uppercase}
+.tabs{display:flex;gap:22px;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:11px;letter-spacing:.18em}
+.tabs button{padding:12px 0;border-bottom:1px solid transparent;color:var(--silver)}
+.tabs button.on{color:var(--fg);border-color:var(--silver)}
+.tabpane{padding-top:18px;display:grid;gap:14px;font-size:14px;color:var(--fg-dim);max-width:62ch}
+.tabpane[hidden]{display:none}
+.notice{border:1px solid var(--line);border-left:3px solid var(--silver);padding:14px 16px;font-size:13px;color:var(--fg-dim);display:grid;gap:6px;border-radius:2px}
+.notice b{color:var(--fg);font-weight:500}
+.crumbs{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--silver);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+.crumbs a:hover{color:var(--fg)}
+.markings{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--silver);border-top:1px solid var(--line-soft);padding-top:12px}
+@media(max-width:900px){.pdp{grid-template-columns:1fr}.gallery{position:static}}
+
+/* missions */
+.missions{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.mcard{border:1px solid var(--line-soft);border-radius:var(--radius);background:var(--panel);padding:24px;display:grid;gap:14px;transition:transform .3s,border-color .3s;position:relative;overflow:hidden}
+.mcard:hover{transform:translateY(-4px);border-color:var(--line)}
+.mcard .ins{width:84px;height:84px}
+.mcard h3{text-transform:uppercase;letter-spacing:.1em;font-size:22px}
+.mcard .meta{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--silver);display:grid;gap:4px}
+.mcard p{font-size:13px;color:var(--fg-dim)}
+.mcard::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;border:1px solid var(--accent,var(--line));opacity:.35}
+.mhero{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;padding-block:40px}
+.mhero .ins{width:min(40vw,200px);height:min(40vw,200px)}
+.mhero p{max-width:60ch;color:var(--fg-dim);font-size:15px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.kv div{border:1px solid var(--line-soft);padding:12px 14px;border-radius:2px}
+.kv .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--silver);margin-bottom:4px}
+@media(max-width:700px){.mhero{grid-template-columns:1fr}}
+
+/* about */
+.divs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.div{border:1px solid var(--line-soft);padding:20px;border-radius:2px;background:var(--panel);display:grid;gap:8px}
+.div .n{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--silver)}
+.div h3{font-size:16px;text-transform:uppercase;letter-spacing:.08em}
+.div p{font-size:13px;color:var(--fg-dim)}
+.prose{max-width:64ch;display:grid;gap:18px;font-size:16px;color:var(--fg-dim);font-weight:300}
+.prose strong{color:var(--fg);font-weight:500}
+
+/* light surface: cart, checkout, account */
+.light{background:var(--white);color:#0B1E36;--fg:#0B1E36;--fg-dim:#4A5A6E;--line:rgba(1,39,78,.22);--line-soft:rgba(1,39,78,.1);--silver:#5C6B7E;--panel:#fff;color-scheme:light;border-top:1px solid rgba(255,255,255,.1)}
+.light .btn{border-color:#0B1E36}
+.light .btn:hover{background:rgba(1,39,78,.05)}
+.light select,.light input,.light textarea{background:#fff;color:#0B1E36;border-color:var(--line)}
+.light .card .pic,.light .lineitem .pic{background:linear-gradient(160deg,#052a57,#011a36)}
+.cartgrid{display:grid;grid-template-columns:1.4fr .8fr;gap:40px;align-items:start}
+.lineitem{display:grid;grid-template-columns:96px 1fr auto;gap:16px;padding:16px 0;border-bottom:1px solid var(--line-soft);align-items:center}
+.lineitem .pic{width:96px;height:96px;border-radius:2px;overflow:hidden}
+.lineitem .pic svg{width:100%;height:100%}
+.lineitem h4{font-family:var(--display);font-size:16px;letter-spacing:.02em}
+.lineitem .sm{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--silver);margin-top:4px}
+.lineitem .ctl{display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap}
+.lineitem .qty{height:38px}.lineitem .qty button{width:36px}
+.lineitem .rm{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--silver);text-decoration:underline}
+.lineitem .lp{font-family:var(--display);font-size:17px;text-align:right}
+.summary{border:1px solid var(--line);padding:22px;border-radius:2px;display:grid;gap:12px;position:sticky;top:calc(84px + env(safe-area-inset-top,0px));background:var(--panel)}
+.summary .r{display:flex;justify-content:space-between;font-size:14px}
+.summary .r.total{font-family:var(--display);font-size:20px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
+.summary h3{text-transform:uppercase;letter-spacing:.14em;font-size:13px;font-family:var(--mono);font-weight:400;color:var(--silver)}
+@media(max-width:900px){.cartgrid{grid-template-columns:1fr}.summary{position:static}}
+@media(max-width:520px){.lineitem{grid-template-columns:72px 1fr}.lineitem .pic{width:72px;height:72px}.lineitem .lp{grid-column:2;text-align:left}}
+.form{display:grid;gap:14px}
+.form .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form label{display:grid;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--silver);text-transform:uppercase}
+.form label input,.form label select{font-family:var(--body);letter-spacing:0;text-transform:none}
+.form .err{border-color:#B94A48 !important}
+.form .msg{font-size:12px;color:#B94A48;font-family:var(--body);letter-spacing:0;text-transform:none}
+.steps{display:flex;gap:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--silver);margin-bottom:26px;border:1px solid var(--line-soft);border-radius:2px;overflow:hidden}
+.steps span{flex:1;padding:10px 12px;text-align:center;border-right:1px solid var(--line-soft)}
+.steps span:last-child{border:0}
+.steps span.on{background:var(--blue);color:#fff}
+.choice{display:flex;gap:12px;align-items:center;border:1px solid var(--line);padding:12px 14px;border-radius:2px;cursor:pointer;font-family:var(--body);text-transform:none;letter-spacing:0;font-size:14px;color:var(--fg)}
+.choice input{accent-color:var(--blue);margin:0}
+.choice.on{border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)}
+.choice .sub{font-size:12px;color:var(--fg-dim)}
+@media(max-width:520px){.form .two{grid-template-columns:1fr}}
+.confirm{text-align:center;display:grid;justify-items:center;gap:16px;padding-block:40px;max-width:60ch;margin:0 auto}
+.confirm .ord{font-family:var(--mono);font-size:13px;letter-spacing:.2em;border:1px solid var(--line);padding:10px 18px;border-radius:2px}
+.orders{display:grid;gap:10px}
+.order{border:1px solid var(--line-soft);padding:14px 16px;border-radius:2px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:13px}
+.order .m{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--silver)}
+
+/* search overlay */
+#search{position:fixed;inset:0;z-index:45;background:rgba(1,19,49,.9);backdrop-filter:blur(10px);display:none;align-items:start;justify-content:center;padding:calc(90px + env(safe-area-inset-top,0px)) var(--gutter) 40px}
+#search.open{display:flex}
+#search .box{width:min(760px,100%);display:grid;gap:14px}
+#search input{font-family:var(--display);font-size:clamp(20px,3vw,30px);letter-spacing:.06em;padding:18px 20px;min-height:64px;background:rgba(1,26,54,.9)}
+#search .hint{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--silver);display:flex;justify-content:space-between}
+#sres{display:grid;gap:6px;max-height:50vh;overflow:auto}
+#sres a{display:flex;gap:14px;align-items:center;padding:10px 12px;border:1px solid var(--line-soft);border-radius:2px;background:var(--panel)}
+#sres a .pic{width:52px;height:52px;flex:none;border-radius:2px;overflow:hidden;background:linear-gradient(160deg,#052a57,#011a36)}
+#sres a .pic svg{width:100%;height:100%}
+#sres a .t{font-family:var(--display);font-size:15px}
+#sres a .s{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--silver)}
+#sres a .p{margin-left:auto;font-family:var(--display)}
+
+/* drawer cart */
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);z-index:46;background:var(--white);color:#0B1E36;transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;padding:calc(20px + env(safe-area-inset-top,0px)) 22px calc(20px + env(safe-area-inset-bottom,0px));box-shadow:-30px 0 60px rgba(0,0,0,.4)}
+#drawer.open{transform:none}
+#drawer .hd{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.2em;padding-bottom:14px;border-bottom:1px solid rgba(1,39,78,.15)}
+#drawer .items{flex:1;overflow:auto;--line-soft:rgba(1,39,78,.1);--silver:#5C6B7E;--fg:#0B1E36;--line:rgba(1,39,78,.22)}
+#drawer .ft{display:grid;gap:10px;padding-top:14px;border-top:1px solid rgba(1,39,78,.15)}
+#drawer .ft .r{display:flex;justify-content:space-between;font-family:var(--display);font-size:18px}
+#drawer .btn{border-color:#0B1E36}
+#dim{position:fixed;inset:0;z-index:44;background:rgba(1,10,28,.5);display:none}
+#dim.on{display:block}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:60;background:var(--white);color:#0B1E36;font-family:var(--mono);font-size:11px;letter-spacing:.16em;padding:12px 18px;border-radius:2px;opacity:0;transition:.3s;pointer-events:none;border-left:3px solid var(--blue);max-width:calc(100vw - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* footer */
+footer{position:relative;z-index:1;border-top:1px solid var(--line-soft);background:rgba(1,19,49,.7);padding-block:48px 32px}
+footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
+footer h4{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:12px}
+footer ul{list-style:none;padding:0;margin:0;display:grid;gap:7px;font-size:13px;color:var(--fg-dim)}
+footer .legal{margin-top:36px;padding-top:18px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--silver-dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer .brand{display:flex;gap:12px;align-items:center;font-family:var(--display);letter-spacing:.3em;font-weight:600;margin-bottom:14px}
+footer .brand .logo{width:40px;height:40px}
+@media(max-width:800px){footer .cols{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){footer .cols{grid-template-columns:1fr}}
+
+.empty{text-align:center;padding:60px 0;color:var(--fg-dim);display:grid;gap:14px;justify-items:center}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.strip div{border:1px solid var(--line-soft);padding:16px;border-radius:2px;display:grid;gap:6px}
+.strip .k{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--silver)}
+.strip .v{font-family:var(--display);font-size:18px}
+.hscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
+.hscroll .card{flex:0 0 250px;scroll-snap-align:start}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div id="veil" aria-hidden="true"></div>
+
+
+<nav id="nav">
+  <a class="brand" href="#home"><span class="logo"><img src="data:image/webp;base64,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" alt=""></span>ASTRAEUS</a>
+  <div class="links" id="links">
+    <a href="#shop" data-r="shop">SHOP</a>
+    <a href="#watches" data-r="watches">WATCHES</a>
+    <a href="#equipment" data-r="equipment">EQUIPMENT</a>
+    <a href="#apparel" data-r="apparel">APPAREL</a>
+    <a href="#missions" data-r="missions">MISSIONS</a>
+    <a href="#about" data-r="about">ABOUT</a>
+  </div>
+  <div class="icons">
+    <button id="sbtn" type="button" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    <a href="#account" aria-label="Account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></a>
+    <a href="#wishlist" aria-label="Wishlist" id="wbtn"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg><span class="badge" id="wcount" hidden>0</span></a>
+    <button id="cbtn" type="button" aria-label="Cart"><svg viewBox="0 0 24 24"><path d="M4 6h16l-1.5 9h-13z"/><path d="M8 6V4h8v2"/><circle cx="9" cy="19" r="1.3"/><circle cx="16" cy="19" r="1.3"/></svg><span class="badge" id="ccount" hidden>0</span></button>
+    <button id="burger" type="button" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</nav>
+<div id="mnav">
+  <button class="close" type="button" id="mclose">CLOSE ×</button>
+  <a href="#shop">SHOP</a><a href="#watches">WATCHES</a><a href="#equipment">EQUIPMENT</a><a href="#apparel">APPAREL</a><a href="#firearms">FIREARMS</a><a href="#missions">MISSIONS</a><a href="#about">ABOUT</a><a href="#account">ACCOUNT</a>
+</div>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <div class="brand"><span class="logo"><img src="data:image/webp;base64,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" alt=""></span>ASTRAEUS</div>
+        <p class="dim" style="font-size:13px;max-width:36ch">Equipment for those who go farther. Designed for life on Earth and whatever comes next.</p>
+        <p class="mono" style="font-size:10px;letter-spacing:.16em;color:var(--silver);margin-top:14px">ASTRAEUS EQUIPMENT GROUP · REF A-2126</p>
+      </div>
+      <div><h4>Shop</h4><ul><li><a href="#watches">Watches</a></li><li><a href="#storage">Watch Storage</a></li><li><a href="#equipment">Field Equipment</a></li><li><a href="#everyday">Everyday Equipment</a></li><li><a href="#apparel">Apparel</a></li><li><a href="#firearms">Firearms</a></li></ul></div>
+      <div><h4>Programs</h4><ul><li><a href="#mission-lunar">Lunar Program</a></li><li><a href="#mission-mars">Mars Expedition</a></li><li><a href="#mission-deepfield">Deep Field</a></li><li><a href="#mission-orbital">Orbital Operations</a></li><li><a href="#mission-frontier">Frontier Series</a></li><li><a href="#mission-earthside">Earthside</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#about">About ASTRAEUS</a></li><li><a href="#about">Divisions</a></li><li><a href="#account">Account</a></li><li><a href="#wishlist">Wishlist</a></li><li><a href="#shipping">Shipping &amp; Returns</a></li><li><a href="#firearms">Firearms Compliance</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 ASTRAEUS. A concept brand of Carlisle Capital LLC. ASTRAEUS is not a space agency.</span><span>ORIGINAL DESIGN SYSTEM · NAVY 01274E · BLUE 0E73B3 · SILVER ADAEB1</span></div>
+  </div>
+</footer>
+
+<div id="search" role="dialog" aria-label="Search">
+  <div class="box">
+    <input id="sinput" type="search" placeholder="Search equipment, watches, missions…" autocomplete="off">
+    <div class="hint"><span id="scount">TYPE TO SEARCH</span><button id="sclose" type="button">ESC · CLOSE</button></div>
+    <div id="sres"></div>
+  </div>
+</div>
+
+<div id="dim"></div>
+<aside id="drawer" aria-label="Cart">
+  <div class="hd"><span>CART</span><button id="dclose" type="button">CLOSE ×</button></div>
+  <div class="items" id="ditems"></div>
+  <div class="ft">
+    <div class="r"><span>Subtotal</span><span id="dsub">$0</span></div>
+    <a class="btn primary" href="#checkout" id="dcheck">CHECKOUT</a>
+    <a class="btn" href="#cart">VIEW CART</a>
+  </div>
+</aside>
+<div id="toast"></div>
+<script>
+const LOGO="data:image/webp;base64,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";
+const MISSIONS={
+ lunar:{id:"lunar",name:"Lunar Program",num:"AP-01",dest:"Lunar surface, Mare Serenitatis station",accent:"#C9CDD3",tone:"silver",
+  bg:"The Lunar Program is ASTRAEUS's longest running equipment line. Every item is rated for dust, thermal swing and long shifts under low light. Finishes are brushed silver and warm white, with navy panels where grip matters."},
+ mars:{id:"mars",name:"Mars Expedition",num:"AP-04",dest:"Mars, Arcadia Planitia forward camp",accent:"#A39189",tone:"dust",
+  bg:"The Mars Expedition line is built for long duration field work far from resupply. Gear is repairable, modular, and marked with large legible identifiers for use with gloves. A muted dust tone identifies the collection."},
+ deepfield:{id:"deepfield",name:"Deep Field",num:"AP-07",dest:"Outer system survey, beyond the belt",accent:"#5B7FA6",tone:"steel",
+  bg:"Deep Field equipment is designed for isolation. Long battery life, mechanical redundancy, and instruments that keep working with nothing else around. The collection carries a cold steel blue accent."},
+ orbital:{id:"orbital",name:"Orbital Operations",num:"AP-02",dest:"Low Earth orbit, station and transit",accent:"#0E73B3",tone:"orbital",
+  bg:"Orbital Operations supplies crews living and working in orbit. Compact, light, and secured against drift, with Earth blue as its accent. This is the line most visitors start with."},
+ frontier:{id:"frontier",name:"Frontier Series",num:"AP-09",dest:"Unmapped terrain, Earth and offworld",accent:"#7D8B99",tone:"slate",
+  bg:"The Frontier Series is the rugged end of the catalog. Reinforced shells, oversized latches, and field serviceable parts. A quiet slate accent marks the series."},
+ earthside:{id:"earthside",name:"Earthside",num:"AP-00",dest:"Home. Cities, roads, coastlines.",accent:"#2E9BD8",tone:"sky",
+  bg:"Earthside is the ASTRAEUS design philosophy applied to ordinary days. The same materials and markings, scaled for a commute, a workshop, a weekend. Sky blue accent."}
+};
+const DIV={EXP:"ASTRAEUS EXPEDITIONARY",ORB:"ASTRAEUS ORBITAL",FLD:"ASTRAEUS FIELD SYSTEMS",WCH:"ASTRAEUS WATCH DIVISION",LAB:"ASTRAEUS EQUIPMENT LAB",MAT:"ASTRAEUS MATERIALS DIVISION",FRO:"ASTRAEUS FRONTIER OPERATIONS"};
+const CATS={watches:{name:"Watches",blurb:"Precision watches inspired by aerospace instrumentation, navigation and mission equipment."},
+ storage:{name:"Watch Storage",blurb:"Protective cases, travel cases and modular storage built like field hardware."},
+ equipment:{name:"Field Equipment",blurb:"Durable storage, tools, bags, utility products and exploration equipment."},
+ everyday:{name:"Everyday Equipment",blurb:"Useful daily objects designed with the same industrial philosophy."},
+ apparel:{name:"Apparel",blurb:"Shirts, jackets, hats, patches and mission inspired technical clothing."},
+ firearms:{name:"Firearms",blurb:"A restrained, professional catalog of field firearms and accessories. Transfer through licensed dealers only."}};
+// kind drives the illustration. av: in|low|out
+const P=[
+ // WATCHES
+ {id:"w-orb-01",cat:"watches",type:"Chronograph",fam:"ASTRAEUS ORBITAL",name:"Orbital Chronograph",model:"OW-01",price:2850,mission:"orbital",div:"WCH",kind:"watch",dial:"navy",strap:"bracelet",av:"in",series:"ORBITAL SERIES",
+  desc:"Flagship manual wind chronograph with tachymeter bezel and a dial calibrated for orbital elapsed time.",materials:"316L stainless case, sapphire crystal with inner anti reflective coating, brushed steel bracelet",dims:"40.5 mm case, 13.2 mm thick, 47 mm lug to lug",weight:"142 g on bracelet",
+  specs:{Movement:"ASTRAEUS cal. A-311 manual wind, 60 hour reserve",Functions:"Hours, minutes, small seconds, 30 minute and 12 hour counters",Crystal:"Sapphire, domed",WaterResistance:"100 m",Lume:"Warm white Super LumiNova on hands and markers",Caseback:"Engraved Earth horizon, serial numbered"}},
+ {id:"w-orb-02",cat:"watches",type:"Three hand",fam:"ASTRAEUS ORBITAL",name:"Orbital Field Automatic",model:"OW-02",price:1850,mission:"orbital",div:"WCH",kind:"watch",dial:"navy",strap:"nato",av:"in",series:"ORBITAL SERIES",
+  desc:"Automatic three hand field watch with a 24 hour inner ring for station timekeeping.",materials:"316L stainless case, sapphire crystal, woven textile strap",dims:"38 mm case, 11 mm thick",weight:"78 g",
+  specs:{Movement:"ASTRAEUS cal. A-200 automatic, 42 hour reserve",Functions:"Hours, minutes, seconds, date, 24 hour ring",Crystal:"Sapphire, flat",WaterResistance:"100 m",Strap:"20 mm quick release"}},
+ {id:"w-lun-01",cat:"watches",type:"Chronograph",fam:"ASTRAEUS LUNAR",name:"Lunar Chronograph",model:"LW-01",price:3400,mission:"lunar",div:"WCH",kind:"watch",dial:"silver",strap:"bracelet",av:"in",series:"EXPEDITION SERIES",
+  desc:"Silver dial chronograph with a lunar surface relief caseback. Rated for thermal cycling from minus 40 to 80 C.",materials:"316L stainless case, sapphire, silver sunray dial",dims:"42 mm case, 13.8 mm thick",weight:"151 g",
+  specs:{Movement:"ASTRAEUS cal. A-311 manual wind",Functions:"Chronograph, tachymeter, small seconds",ThermalRating:"minus 40 to 80 C",WaterResistance:"100 m",Caseback:"Lunar relief, laser etched"}},
+ {id:"w-lun-02",cat:"watches",type:"GMT",fam:"ASTRAEUS LUNAR",name:"Lunar GMT",model:"LW-02",price:2650,mission:"lunar",div:"WCH",kind:"watch",dial:"silver",strap:"rubber",av:"low",series:"EXPEDITION SERIES",
+  desc:"Dual time GMT with a 24 hour bezel in navy and silver for two reference clocks.",materials:"Titanium grade 2 case, sapphire, fluororubber strap",dims:"41 mm case, 12.4 mm thick",weight:"96 g",
+  specs:{Movement:"ASTRAEUS cal. A-250 automatic GMT",Functions:"Hours, minutes, seconds, second time zone",Bezel:"Bidirectional 24 hour, ceramic insert",WaterResistance:"200 m"}},
+ {id:"w-dfd-01",cat:"watches",type:"Diver",fam:"ASTRAEUS DEEP FIELD",name:"Deep Field Diver",model:"DW-01",price:2950,mission:"deepfield",div:"WCH",kind:"watch",dial:"black",strap:"rubber",av:"in",series:"EXPEDITION SERIES",
+  desc:"600 m diver with helium valve and oversized lume plots for low light environments.",materials:"Titanium grade 5 case, sapphire, ceramic bezel",dims:"43 mm case, 14.5 mm thick",weight:"118 g",
+  specs:{Movement:"ASTRAEUS cal. A-200 automatic",WaterResistance:"600 m, helium escape valve",Bezel:"Unidirectional 120 click",Lume:"Large plots, 10 hour visibility",Strap:"22 mm rubber with extension"}},
+ {id:"w-dfd-02",cat:"watches",type:"Three hand",fam:"ASTRAEUS DEEP FIELD",name:"Deep Field Survey",model:"DW-02",price:2100,mission:"deepfield",div:"WCH",kind:"watch",dial:"black",strap:"bracelet",av:"in",series:"EXPEDITION SERIES",
+  desc:"Antimagnetic survey watch with soft iron inner case and a compass style seconds hand.",materials:"316L stainless, soft iron inner case, sapphire",dims:"40 mm case, 12 mm thick",weight:"136 g",
+  specs:{Movement:"ASTRAEUS cal. A-200 automatic",Antimagnetic:"to 80,000 A/m",WaterResistance:"150 m",Crystal:"Sapphire, domed"}},
+ {id:"w-exp-01",cat:"watches",type:"Field",fam:"ASTRAEUS EXPEDITION",name:"Expedition Field 38",model:"EW-01",price:1450,mission:"frontier",div:"WCH",kind:"watch",dial:"navy",strap:"nato",av:"in",series:"EXPEDITION SERIES",
+  desc:"Entry point to the catalog. Mechanical field watch with hacking seconds and a drilled lug case.",materials:"316L stainless, sapphire, textile strap",dims:"38 mm case, 10.8 mm thick",weight:"72 g",
+  specs:{Movement:"ASTRAEUS cal. A-100 hand wound, 56 hour reserve",Functions:"Hours, minutes, hacking seconds",WaterResistance:"100 m",Strap:"20 mm, two included"}},
+ {id:"w-exp-02",cat:"watches",type:"Chronograph",fam:"ASTRAEUS EXPEDITION",name:"Expedition Chronograph 42",model:"EW-02",price:2400,mission:"mars",div:"WCH",kind:"watch",dial:"black",strap:"nato",av:"in",series:"EXPEDITION SERIES",
+  desc:"Mars Expedition issue chronograph with oversized pushers for gloved operation.",materials:"Bead blasted titanium, sapphire",dims:"42 mm case, 14 mm thick",weight:"104 g",
+  specs:{Movement:"ASTRAEUS cal. A-311 manual wind",Pushers:"Oversized, glove rated",WaterResistance:"100 m",Caseback:"Mission AP-04 engraving"}},
+ // STORAGE
+ {id:"c-w2",cat:"storage",type:"Watch case",name:"Field Watch Case Two",model:"FC-200",price:290,mission:"frontier",div:"FLD",kind:"case",size:2,av:"in",series:"FIELD SYSTEMS",
+  desc:"Two watch hard case with a twist latch, replaceable webbing and a window for a mission disc.",materials:"Glass filled polymer shell, machined aluminum end caps, closed cell foam",dims:"200 × 150 × 85 mm",weight:"640 g",
+  specs:{Capacity:"2 watches, up to 46 mm",Closure:"Twist and pull latch, stainless pin",Interior:"Two cushion foam, removable",WaterResistance:"IP67, pressure equalization valve",Impact:"1.5 m drop onto concrete, loaded",MissionCompatibility:"All programs, disc window accepts any mission disc"}},
+ {id:"c-w4",cat:"storage",type:"Watch case",name:"Field Watch Case Four",model:"FC-400",price:390,mission:"frontier",div:"FLD",kind:"case",size:4,av:"in",series:"FIELD SYSTEMS",
+  desc:"Four watch case in the compact format. Same latch and webbing system as the FC-200.",materials:"Glass filled polymer shell, aluminum end caps, closed cell foam",dims:"180 × 140 × 70 mm per tier, stacked",weight:"890 g",
+  specs:{Capacity:"4 watches",Closure:"Twist and pull latch",Interior:"Four cushion foam",WaterResistance:"IP67",Impact:"1.5 m drop rated"}},
+ {id:"c-w4p",cat:"storage",type:"Watch case",name:"Field Watch Case Four Premier",model:"FC-400P",price:520,mission:"lunar",div:"MAT",kind:"case",size:4,prem:true,av:"low",series:"FIELD SYSTEMS",
+  desc:"Premier edition with brushed aluminum lid panels, leather lined interior and a serial plate.",materials:"Aluminum lid, polymer base, vegetable tanned leather lining",dims:"190 × 145 × 75 mm",weight:"1,020 g",
+  specs:{Capacity:"4 watches",Closure:"Twist and pull latch, keyed",Interior:"Leather lined cushions",WaterResistance:"IP54",SerialPlate:"Individually numbered"}},
+ {id:"c-g4",cat:"storage",type:"Gear case",name:"Tech Case Tall",model:"GC-400",price:340,mission:"orbital",div:"FLD",kind:"case",size:0,tall:true,av:"in",series:"FIELD SYSTEMS",
+  desc:"Deep storage case for watches plus tools, cables, a light and everyday carry.",materials:"Glass filled polymer, aluminum",dims:"220 × 160 × 120 mm",weight:"1,100 g",
+  specs:{Capacity:"2 watches plus modular tray",Closure:"Twist and pull latch",Interior:"Pick and pluck foam over watch cushions",WaterResistance:"IP67",Impact:"2 m drop rated"}},
+ {id:"c-disc",cat:"storage",type:"Accessory",name:"Mission Disc Set",model:"MD-06",price:48,mission:"",div:"LAB",kind:"disc",av:"in",series:"FIELD SYSTEMS",
+  desc:"Six interchangeable art discs for the case window. One for each ASTRAEUS program.",materials:"Anodized aluminum, printed and sealed",dims:"38 mm diameter",weight:"6 g each",
+  specs:{Contents:"Six discs, one per program",Fit:"All FC and GC series windows",Finish:"Anodized, UV sealed"}},
+ // FIELD EQUIPMENT
+ {id:"e-duffel",cat:"equipment",type:"Bag",name:"Transit Duffel 45",model:"FD-45",price:260,mission:"frontier",div:"EXP",kind:"bag",av:"in",series:"EXPEDITION SERIES",
+  desc:"45 liter weather resistant duffel with stowable harness and a welded navy base.",materials:"840D nylon, TPU laminated base, aluminum hardware",dims:"58 × 32 × 28 cm",weight:"1.2 kg",
+  specs:{Volume:"45 L",Carry:"Duffel handles, stowable backpack harness",Weather:"Water resistant, storm flap zipper",Access:"Full length U zip"}},
+ {id:"e-pack",cat:"equipment",type:"Bag",name:"Survey Pack 28",model:"FP-28",price:240,mission:"deepfield",div:"EXP",kind:"pack",av:"in",series:"EXPEDITION SERIES",
+  desc:"Daypack with instrument sleeve, external tool loops and a frame sheet.",materials:"500D nylon, foam frame sheet",dims:"50 × 30 × 20 cm",weight:"980 g",
+  specs:{Volume:"28 L",Sleeve:"Fits 16 inch instrument or laptop",Loops:"Four external tool loops",Frame:"Removable HDPE sheet"}},
+ {id:"e-light",cat:"equipment",type:"Light",name:"Field Light 900",model:"FL-900",price:135,mission:"mars",div:"LAB",kind:"light",av:"in",series:"FIELD SYSTEMS",
+  desc:"900 lumen rechargeable light with a warm white emitter and a momentary tail switch.",materials:"Machined aluminum, type III anodized",dims:"128 mm long, 25 mm head",weight:"112 g with cell",
+  specs:{Output:"900 lm high, 30 lm low, 2 lm moonlight",Runtime:"3 h high, 60 h low",Charging:"USB C, 21700 cell included",Rating:"IPX8, 1 m drop"}},
+ {id:"e-tool",cat:"equipment",type:"Tool",name:"Service Multitool",model:"FT-12",price:165,mission:"orbital",div:"LAB",kind:"tool",av:"in",series:"FIELD SYSTEMS",
+  desc:"Twelve function multitool with spring strap tool, driver bits and locking blade.",materials:"Stainless frame, titanium scales",dims:"105 mm closed",weight:"160 g",
+  specs:{Functions:"12",Blade:"78 mm, locking",Drivers:"Bit holder, 4 bits included",Sheath:"Navy nylon, belt loop"}},
+ {id:"e-cont",cat:"equipment",type:"Container",name:"Modular Storage Container 10",model:"MC-10",price:95,mission:"orbital",div:"FLD",kind:"container",av:"in",series:"FIELD SYSTEMS",
+  desc:"Stackable 10 liter container with gasketed lid and label plate. Locks to its neighbors.",materials:"Polypropylene, silicone gasket",dims:"400 × 300 × 120 mm",weight:"720 g",
+  specs:{Volume:"10 L",Stacking:"Interlocking corners, 6 high",Seal:"Gasketed, dust and splash",Label:"Replaceable plate, dry erase"}},
+ {id:"e-bottle",cat:"equipment",type:"Bottle",name:"Thermal Bottle 750",model:"TB-750",price:58,mission:"earthside",div:"MAT",kind:"bottle",av:"in",series:"EARTHSIDE CERTIFIED",
+  desc:"Vacuum bottle with a wide mouth, a silver cap and laser etched volume marks.",materials:"18/8 stainless, powder coated navy",dims:"265 mm tall, 78 mm diameter",weight:"410 g",
+  specs:{Volume:"750 ml",Thermal:"24 h cold, 12 h hot",Cap:"Wide mouth, carry loop",Finish:"Navy powder coat, silver cap"}},
+ // EVERYDAY
+ {id:"d-note",cat:"everyday",type:"Notebook",name:"Mission Log Notebook",model:"ML-A5",price:28,mission:"earthside",div:"LAB",kind:"notebook",av:"in",series:"EARTHSIDE CERTIFIED",
+  desc:"A5 hardcover log with numbered pages, a silver ribbon and a contour map end paper.",materials:"Navy linen cover, 100 gsm paper",dims:"148 × 210 mm",weight:"320 g",
+  specs:{Pages:"192, numbered",Ruling:"Dot grid 5 mm",Binding:"Thread sewn, lies flat",Extras:"Ribbon, elastic, rear pocket"}},
+ {id:"d-pen",cat:"everyday",type:"Pen",name:"Pressurized Field Pen",model:"FP-01",price:44,mission:"orbital",div:"LAB",kind:"pen",av:"in",series:"EARTHSIDE CERTIFIED",
+  desc:"Machined aluminum pen with a pressurized cartridge that writes upside down and in the cold.",materials:"Aluminum, stainless clip",dims:"135 mm",weight:"28 g",
+  specs:{Cartridge:"Pressurized, black",Operation:"Twist",Temperature:"minus 30 to 120 C",Finish:"Silver, navy band"}},
+ {id:"d-wallet",cat:"everyday",type:"Wallet",name:"Card Carrier",model:"CC-06",price:62,mission:"earthside",div:"MAT",kind:"wallet",av:"in",series:"EARTHSIDE CERTIFIED",
+  desc:"Six card aluminum carrier with a pull tab and RFID shielding.",materials:"Aluminum, elastic",dims:"88 × 56 × 10 mm",weight:"42 g",
+  specs:{Capacity:"6 cards",Shielding:"RFID",Finish:"Brushed silver or navy"}},
+ {id:"d-mug",cat:"everyday",type:"Mug",name:"Station Mug",model:"SM-12",price:34,mission:"orbital",div:"MAT",kind:"mug",av:"in",series:"EARTHSIDE CERTIFIED",
+  desc:"Double wall stainless mug with a sliding lid and ASTRAEUS orbital markings.",materials:"18/8 stainless",dims:"350 ml",weight:"240 g",
+  specs:{Volume:"350 ml",Lid:"Sliding, dishwasher safe",Thermal:"Double wall vacuum"}},
+ {id:"d-charger",cat:"everyday",type:"Power",name:"Power Cell 20",model:"PC-20",price:89,mission:"deepfield",div:"LAB",kind:"cell",av:"low",series:"FIELD SYSTEMS",
+  desc:"20,000 mAh power cell in a rubber armored aluminum shell with a state of charge dial.",materials:"Aluminum, TPU armor",dims:"150 × 72 × 24 mm",weight:"380 g",
+  specs:{Capacity:"20,000 mAh",Output:"65 W USB C, 18 W USB A",Display:"Analog charge dial",Rating:"IP54"}},
+ // APPAREL
+ {id:"a-jacket",cat:"apparel",type:"Jacket",name:"Flight Shell Jacket",model:"AJ-01",price:385,mission:"orbital",div:"EXP",kind:"jacket",av:"in",series:"ORBITAL SERIES",
+  desc:"Three layer shell with a stowable hood, chest instrument pocket and a program patch panel.",materials:"3L nylon shell, taped seams",dims:"Sizes XS to XXL",weight:"520 g",
+  specs:{Waterproof:"20,000 mm",Breathability:"20,000 g",Pockets:"Two hand, one chest, one sleeve",Patch:"Loop panel on left shoulder"}},
+ {id:"a-tee",cat:"apparel",type:"Shirt",name:"Program Tee",model:"AT-02",price:48,mission:"lunar",div:"EXP",kind:"tee",av:"in",series:"EARTHSIDE CERTIFIED",
+  desc:"Heavyweight cotton tee with a small chest insignia and a back print of the Lunar Program manifest.",materials:"220 gsm combed cotton",dims:"Sizes XS to XXL",weight:"230 g",
+  specs:{Fabric:"220 gsm cotton",Fit:"Regular",Print:"Water based ink, chest and back"}},
+ {id:"a-cap",cat:"apparel",type:"Hat",name:"Field Cap",model:"AC-01",price:42,mission:"frontier",div:"EXP",kind:"cap",av:"in",series:"EXPEDITION SERIES",
+  desc:"Six panel cap in navy ripstop with a silver insignia and a metal slide adjuster.",materials:"Nylon ripstop",dims:"One size",weight:"70 g",
+  specs:{Panels:"6",Closure:"Metal slide",Brim:"Pre curved"}},
+ {id:"a-patch",cat:"apparel",type:"Patch",name:"Program Patch Set",model:"AP-06",price:36,mission:"",div:"EXP",kind:"patch",av:"in",series:"MISSION READY",
+  desc:"Six embroidered program patches with hook backing. One for each ASTRAEUS mission.",materials:"Embroidered twill, hook backing",dims:"76 mm",weight:"8 g each",
+  specs:{Contents:"Six patches",Backing:"Hook",Fit:"Jacket patch panel, packs"}},
+ {id:"a-fleece",cat:"apparel",type:"Fleece",name:"Station Fleece",model:"AF-03",price:165,mission:"deepfield",div:"MAT",kind:"fleece",av:"in",series:"ORBITAL SERIES",
+  desc:"Grid fleece quarter zip with a silver chest zipper and division marking on the sleeve.",materials:"Polartec style grid fleece",dims:"Sizes XS to XXL",weight:"340 g",
+  specs:{Fabric:"Grid fleece, 200 gsm",Zip:"Quarter length, silver",Sleeve:"Division marking"}},
+ {id:"a-pants",cat:"apparel",type:"Pants",name:"Field Pant",model:"AP-04",price:175,mission:"mars",div:"EXP",kind:"pants",av:"low",series:"EXPEDITION SERIES",
+  desc:"Articulated field pant with reinforced knees, a tool pocket and a gusseted crotch.",materials:"Stretch nylon canvas",dims:"Waist 28 to 40",weight:"480 g",
+  specs:{Fabric:"Nylon canvas, 4 way stretch",Knees:"Reinforced, pad pocket",Pockets:"Seven"}},
+ // FIREARMS
+ {id:"f-rifle",cat:"firearms",type:"Rifle",name:"FR-7 Field Rifle",model:"FR-7",price:2190,mission:"frontier",div:"FRO",kind:"rifle",av:"in",series:"FIELD SYSTEMS",ffl:true,
+  desc:"Bolt action field rifle in a navy composite stock with a silver bolt handle. Supplied with a hard case.",materials:"Stainless barreled action, composite stock",dims:"Overall 1,040 mm, 20 inch barrel",weight:"3.4 kg",
+  specs:{Action:"Bolt, controlled feed",Chambering:"6.5 mm",Barrel:"20 inch, threaded, stainless",Magazine:"Detachable, 5 round",Trigger:"Adjustable, 1.0 to 1.8 kg",Case:"FC series hard case included"}},
+ {id:"f-pistol",cat:"firearms",type:"Pistol",name:"SP-9 Service Pistol",model:"SP-9",price:890,mission:"orbital",div:"FRO",kind:"pistol",av:"in",series:"FIELD SYSTEMS",ffl:true,
+  desc:"Striker fired 9 mm service pistol with an optics ready slide and a navy polymer frame.",materials:"Stainless slide, polymer frame",dims:"Overall 185 mm, 4 inch barrel",weight:"680 g",
+  specs:{Action:"Striker fired",Chambering:"9 mm",Capacity:"15 round, two magazines",Slide:"Optics ready, silver finish",Sights:"Tritium, warm white"}},
+ {id:"f-shot",cat:"firearms",type:"Shotgun",name:"FS-12 Utility Shotgun",model:"FS-12",price:1150,mission:"mars",div:"FRO",kind:"shotgun",av:"low",series:"FIELD SYSTEMS",ffl:true,
+  desc:"Pump action utility shotgun with an 18.5 inch barrel and a composite stock.",materials:"Steel receiver, composite stock",dims:"Overall 970 mm",weight:"3.2 kg",
+  specs:{Action:"Pump",Chambering:"12 gauge, 3 inch",Barrel:"18.5 inch, cylinder bore",Capacity:"5 plus 1",Sights:"Ghost ring"}},
+ {id:"f-sling",cat:"firearms",type:"Accessory",name:"Rifle Sling",model:"RS-02",price:68,mission:"frontier",div:"FRO",kind:"sling",av:"in",series:"FIELD SYSTEMS",
+  desc:"Two point adjustable sling in navy webbing with silver hardware. Ships without restriction.",materials:"Nylon webbing, aluminum hardware",dims:"Adjustable 90 to 140 cm",weight:"120 g",
+  specs:{Type:"Two point, quick adjust",Hardware:"Aluminum, silver",Width:"32 mm"}},
+ {id:"f-rcase",cat:"firearms",type:"Accessory",name:"Long Gun Hard Case",model:"LC-110",price:310,mission:"frontier",div:"FLD",kind:"longcase",av:"in",series:"FIELD SYSTEMS",
+  desc:"Lockable 110 cm hard case with pressure valve and pick and pluck foam. Ships without restriction.",materials:"Polymer shell, stainless hinge pins",dims:"1,100 × 380 × 150 mm",weight:"5.6 kg",
+  specs:{Length:"110 cm interior",Locks:"Two padlock points",Rating:"IP67, airline approved",Interior:"Pick and pluck foam"}},
+];
+const BYID=Object.fromEntries(P.map(p=>[p.id,p]));
+const fmt=n=>"$"+n.toLocaleString("en-US");
+</script>
+<script>
+/* ---------- illustration engine (all inline SVG) ---------- */
+const C={navy:"#01274E",deep:"#011A36",blue:"#0E73B3",silver:"#ADAEB1",white:"#FBFAFB",slate:"#3F5570",steel:"#8E9AA8",ink:"#0B1E36"};
+let uid=0;
+function defs(id,acc){return `<defs>
+<linearGradient id="bg${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#063066"/><stop offset="1" stop-color="#01152C"/></linearGradient>
+<linearGradient id="st${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6E7EA"/><stop offset=".5" stop-color="#ADAEB1"/><stop offset="1" stop-color="#7C8089"/></linearGradient>
+<linearGradient id="sv${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3F3F5"/><stop offset=".5" stop-color="#B9BBC0"/><stop offset="1" stop-color="#8A8E96"/></linearGradient>
+<linearGradient id="nv${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A3B7A"/><stop offset="1" stop-color="#01274E"/></linearGradient>
+<linearGradient id="wh${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D5D8DE"/></linearGradient>
+<radialGradient id="dl${id}" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="${acc||'#0E4F8E'}"/><stop offset="1" stop-color="#01152C"/></radialGradient>
+<radialGradient id="glow${id}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#0E73B3" stop-opacity=".35"/><stop offset="1" stop-color="#0E73B3" stop-opacity="0"/></radialGradient>
+<pattern id="gr${id}" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#ADAEB1" stroke-opacity=".08"/></pattern>
+<clipPath id="cl${id}"><circle cx="0" cy="0" r="1"/></clipPath>
+</defs>`;}
+function frame(id,inner,label,opts={}){
+ const acc=opts.acc;
+ return `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${label||''}">${defs(id,acc)}
+<rect width="400" height="400" fill="url(#bg${id})"/><rect width="400" height="400" fill="url(#gr${id})"/>
+<circle cx="200" cy="230" r="170" fill="url(#glow${id})"/>
+${opts.noline?'':`<path d="M20 380H380M20 20V40M380 20V40M20 360V380M380 360V380" stroke="#ADAEB1" stroke-opacity=".35" fill="none"/>`}
+${inner}
+${opts.mark?`<rect x="18" y="22" width="${opts.mark.length*6.2+12}" height="18" fill="#011A36" opacity=".8"/><text x="24" y="34" font-family="IBM Plex Mono,monospace" font-size="9" letter-spacing="2" fill="#ADAEB1" fill-opacity=".8">${opts.mark}</text>`:''}
+</svg>`;}
+const T=(x,y,s,txt,o={})=>`<text x="${x}" y="${y}" font-family="${o.f||'IBM Plex Mono,monospace'}" font-size="${s}" fill="${o.c||'#ADAEB1'}" letter-spacing="${o.ls??1.5}" text-anchor="${o.a||'start'}" font-weight="${o.w||400}" opacity="${o.op??1}">${txt}</text>`;
+
+function dialColor(d){return d==="silver"?"#C9CBD0":d==="black"?"#0B1522":"#0A3263";}
+function watchArt(p,id,view){
+ const dc=dialColor(p.dial), onSilver=p.dial==="silver", hand=onSilver?"#1B2A3D":"#F3F3F5", txt=onSilver?"#1B2A3D":"#E8EAEE";
+ const acc=MISSIONS[p.mission]?.accent||C.blue;
+ const chrono=p.type==="Chronograph", diver=p.type==="Diver", gmt=p.type==="GMT";
+ if(view===1){ // dial detail
+  return frame(id,`<g transform="translate(200 200) scale(2.3)">
+   <circle r="90" fill="${dc}"/><circle r="90" fill="none" stroke="url(#st${id})" stroke-width="6"/>
+   ${Array.from({length:60},(_,i)=>`<line x1="0" y1="-86" x2="0" y2="${i%5?-82:-76}" stroke="${txt}" stroke-width="${i%5?.6:1.4}" transform="rotate(${i*6})"/>`).join('')}
+   ${[0,30,60,90,120,150,180,210,240,270,300,330].map(a=>`<rect x="-2.2" y="-74" width="4.4" height="12" fill="${hand}" transform="rotate(${a})"/>`).join('')}
+   ${chrono?`<circle cx="-32" r="16" fill="none" stroke="${txt}" stroke-width=".6"/><circle cx="32" r="16" fill="none" stroke="${txt}" stroke-width=".6"/><circle cy="34" r="16" fill="none" stroke="${txt}" stroke-width=".6"/>`:''}
+   <g transform="rotate(-40)"><rect x="-1.8" y="-60" width="3.6" height="66" fill="${hand}"/></g><g transform="rotate(50)"><rect x="-1.4" y="-78" width="2.8" height="84" fill="${hand}"/></g>
+   <line x1="0" y1="10" x2="0" y2="-80" stroke="${acc}" stroke-width=".9" transform="rotate(200)"/><circle r="2.5" fill="${hand}"/>
+   <text y="-40" text-anchor="middle" font-family="Saira,sans-serif" font-size="6" letter-spacing="2" fill="${txt}">ASTRAEUS</text>
+  </g>`,p.name+" dial detail",{mark:"DIAL · 2.3X",acc});
+ }
+ if(view===2){ // caseback
+  return frame(id,`<g transform="translate(200 200)">
+   <circle r="150" fill="url(#st${id})"/><circle r="128" fill="#9EA1A8"/><circle r="126" fill="none" stroke="#6F737B" stroke-width="1"/>
+   <path d="M-126 0A126 126 0 0 1 126 0" fill="none" stroke="#7D8089" stroke-width="2"/>
+   <clipPath id="cb${id}"><circle r="110"/></clipPath>
+   <g clip-path="url(#cb${id})"><circle r="110" fill="#8E9199"/>${Array.from({length:16},(_,i)=>{const x=Math.sin(i*2.1)*80,y=Math.cos(i*1.7)*80,r=6+((i*7)%18);return `<circle cx="${x}" cy="${y}" r="${r}" fill="#7A7E86"/><circle cx="${x-r*.15}" cy="${y-r*.15}" r="${r*.75}" fill="#9A9DA4"/>`;}).join('')}
+   <path d="M-110 20Q-40 -70 110 10" fill="none" stroke="#A9ACB3" stroke-width="30" opacity=".35"/></g>
+   ${[0,45,90,135,180,225,270,315].map(a=>`<circle cx="0" cy="-140" r="4" fill="#5E626A" transform="rotate(${a})"/>`).join('')}
+   <path id="arc${id}" d="M-100 0A100 100 0 0 1 100 0" fill="none"/><text font-family="Saira,sans-serif" font-size="14" letter-spacing="6" fill="#2F333B"><textPath href="#arc${id}" startOffset="50%" text-anchor="middle">ASTRAEUS</textPath></text>
+   <path id="arc2${id}" d="M-100 0A100 100 0 0 0 100 0" fill="none"/><text font-family="IBM Plex Mono,monospace" font-size="9" letter-spacing="3" fill="#2F333B"><textPath href="#arc2${id}" startOffset="50%" text-anchor="middle">${p.model} · ${MISSIONS[p.mission]?.num||'AP-00'} · WATCH DIVISION</textPath></text>
+  </g>`,p.name+" caseback",{mark:"CASEBACK · SERIAL 000128",acc});
+ }
+ if(view===3) return packagingArt(p,id);
+ // main
+ const strapY=p.strap==="bracelet"?`<rect x="150" y="20" width="100" height="100" fill="url(#st${id})"/><rect x="150" y="280" width="100" height="110" fill="url(#st${id})"/>${[40,62,84,106].map(y=>`<rect x="150" y="${y}" width="100" height="1.5" fill="#6F737B"/><rect x="183" y="${y-20}" width="34" height="20" fill="#C9CBD0"/>`).join('')}${[300,322,344,366].map(y=>`<rect x="150" y="${y}" width="100" height="1.5" fill="#6F737B"/><rect x="183" y="${y+2}" width="34" height="20" fill="#C9CBD0"/>`).join('')}`
+  :p.strap==="nato"?`<rect x="160" y="18" width="80" height="110" fill="#0A3B7A"/><rect x="160" y="275" width="80" height="115" fill="#0A3B7A"/><rect x="160" y="18" width="80" height="110" fill="url(#gr${id})"/><rect x="160" y="275" width="80" height="115" fill="url(#gr${id})"/><rect x="172" y="18" width="4" height="110" fill="#ADAEB1" opacity=".6"/><rect x="224" y="275" width="4" height="115" fill="#ADAEB1" opacity=".6"/><rect x="160" y="330" width="80" height="12" fill="#ADAEB1"/>`
+  :`<path d="M162 20h76v110h-76z" fill="#122033"/><path d="M162 275h76v115h-76z" fill="#122033"/>${[40,60,80,100].map(y=>`<rect x="168" y="${y}" width="64" height="4" fill="#0B1522"/>`).join('')}${[300,320,340,360].map(y=>`<rect x="168" y="${y}" width="64" height="4" fill="#0B1522"/>`).join('')}`;
+ const bez=diver?`<circle r="118" fill="#0B1522"/><circle r="118" fill="none" stroke="url(#st${id})" stroke-width="3"/>${Array.from({length:60},(_,i)=>`<line x1="0" y1="-116" x2="0" y2="${i%5?-112:-106}" stroke="#E8EAEE" stroke-width="${i%5?.8:2}" transform="rotate(${i*6})"/>`).join('')}<polygon points="0,-114 -5,-104 5,-104" fill="${acc}"/>`
+  :gmt?`<circle r="118" fill="#0B1522"/><path d="M0 -118A118 118 0 0 1 0 118Z" fill="#C9CBD0"/>${Array.from({length:24},(_,i)=>T(0,-105,8,i===0?24:i,{a:"middle",c:i>=12?"#E8EAEE":"#1B2A3D"}).replace('<text','<text transform="rotate('+(i*15)+')"')).join('')}`
+  :`<circle r="118" fill="${chrono?'#0B1522':'url(#st'+id+')'}"/>${chrono?Array.from({length:40},(_,i)=>`<line x1="0" y1="-116" x2="0" y2="${i%5?-112:-108}" stroke="#C9CBD0" stroke-width=".8" transform="rotate(${i*9})"/>`).join('')+T(0,-108,7,"TACHYMETRE",{a:"middle",c:"#E8EAEE",ls:1.5}).replace('<text','<text transform="rotate(14)"'):''}`;
+ const sub=chrono?`<g fill="none" stroke="${txt}" stroke-width=".8"><circle cx="-42" r="20"/><circle cx="42" r="20"/><circle cy="44" r="20"/></g><line x1="-42" y1="0" x2="-42" y2="-14" stroke="${hand}" stroke-width="1.5"/><line x1="42" y1="0" x2="48" y2="-10" stroke="${hand}" stroke-width="1.5"/><line x1="0" y1="44" x2="0" y2="30" stroke="${hand}" stroke-width="1.5"/>`:'';
+ return frame(id,`<g>${strapY}</g>
+ <g transform="translate(200 200)">
+  <circle r="130" fill="url(#sv${id})"/><rect x="118" y="-62" width="16" height="22" rx="3" fill="url(#sv${id})"/><rect x="118" y="40" width="16" height="22" rx="3" fill="url(#sv${id})"/><rect x="124" y="-11" width="20" height="22" rx="4" fill="url(#sv${id})"/>
+  ${bez}
+  <circle r="100" fill="${dc}"/>
+  ${Array.from({length:60},(_,i)=>`<line x1="0" y1="-98" x2="0" y2="${i%5?-94:-88}" stroke="${txt}" stroke-width="${i%5?.5:1.2}" transform="rotate(${i*6})"/>`).join('')}
+  ${[0,30,60,90,120,150,180,210,240,270,300,330].map(a=>a===0?`<rect x="-3" y="-86" width="6" height="14" fill="${hand}"/>`:`<rect x="-2" y="-86" width="4" height="12" fill="${hand}" transform="rotate(${a})"/>`).join('')}
+  ${sub}
+  <text y="-48" text-anchor="middle" font-family="Saira,sans-serif" font-size="9" letter-spacing="3" fill="${txt}">ASTRAEUS</text>
+  <text y="${chrono?-34:-36}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="5.5" letter-spacing="1.5" fill="${txt}" opacity=".8">${p.fam.replace('ASTRAEUS ','')} · ${p.model}</text>
+  <g transform="rotate(-50)"><rect x="-2.6" y="-62" width="5.2" height="70" fill="${hand}"/></g><g transform="rotate(100)"><rect x="-2" y="-84" width="4" height="92" fill="${hand}"/></g>
+  <g transform="rotate(215)"><rect x="-.6" y="-90" width="1.2" height="104" fill="${acc}"/></g><circle r="4" fill="${hand}"/><circle r="1.6" fill="${dc}"/>
+ </g>`,p.name,{mark:`${p.model} · WATCH DIVISION`,acc});
+}
+function caseArt(p,id,view){
+ const acc=MISSIONS[p.mission]?.accent||C.blue;
+ if(view===1){ // open
+  return frame(id,`<g transform="translate(200 215)">
+   <path d="M-150 -40h300v120a16 16 0 0 1 -16 16h-268a16 16 0 0 1 -16 -16z" fill="#0A3B7A"/><rect x="-150" y="-40" width="300" height="10" fill="#C9CBD0"/>
+   <path d="M-150 -40 l20 -110 h260 l20 110z" fill="url(#wh${id})"/><path d="M-130 -150h260l20 110h-300z" fill="#0B1522" opacity=".9" transform="translate(0 0)"/>
+   <rect x="-120" y="-130" width="240" height="80" rx="6" fill="#0B1522"/>
+   ${(p.size||2)===4?[-100,-40,20,80].map(x=>`<rect x="${x}" y="-20" width="50" height="76" rx="8" fill="#0B1522"/><rect x="${x+6}" y="-14" width="38" height="64" rx="19" fill="#182233"/>`).join(''):[-90,10].map(x=>`<rect x="${x}" y="-20" width="80" height="76" rx="10" fill="#0B1522"/><rect x="${x+10}" y="-12" width="60" height="60" rx="30" fill="#182233"/>`).join('')}
+   ${T(-120,-100,9,"ASTRAEUS FIELD SYSTEMS",{c:"#ADAEB1"})}${T(-120,-84,7,`${p.model} · INTERIOR CONFIGURATION`,{c:"#6F7C8C"})}
+  </g>`,p.name+" open",{mark:`${p.model} · OPEN`,acc});
+ }
+ if(view===2){ // latch + dimensions diagram
+  return frame(id,`<g transform="translate(200 200)" fill="none" stroke="#ADAEB1" stroke-width="1">
+   <rect x="-140" y="-90" width="280" height="150" rx="14"/><rect x="-140" y="-90" width="280" height="150" rx="14" stroke-dasharray="3 5" opacity=".4" transform="scale(1.06)"/>
+   <rect x="-30" y="-90" width="60" height="150" opacity=".5"/><circle cx="90" cy="-50" r="22"/><rect x="-16" y="50" width="32" height="26" rx="3" stroke="${acc}"/>
+   <path d="M-150 80v20M150 80v20M-150 95h300" /><path d="M-160 -90h-20M-160 60h-20M-175 -90v150"/>
+   <path d="M170 -90h30M170 -30h30M185 -90v60"/>
+  </g>
+  ${T(200,320,9,p.dims.split(',')[0].split('×')[0].trim()+" mm",{a:"middle"})}${T(28,200,9,"150",{a:"middle"}).replace('<text','<text transform="rotate(-90 28 200)"')}${T(380,170,8,"H",{a:"middle"})}
+  ${T(24,370,8,"TWIST AND PULL LATCH · PRESSURE VALVE · WEBBING ANCHOR",{c:"#6F7C8C"})}`,p.name+" diagram",{mark:`${p.model} · DRAWING REV A`,acc});
+ }
+ if(view===3) return packagingArt(p,id);
+ const tall=p.tall, h=tall?170:130, prem=p.prem;
+ return frame(id,`<g transform="translate(200 ${tall?212:208})">
+  <rect x="-156" y="${-h/2-6}" width="312" height="${h+12}" rx="18" fill="#0A3B7A"/>
+  <rect x="-150" y="${-h/2}" width="300" height="${h}" rx="14" fill="${prem?'url(#st'+id+')':'url(#wh'+id+')'}"/>
+  <rect x="-150" y="-2" width="300" height="5" fill="#8A8E96" opacity=".6"/>
+  <rect x="-34" y="${-h/2}" width="68" height="${h}" fill="#565C66"/><rect x="-34" y="${-h/2}" width="68" height="${h}" fill="url(#gr${id})"/>
+  <circle cx="88" cy="${-h/2+40}" r="24" fill="#0B1522"/><circle cx="88" cy="${-h/2+40}" r="24" fill="url(#dl${id})"/><circle cx="88" cy="${-h/2+40}" r="26" fill="none" stroke="#C9CBD0" stroke-width="3"/>
+  ${[0,1,2,3,4].map(i=>`<circle cx="${80+i*4}" cy="${-h/2+32+i*3}" r="1" fill="#FBFAFB"/>`).join('')}
+  <image href="${LOGO}" x="-128" y="${-h/2+18}" width="30" height="30" clip-path="circle(50%)"/>
+  ${T(-92,-h/2+30,8,"ASTRAEUS",{f:"Saira,sans-serif",c:"#1B2A3D",ls:3,w:600})}${T(-92,-h/2+42,6,"FIELD SYSTEMS",{c:"#3F5570"})}
+  ${T(-128,h/2-14,7,p.model,{c:"#1B2A3D"})}${T(128,h/2-14,6,"TRV DIV · A/01",{c:"#3F5570",a:"end"})}
+  <rect x="-16" y="${h/2-10}" width="32" height="26" rx="4" fill="#A6AAB3"/><rect x="-12" y="${h/2-6}" width="24" height="18" rx="3" fill="url(#st${id})"/>
+  <rect x="-156" y="${h/2+2}" width="312" height="8" rx="4" fill="#01274E"/>
+ </g>`,p.name,{mark:`${p.model} · FIELD SYSTEMS`,acc});
+}
+function packagingArt(p,id){
+ const acc=MISSIONS[p.mission]?.accent||C.blue; const m=MISSIONS[p.mission];
+ return frame(id,`<g transform="translate(200 210)">
+  <path d="M-130 -70 l130 -50 l130 50 v150 l-130 50 l-130 -50z" fill="#01274E"/><path d="M-130 -70 l130 -50 l130 50 l-130 50z" fill="#0A3B7A"/><path d="M0 -20 l130 -50 v150 l-130 50z" fill="#011A36"/>
+  <path d="M-130 -70 l130 50 v150" fill="none" stroke="#ADAEB1" stroke-width="1.2"/><path d="M-130 -70 l130 -50 l130 50 M0 -20 l130 -50" fill="none" stroke="#ADAEB1" stroke-opacity=".5" stroke-width=".8"/>
+  <g transform="translate(-100 -20) skewY(21)"><image href="${LOGO}" x="0" y="0" width="34" height="34" clip-path="circle(50%)"/>
+  ${T(0,52,8,"ASTRAEUS",{f:"Saira,sans-serif",c:"#FBFAFB",ls:3,w:600})}${T(0,64,5.5,DIV[p.div],{c:"#ADAEB1"})}
+  ${T(0,86,6,"MODEL "+p.model,{c:"#FBFAFB"})}${T(0,96,6,"MISSION "+(m?m.num+" · "+m.name.toUpperCase():"GENERAL ISSUE"),{c:"#ADAEB1"})}${T(0,106,6,"SN 2126-"+p.id.toUpperCase().replace(/-/g,'')+"-0001",{c:"#ADAEB1"})}
+  <rect x="0" y="116" width="60" height="8" fill="none" stroke="#ADAEB1" stroke-width=".6"/>${[4,9,13,20,24,31,35,42,48,53].map(x=>`<rect x="${x}" y="116" width="1.4" height="8" fill="#ADAEB1"/>`).join('')}</g>
+  <g transform="translate(20 -10) skewY(-21)"><rect x="0" y="0" width="90" height="70" fill="none" stroke="#ADAEB1" stroke-width=".6" opacity=".7"/>${T(4,12,5,"THIS SIDE UP",{c:"#ADAEB1"})}${T(4,24,5,"ISSUED FOR EXPEDITION",{c:"#ADAEB1"})}<path d="M45 32v30M35 44l10-12 10 12" fill="none" stroke="${acc}" stroke-width="1.2"/></g>
+ </g>`,p.name+" packaging",{mark:`${p.model} · PACKAGING`,acc});
+}
+function genericArt(p,id,view){
+ const acc=MISSIONS[p.mission]?.accent||C.blue;
+ if(view===3) return packagingArt(p,id);
+ if(view===2) return frame(id,`<g transform="translate(200 200)" fill="none" stroke="#ADAEB1" stroke-width="1">${shapeOutline(p.kind)}<path d="M-160 120h320" stroke-dasharray="2 6" opacity=".5"/><path d="M-150 110v20M150 110v20"/></g>${T(200,345,9,(p.dims||'').split(',')[0],{a:"middle"})}${T(24,370,8,(p.materials||'').toUpperCase().slice(0,56),{c:"#6F7C8C"})}`,p.name+" drawing",{mark:`${p.model} · DRAWING REV A`,acc});
+ const inner=shapeFill(p,id,acc,view===1);
+ return frame(id,`<g transform="translate(200 200)${view===1?' scale(1.7) translate(0 10)':''}">${inner}</g>`,p.name,{mark:view===1?`${p.model} · DETAIL`:`${p.model} · ${DIV[p.div].replace('ASTRAEUS ','')}`,acc});
+}
+function shapeOutline(kind){
+ const o={
+  bag:`<rect x="-140" y="-50" width="280" height="130" rx="30"/><path d="M-60 -50v-30a60 30 0 0 1 120 0v30"/>`,
+  pack:`<path d="M-80 -120h160a20 20 0 0 1 20 20v200h-200v-200a20 20 0 0 1 20 -20z"/><path d="M-50 -120v-20M50 -120v-20"/>`,
+  light:`<rect x="-150" y="-22" width="300" height="44" rx="8"/><rect x="60" y="-32" width="90" height="64" rx="10"/>`,
+  tool:`<rect x="-100" y="-40" width="200" height="80" rx="10"/><path d="M-100 0h200"/>`,
+  container:`<rect x="-150" y="-60" width="300" height="140" rx="8"/><rect x="-150" y="-80" width="300" height="20" rx="4"/>`,
+  bottle:`<rect x="-45" y="-140" width="90" height="280" rx="24"/><rect x="-32" y="-170" width="64" height="30" rx="6"/>`,
+  notebook:`<rect x="-90" y="-120" width="180" height="240" rx="6"/><path d="M40 -120v240"/>`,
+  pen:`<rect x="-150" y="-10" width="300" height="20" rx="8"/><path d="M110 -10l40 10l-40 10"/>`,
+  wallet:`<rect x="-100" y="-62" width="200" height="124" rx="10"/>`,
+  mug:`<rect x="-70" y="-100" width="140" height="200" rx="12"/><path d="M70 -50h30a30 30 0 0 1 0 60h-30"/>`,
+  cell:`<rect x="-120" y="-50" width="240" height="100" rx="14"/><circle cx="70" cy="0" r="28"/>`,
+  jacket:`<path d="M-100 -120l50 -20 50 30 50 -30 50 20 20 120 -50 10 -10 110h-120l-10 -110 -50 -10z"/>`,
+  tee:`<path d="M-110 -110l60 -20 50 20 50 -20 60 20 20 70 -50 10v150h-160v-150l-50 -10z"/>`,
+  cap:`<path d="M-90 20a90 70 0 0 1 180 0z"/><path d="M-120 20h240a20 20 0 0 1 0 30h-240a20 20 0 0 1 0 -30z"/>`,
+  patch:`<circle r="110"/>`,
+  fleece:`<path d="M-100 -110l55 -20 45 20 45 -20 55 20 20 70 -50 10v150h-140v-150l-50 -10z"/>`,
+  pants:`<path d="M-80 -140h160v100l-20 180h-50l-10 -150 -10 150h-50l-20 -180z"/>`,
+  rifle:`<path d="M-180 -10h120l20 -10h200v14h-140l-10 40h-30l-10 -40h-30l-20 50h-50l10 -50h-60z"/>`,
+  pistol:`<path d="M-120 -40h220v34h-150l-10 20 -20 70h-50l20 -90h-20z"/>`,
+  shotgun:`<path d="M-180 -8h120l20 -10h200v14h-150l-8 30h-30l-6 -30h-40l-20 48h-50l10 -48h-56z"/>`,
+  sling:`<path d="M-150 60c40 -120 260 -120 300 0" /><rect x="-20" y="-50" width="40" height="18" rx="4"/>`,
+  longcase:`<rect x="-170" y="-50" width="340" height="110" rx="10"/><path d="M-170 0h340"/>`,
+  disc:`<circle r="90"/><circle r="60"/>`
+ };return o[kind]||`<rect x="-100" y="-100" width="200" height="200" rx="12"/>`;
+}
+function shapeFill(p,id,acc,detail){
+ const S=`url(#st${id})`,W=`url(#wh${id})`,N=`url(#nv${id})`,K="#0B1522";
+ const lbl=(x,y,t,c)=>T(x,y,6,t,{c:c||"#ADAEB1",ls:1.2});
+ const ins=(x,y,s)=>`<image href="${LOGO}" x="${x-s/2}" y="${y-s/2}" width="${s}" height="${s}" clip-path="circle(50%)"/>`;
+ const k=p.kind;
+ const m={
+  bag:()=>`<rect x="-140" y="-50" width="280" height="130" rx="30" fill="${N}"/><rect x="-140" y="40" width="280" height="40" rx="0" fill="${K}" opacity=".5"/><path d="M-60 -50v-30a60 30 0 0 1 120 0v30" fill="none" stroke="${S}" stroke-width="10"/><rect x="-130" y="-20" width="260" height="3" fill="#ADAEB1"/><rect x="-20" y="-40" width="40" height="10" rx="2" fill="${S}"/>${ins(100,20,30)}${lbl(-120,70,"ASTRAEUS EXPEDITIONARY · "+p.model)}`,
+  pack:()=>`<path d="M-80 -120h160a20 20 0 0 1 20 20v200h-200v-200a20 20 0 0 1 20 -20z" fill="${N}"/><rect x="-100" y="20" width="200" height="80" fill="${K}" opacity=".5"/><path d="M-50 -120v-30M50 -120v-30" stroke="${S}" stroke-width="12"/><rect x="-70" y="-90" width="140" height="4" fill="#ADAEB1"/><rect x="-70" y="-60" width="140" height="4" fill="#ADAEB1"/>${ins(0,-30,34)}${lbl(-80,70,"SURVEY PACK · "+p.model)}`,
+  light:()=>`<rect x="-150" y="-22" width="300" height="44" rx="8" fill="${S}"/><rect x="-150" y="-22" width="90" height="44" rx="8" fill="${N}"/>${[-120,-100,-80].map(x=>`<rect x="${x}" y="-22" width="6" height="44" fill="#ADAEB1" opacity=".6"/>`).join('')}<rect x="60" y="-32" width="90" height="64" rx="10" fill="${S}"/><circle cx="150" cy="0" r="24" fill="#FBFAFB"/><circle cx="150" cy="0" r="12" fill="#E8E2C8"/><rect x="-150" y="-14" width="300" height="2" fill="#FFF" opacity=".5"/>${lbl(-40,4,"ASTRAEUS · "+p.model+" · 900 LM","#1B2A3D")}`,
+  tool:()=>`<rect x="-100" y="-40" width="200" height="80" rx="10" fill="${S}"/><rect x="-90" y="-30" width="180" height="26" rx="4" fill="${N}"/><rect x="-90" y="4" width="180" height="26" rx="4" fill="${N}"/><path d="M100 -20h70l-6 10h-64z" fill="#C9CBD0"/><path d="M100 10h50v8h-50z" fill="#C9CBD0"/>${lbl(-80,-13,"ASTRAEUS EQUIPMENT LAB")}${lbl(-80,21,p.model+" · 12 FN")}`,
+  container:()=>`<rect x="-150" y="-60" width="300" height="140" rx="8" fill="${N}"/><rect x="-150" y="-80" width="300" height="24" rx="4" fill="${S}"/><rect x="-140" y="-30" width="110" height="50" rx="2" fill="#FBFAFB"/>${lbl(-132,-14,"ASTRAEUS FIELD SYSTEMS","#1B2A3D")}${lbl(-132,0,"MC-10 · 10 L","#1B2A3D")}${lbl(-132,12,"STACK 6 HIGH","#3F5570")}${[60,80,100,120].map(x=>`<rect x="${x}" y="-30" width="4" height="100" fill="#ADAEB1" opacity=".3"/>`).join('')}${ins(110,30,34)}`,
+  bottle:()=>`<rect x="-45" y="-140" width="90" height="280" rx="24" fill="${N}"/><rect x="-32" y="-170" width="64" height="34" rx="6" fill="${S}"/><rect x="-45" y="-100" width="90" height="4" fill="#ADAEB1"/>${[0,30,60,90].map(y=>`<rect x="30" y="${-60+y}" width="10" height="1.5" fill="#ADAEB1"/>`).join('')}${ins(0,-20,40)}<text transform="rotate(-90 -18 60)" x="-18" y="60" font-family="Saira,sans-serif" font-size="12" letter-spacing="4" fill="#FBFAFB">ASTRAEUS</text>${lbl(-30,120,"750 ML · TB-750")}`,
+  notebook:()=>`<rect x="-90" y="-120" width="180" height="240" rx="6" fill="${N}"/><rect x="-90" y="-120" width="180" height="240" rx="6" fill="url(#gr${id})"/><rect x="40" y="-120" width="4" height="240" fill="#ADAEB1" opacity=".7"/><path d="M-70 -100q60 20 120 0M-70 -60q60 20 120 0M-70 -20q60 20 120 0" fill="none" stroke="#ADAEB1" stroke-opacity=".25"/>${ins(0,0,54)}${lbl(-70,100,"MISSION LOG · A5")}`,
+  pen:()=>`<rect x="-150" y="-10" width="300" height="20" rx="8" fill="${S}"/><rect x="-60" y="-10" width="60" height="20" fill="${N}"/><path d="M110 -10l40 10l-40 10z" fill="#C9CBD0"/><rect x="-150" y="-20" width="80" height="8" rx="3" fill="#8A8E96"/>${lbl(-40,3,"ASTRAEUS","#1B2A3D")}`,
+  wallet:()=>`<rect x="-100" y="-62" width="200" height="124" rx="10" fill="${S}"/><rect x="-100" y="-62" width="200" height="40" rx="10" fill="${N}"/><rect x="-30" y="-74" width="60" height="18" rx="4" fill="#FBFAFB"/>${ins(70,30,32)}${lbl(-84,40,"CARD CARRIER · CC-06","#1B2A3D")}`,
+  mug:()=>`<rect x="-70" y="-100" width="140" height="200" rx="12" fill="${S}"/><rect x="-70" y="-100" width="140" height="22" rx="8" fill="${N}"/><path d="M70 -50h30a30 30 0 0 1 0 60h-30" fill="none" stroke="${S}" stroke-width="16"/>${ins(0,0,56)}${lbl(-50,70,"STATION MUG · SM-12","#1B2A3D")}`,
+  cell:()=>`<rect x="-120" y="-50" width="240" height="100" rx="14" fill="${N}"/><rect x="-112" y="-42" width="224" height="84" rx="10" fill="${S}"/><circle cx="70" cy="0" r="28" fill="${K}"/><circle cx="70" cy="0" r="24" fill="none" stroke="#FBFAFB" stroke-width="1"/>${Array.from({length:12},(_,i)=>`<line x1="70" y1="-20" x2="70" y2="-16" stroke="#FBFAFB" transform="rotate(${i*30} 70 0)"/>`).join('')}<line x1="70" y1="0" x2="82" y2="-14" stroke="${acc}" stroke-width="2"/>${lbl(-100,-10,"POWER CELL 20","#1B2A3D")}${lbl(-100,4,"20 000 MAH · 65 W","#3F5570")}`,
+  jacket:()=>`<path d="M-100 -120l50 -20 50 30 50 -30 50 20 20 120 -50 10 -10 110h-120l-10 -110 -50 -10z" fill="${N}"/><path d="M0 -110v220" stroke="#ADAEB1" stroke-width="3"/><rect x="-60" y="-50" width="40" height="30" rx="3" fill="#0A3B7A" stroke="#ADAEB1" stroke-width="1"/>${ins(60,-60,30)}<path d="M-50 -140l50 30 50 -30" fill="none" stroke="#ADAEB1" stroke-width="2"/>${lbl(-70,60,"ASTRAEUS ORBITAL")}`,
+  tee:()=>`<path d="M-110 -110l60 -20 50 20 50 -20 60 20 20 70 -50 10v150h-160v-150l-50 -10z" fill="${N}"/>${ins(40,-50,24)}<text y="40" text-anchor="middle" font-family="Saira,sans-serif" font-size="14" letter-spacing="4" fill="#FBFAFB">ASTRAEUS</text>${lbl(-36,56,"LUNAR PROGRAM · AP-01")}`,
+  cap:()=>`<path d="M-90 20a90 70 0 0 1 180 0z" fill="${N}"/><path d="M0 -50v70" stroke="#ADAEB1" stroke-opacity=".3"/><path d="M-120 20h240a20 20 0 0 1 0 30h-240a20 20 0 0 1 0 -30z" fill="#0A3B7A"/>${ins(0,-10,40)}`,
+  patch:()=>`<circle r="110" fill="${N}"/><circle r="110" fill="none" stroke="#ADAEB1" stroke-width="8"/><circle r="96" fill="none" stroke="#ADAEB1" stroke-width="1"/>${ins(0,-10,90)}<text y="70" text-anchor="middle" font-family="Saira,sans-serif" font-size="12" letter-spacing="4" fill="#FBFAFB">PROGRAM SET</text>`,
+  fleece:()=>`<path d="M-100 -110l55 -20 45 20 45 -20 55 20 20 70 -50 10v150h-140v-150l-50 -10z" fill="${N}"/><path d="M0 -110v70" stroke="#ADAEB1" stroke-width="4"/>${lbl(-60,20,"DEEP FIELD · AP-07")}${ins(50,-50,22)}`,
+  pants:()=>`<path d="M-80 -140h160v100l-20 180h-50l-10 -150 -10 150h-50l-20 -180z" fill="${N}"/><rect x="-80" y="-140" width="160" height="14" fill="#ADAEB1" opacity=".6"/><rect x="30" y="-40" width="40" height="50" rx="3" fill="#0A3B7A" stroke="#ADAEB1"/>`,
+  rifle:()=>`<path d="M-180 -10h120l20 -10h200v14h-140l-10 40h-30l-10 -40h-30l-20 50h-50l10 -50h-60z" fill="${N}"/><rect x="40" y="-20" width="130" height="8" fill="${S}"/><rect x="-60" y="-26" width="90" height="10" rx="3" fill="${S}"/><rect x="-10" y="-40" width="14" height="22" rx="4" fill="#C9CBD0"/>${lbl(-170,40,"FR-7 · 6.5 MM · FRONTIER OPERATIONS")}`,
+  pistol:()=>`<path d="M-120 -40h220v34h-150l-10 20 -20 70h-50l20 -90h-20z" fill="${N}"/><rect x="-120" y="-40" width="220" height="22" rx="4" fill="${S}"/><rect x="-60" y="-50" width="30" height="8" fill="#C9CBD0"/>${lbl(-110,70,"SP-9 · 9 MM")}`,
+  shotgun:()=>`<path d="M-180 -8h120l20 -10h200v14h-150l-8 30h-30l-6 -30h-40l-20 48h-50l10 -48h-56z" fill="${N}"/><rect x="40" y="-18" width="130" height="7" fill="${S}"/><rect x="-40" y="-2" width="70" height="12" rx="3" fill="${S}"/>${lbl(-170,40,"FS-12 · 12 GA")}`,
+  sling:()=>`<path d="M-150 60c40 -120 260 -120 300 0" fill="none" stroke="${N}" stroke-width="22"/><path d="M-150 60c40 -120 260 -120 300 0" fill="none" stroke="#ADAEB1" stroke-width="1" stroke-dasharray="2 8"/><rect x="-20" y="-50" width="40" height="18" rx="4" fill="${S}"/><rect x="-160" y="50" width="30" height="20" rx="4" fill="${S}"/><rect x="130" y="50" width="30" height="20" rx="4" fill="${S}"/>`,
+  longcase:()=>`<rect x="-170" y="-50" width="340" height="110" rx="10" fill="${W}"/><rect x="-170" y="-2" width="340" height="5" fill="#8A8E96"/><rect x="-60" y="-50" width="50" height="110" fill="#565C66"/><rect x="10" y="-50" width="50" height="110" fill="#565C66"/><rect x="-150" y="-36" width="60" height="26" fill="#01274E"/>${lbl(-146,-22,"ASTRAEUS","#FBFAFB")}${lbl(-146,-13,"LC-110","#ADAEB1")}${ins(130,0,34)}<rect x="-30" y="56" width="20" height="14" rx="3" fill="${S}"/><rect x="10" y="56" width="20" height="14" rx="3" fill="${S}"/>`,
+  disc:()=>[[-70,-60,"#C9CDD3"],[0,-60,"#A39189"],[70,-60,"#5B7FA6"],[-70,30,"#0E73B3"],[0,30,"#7D8B99"],[70,30,"#2E9BD8"]].map(([x,y,c],i)=>`<circle cx="${x}" cy="${y}" r="30" fill="${K}"/><circle cx="${x}" cy="${y}" r="30" fill="url(#dl${id})" opacity=".6"/><circle cx="${x}" cy="${y}" r="31" fill="none" stroke="#C9CBD0" stroke-width="3"/><circle cx="${x}" cy="${y+10}" r="12" fill="${c}" opacity=".9"/><circle cx="${x-8}" cy="${y-10}" r="1.5" fill="#FBFAFB"/><circle cx="${x+10}" cy="${y-6}" r="1" fill="#FBFAFB"/>`).join('')
+ };
+ return (m[k]||(()=>`<rect x="-100" y="-100" width="200" height="200" rx="12" fill="${N}"/>${ins(0,0,80)}`))();
+}
+function art(p,view=0){const id=++uid; return p.kind==="watch"?watchArt(p,id,view):p.kind==="case"?caseArt(p,id,view):genericArt(p,id,view);}
+
+/* mission insignia */
+function insignia(m,size=84){
+ const id=++uid;const a=m.accent;
+ const inner={
+  lunar:`<circle cx="0" cy="-4" r="22" fill="#C9CDD3"/><circle cx="-7" cy="-8" r="5" fill="#9EA1A8"/><circle cx="8" cy="2" r="3" fill="#9EA1A8"/><path d="M-40 26q40 -18 80 0" fill="none" stroke="#FBFAFB" stroke-width="1.5"/>`,
+  mars:`<circle cx="0" cy="-2" r="22" fill="${a}"/><ellipse cx="0" cy="-2" rx="34" ry="8" fill="none" stroke="#FBFAFB" stroke-width="1.2" transform="rotate(-20)"/>`,
+  deepfield:`${[[-20,-14,2],[10,-24,1.4],[22,6,1.8],[-8,18,1.2],[0,-2,3]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#FBFAFB"/>`).join('')}<path d="M-20 -14L0 -2L22 6M10 -24L0 -2L-8 18" stroke="${a}" stroke-width="1" fill="none"/>`,
+  orbital:`<circle cx="0" cy="4" r="24" fill="#0E73B3"/><path d="M-24 4a24 24 0 0 0 48 0" fill="#0A4F84"/><ellipse cx="0" cy="-4" rx="36" ry="10" fill="none" stroke="#FBFAFB" stroke-width="1.4" transform="rotate(-15)"/><circle cx="30" cy="-12" r="2.5" fill="#FBFAFB"/>`,
+  frontier:`<path d="M-36 20l16 -34 10 16 10 -26 20 44z" fill="${a}"/><path d="M-36 20h72" stroke="#FBFAFB" stroke-width="1.5"/><circle cx="20" cy="-22" r="4" fill="#FBFAFB"/>`,
+  earthside:`<circle cx="0" cy="0" r="24" fill="${a}"/><path d="M-10 -14q8 4 4 12t8 10q-10 6 -16 -2t4 -20z" fill="#01274E"/><path d="M10 -16q6 6 2 12" stroke="#01274E" stroke-width="3" fill="none"/>`
+ }[m.id];
+ return `<svg viewBox="-60 -60 120 120" width="${size}" height="${size}" class="ins" role="img" aria-label="${m.name} insignia"><circle r="58" fill="#01274E" stroke="#ADAEB1" stroke-width="2"/><circle r="50" fill="none" stroke="${a}" stroke-width="1" opacity=".8"/>${inner}<path id="mi${id}" d="M-44 0A44 44 0 0 1 44 0" fill="none"/><text font-family="IBM Plex Mono,monospace" font-size="7.5" letter-spacing="2.5" fill="#FBFAFB"><textPath href="#mi${id}" startOffset="50%" text-anchor="middle">${m.name.toUpperCase()}</textPath></text><text y="44" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" letter-spacing="2" fill="#ADAEB1">${m.num}</text></svg>`;
+}
+/* spacecraft */
+function shipSVG(){
+ return `<svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs><linearGradient id="hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#D9DCE1"/><stop offset="1" stop-color="#8E929B"/></linearGradient>
+<linearGradient id="hullN" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A3B7A"/><stop offset="1" stop-color="#01274E"/></linearGradient>
+<linearGradient id="eng" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2C8FD0" stop-opacity="0"/><stop offset="1" stop-color="#2C8FD0" stop-opacity=".9"/></linearGradient></defs>
+<path d="M30 118h60v-6h-60z" fill="url(#eng)" opacity=".8"/><path d="M10 112h80v-2h-80z" fill="#8FD0FF" opacity=".5"/>
+<path d="M86 96h30v38h-30z" fill="#6F737B"/><path d="M90 92h20v46h-20z" fill="#3F4450"/>
+<path d="M110 70h190l40 -30h40l80 50l20 20l-20 20l-80 50h-40l-40 -30h-190q-30 0 -30 -40t30 -40z" fill="url(#hull)"/>
+<path d="M110 70h190l40 -30h40l40 25h-250q-24 0 -26 25h-24v-20z" fill="#FFFFFF" opacity=".5"/>
+<path d="M300 150l40 30h40l40 -25h-250z" fill="#8E929B" opacity=".5"/>
+<path d="M130 80h150v60h-150z" fill="url(#hullN)"/><path d="M135 84h140v4h-140z" fill="#2C8FD0" opacity=".9"/>
+<path d="M150 125h110v8h-110z" fill="#ADAEB1" opacity=".5"/>
+<path d="M340 48h32l70 44h-60z" fill="#01274E"/><path d="M345 54h24l54 34h-44z" fill="#2C8FD0" opacity=".35"/>
+<path d="M420 94l60 16l-60 16z" fill="#C9CBD0"/>
+<path d="M200 40h60v30h-60z" fill="#E6E7EA"/><path d="M210 30h40v10h-40z" fill="#ADAEB1"/>
+<path d="M200 150h60v30h-60z" fill="#8E929B"/>
+<rect x="296" y="96" width="60" height="28" rx="4" fill="#ADAEB1" opacity=".35"/>
+<image href="${LOGO}" x="306" y="88" width="42" height="42" clip-path="circle(50%)"/>
+<text x="160" y="112" font-family="Saira,sans-serif" font-size="18" letter-spacing="6" font-weight="600" fill="#FBFAFB">ASTRAEUS</text>
+<text x="160" y="124" font-family="IBM Plex Mono,monospace" font-size="6" letter-spacing="2" fill="#ADAEB1">AV-2126 · ORBITAL TRANSIT · EXPEDITIONARY</text>
+${[120,140,160,180].map(x=>`<circle cx="${x}" cy="66" r="1.2" fill="#6F737B"/>`).join('')}
+<path d="M110 70q-30 0 -30 40t30 40" fill="none" stroke="#6F737B" stroke-width="1"/>
+</svg>`;
+}
+/* hero planet */
+function planetSVG(){
+ return `<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs><radialGradient id="pl" cx=".32" cy=".3" r=".8"><stop offset="0" stop-color="#2C8FD0"/><stop offset=".45" stop-color="#0E73B3"/><stop offset=".8" stop-color="#01274E"/><stop offset="1" stop-color="#011A36"/></radialGradient>
+<radialGradient id="atm" cx=".5" cy=".5" r=".5"><stop offset=".86" stop-color="#2C8FD0" stop-opacity="0"/><stop offset=".97" stop-color="#2C8FD0" stop-opacity=".35"/><stop offset="1" stop-color="#2C8FD0" stop-opacity="0"/></radialGradient>
+<clipPath id="pc"><circle cx="300" cy="300" r="250"/></clipPath></defs>
+<circle cx="300" cy="300" r="270" fill="url(#atm)"/><circle cx="300" cy="300" r="250" fill="url(#pl)"/>
+<g clip-path="url(#pc)" fill="#0A4F84" opacity=".9"><path d="M120 200q60 -40 120 -10t40 70q-20 50 -90 40t-70 -100z"/><path d="M330 120q90 -20 140 40t-20 100q-60 20 -110 -30t-10 -110z"/><path d="M200 380q70 -30 140 10t20 90q-80 40 -160 0t0 -100z"/></g>
+<g clip-path="url(#pc)"><path d="M60 180q120 -60 240 20t260 -40" fill="none" stroke="#FBFAFB" stroke-opacity=".35" stroke-width="18"/><path d="M40 420q140 -40 300 10t240 -30" fill="none" stroke="#FBFAFB" stroke-opacity=".25" stroke-width="26"/></g>
+<path d="M300 300m-250 0a250 250 0 0 0 500 0" fill="#011A36" opacity=".55"/>
+<ellipse cx="300" cy="300" rx="330" ry="80" fill="none" stroke="#ADAEB1" stroke-opacity=".35" stroke-width="1" transform="rotate(-18 300 300)"/>
+<g transform="rotate(-18 300 300)"><g class="sat"><rect x="596" y="294" width="14" height="6" fill="#C9CBD0"/><rect x="584" y="295" width="10" height="4" fill="#0E73B3"/><rect x="610" y="295" width="10" height="4" fill="#0E73B3"/></g></g>
+</svg>`;
+}
+function catArt(cat){
+ const id=++uid;const kinds={watches:"watch",storage:"case",equipment:"pack",everyday:"bottle",apparel:"jacket",firearms:"longcase"};
+ const sample=P.find(p=>p.cat===cat&&p.kind===kinds[cat])||P.find(p=>p.cat===cat);
+ return `<svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${defs(id)}<g opacity=".55" transform="translate(120 -30) scale(.9)">${sample.kind==="watch"?watchArt(sample,id+1000,0).replace(/<svg[^>]*>|<\/svg>|<defs>[\s\S]*?<\/defs>|<rect width="400" height="400"[^>]*\/>/g,'').replace(/url\(#(\w+)\d+\)/g,(m_,g)=>`url(#${g}${id})`):sample.kind==="case"?caseArt(sample,id,0).replace(/<svg[^>]*>|<\/svg>|<defs>[\s\S]*?<\/defs>|<rect width="400" height="400"[^>]*\/>/g,''):genericArt(sample,id,0).replace(/<svg[^>]*>|<\/svg>|<defs>[\s\S]*?<\/defs>|<rect width="400" height="400"[^>]*\/>/g,'')}</g><rect width="400" height="400" fill="url(#bg${id})" opacity=".55"/><path d="M0 300q200 -80 400 0v100h-400z" fill="#011A36" opacity=".85"/></svg>`;
+}
+</script>
+<script>
+/* simpler category art: nested svg */
+function catArt(cat){
+ const kinds={watches:"watch",storage:"case",equipment:"pack",everyday:"bottle",apparel:"jacket",firearms:"longcase"};
+ const sample=P.find(p=>p.cat===cat&&p.kind===kinds[cat])||P.find(p=>p.cat===cat);
+ return `<svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g opacity=".75"><svg x="60" y="-20" width="340" height="340" viewBox="0 0 400 400">${art(sample,0)}</svg></g><path d="M0 240q200 -60 400 20v140h-400z" fill="#011A36" opacity=".9"/></svg>`;
+}
+
+/* ---------- star field ---------- */
+const cv=document.getElementById('stars'),cx=cv.getContext('2d');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mobile=matchMedia('(max-width: 700px)').matches;
+let W,H,stars=[],mode='warp',scrollY=0,objs=[],t0=performance.now();
+function resize(){W=cv.width=innerWidth*devicePixelRatio;H=cv.height=innerHeight*devicePixelRatio;cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);W=innerWidth;H=innerHeight;}
+function seed(){const n=mobile?140:420;stars=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,z:Math.random(),r:Math.random()*1.3+.3,tw:Math.random()*6.28}));
+ objs=[{type:'moon',x:W*.82,y:H*.2,r:Math.min(W,H)*.08,spd:.004},{type:'station',x:-80,y:H*.35,spd:.12},{type:'ship',x:W+100,y:H*.6,spd:-.18}];}
+addEventListener('resize',()=>{resize();seed();});resize();seed();
+addEventListener('scroll',()=>{scrollY=window.scrollY;document.getElementById('nav').classList.toggle('scrolled',scrollY>40);},{passive:true});
+let warpSpeed=1;
+function draw(now){
+ const dt=Math.min(50,now-t0)/16.7;t0=now;
+ cx.clearRect(0,0,W,H);
+ if(mode==='warp'){
+  for(const s of stars){
+   // project from center
+   const dx=s.x-W/2,dy=s.y-H/2;const sp=(0.004+s.z*0.02)*warpSpeed*dt;
+   s.x+=dx*sp;s.y+=dy*sp;
+   if(s.x<0||s.x>W||s.y<0||s.y>H){s.x=W/2+(Math.random()-.5)*W*.6;s.y=H/2+(Math.random()-.5)*H*.6;s.z=Math.random();}
+   const len=Math.hypot(dx,dy)*sp*2.2;const a=.35+s.z*.65;
+   cx.strokeStyle=`rgba(251,250,251,${a})`;cx.lineWidth=s.r*(0.6+s.z);cx.beginPath();cx.moveTo(s.x,s.y);cx.lineTo(s.x-dx*sp*2.2,s.y-dy*sp*2.2);cx.stroke();
+  }
+ }else{
+  const py=scrollY*0.06;
+  for(const s of stars){
+   if(!reduced){s.x-=(0.02+s.z*0.09)*dt;if(s.x<-2){s.x=W+2;s.y=Math.random()*H;}}
+   const y=((s.y-py*(0.3+s.z))%H+H)%H;
+   const tw=0.65+0.35*Math.sin(now*0.0012+s.tw);
+   cx.fillStyle=`rgba(251,250,251,${(0.25+s.z*0.7)*tw})`;cx.beginPath();cx.arc(s.x,y,s.r*(0.7+s.z*.6),0,6.28);cx.fill();
+  }
+  if(!reduced&&!mobile){for(const o of objs){drawObj(o,dt,py);}}
+ }
+ requestAnimationFrame(draw);
+}
+function drawObj(o,dt,py){
+ if(o.type==='moon'){const y=o.y-py*.15;cx.save();cx.globalAlpha=.55;const g=cx.createRadialGradient(o.x-o.r*.3,y-o.r*.3,o.r*.1,o.x,y,o.r);g.addColorStop(0,'#C9CDD3');g.addColorStop(.7,'#6F737B');g.addColorStop(1,'#1B2A3D');cx.fillStyle=g;cx.beginPath();cx.arc(o.x,y,o.r,0,6.28);cx.fill();cx.restore();o.x-=o.spd*dt;if(o.x<-o.r*2){o.x=W+o.r*2;o.y=H*(0.1+Math.random()*.4);}}
+ else if(o.type==='station'){o.x+=o.spd*dt;if(o.x>W+120)o.x=-120;const y=o.y-py*.2;cx.save();cx.globalAlpha=.45;cx.fillStyle='#ADAEB1';cx.fillRect(o.x,y,40,3);cx.fillRect(o.x+17,y-8,6,19);cx.fillStyle='#0E73B3';cx.fillRect(o.x-14,y-1,12,5);cx.fillRect(o.x+42,y-1,12,5);cx.restore();}
+ else{o.x+=o.spd*dt;if(o.x<-140)o.x=W+140;const y=o.y-py*.25;cx.save();cx.globalAlpha=.4;cx.fillStyle='#D9DCE1';cx.beginPath();cx.moveTo(o.x,y);cx.lineTo(o.x+34,y-5);cx.lineTo(o.x+60,y);cx.lineTo(o.x+34,y+5);cx.closePath();cx.fill();cx.fillStyle='#0E73B3';cx.fillRect(o.x+60,y-1,8,2);cx.restore();}
+}
+requestAnimationFrame(draw);
+
+mode='drift';
+
+/* ---------- state ---------- */
+const store={get(k,d){try{return JSON.parse(localStorage.getItem('astraeus.'+k))??d;}catch(e){return d;}},set(k,v){try{localStorage.setItem('astraeus.'+k,JSON.stringify(v));}catch(e){}}};
+let cart=store.get('cart',{}),wish=store.get('wish',[]),recent=store.get('recent',[]),orders=store.get('orders',[]),account=store.get('account',null);
+const cartCount=()=>Object.values(cart).reduce((a,b)=>a+b,0);
+const cartItems=()=>Object.entries(cart).map(([id,q])=>({p:BYID[id],q})).filter(x=>x.p);
+const subtotal=()=>cartItems().reduce((a,{p,q})=>a+p.price*q,0);
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200);}
+function syncBadges(){const c=document.getElementById('ccount'),w=document.getElementById('wcount');const n=cartCount();c.textContent=n;c.hidden=!n;w.textContent=wish.length;w.hidden=!wish.length;}
+function addCart(id,q=1){const p=BYID[id];if(!p||p.av==='out')return;cart[id]=(cart[id]||0)+q;store.set('cart',cart);syncBadges();renderDrawer();toast(p.name.toUpperCase()+' · ADDED TO CART');openDrawer();}
+function setQty(id,q){if(q<=0)delete cart[id];else cart[id]=q;store.set('cart',cart);syncBadges();renderDrawer();if(location.hash==='#cart')render();}
+function toggleWish(id){const i=wish.indexOf(id);if(i<0){wish.push(id);toast('SAVED TO WISHLIST');}else{wish.splice(i,1);toast('REMOVED FROM WISHLIST');}store.set('wish',wish);syncBadges();document.querySelectorAll(`.wish[data-id="${id}"]`).forEach(b=>b.classList.toggle('on',i<0));if(location.hash==='#wishlist')render();}
+function noteRecent(id){recent=[id,...recent.filter(x=>x!==id)].slice(0,8);store.set('recent',recent);}
+
+/* ---------- drawer / search ---------- */
+const drawer=document.getElementById('drawer'),dim=document.getElementById('dim');
+function openDrawer(){drawer.classList.add('open');dim.classList.add('on');}
+function closeDrawer(){drawer.classList.remove('open');dim.classList.remove('on');}
+document.getElementById('cbtn').onclick=()=>{renderDrawer();openDrawer();};
+document.getElementById('dclose').onclick=closeDrawer;dim.onclick=closeDrawer;
+document.getElementById('dcheck').onclick=closeDrawer;drawer.querySelector('a[href="#cart"]').onclick=closeDrawer;
+function lineHTML(p,q,light){return `<div class="lineitem"><div class="pic">${art(p,0)}</div><div><h4><a href="#product-${p.id}">${p.name}</a></h4><div class="sm">${p.model} · ${DIV[p.div]}${p.ffl?' · FFL TRANSFER':''}</div><div class="ctl"><div class="qty"><button type="button" data-q="${p.id}" data-d="-1" aria-label="Decrease">−</button><input type="number" value="${q}" min="0" data-qi="${p.id}" aria-label="Quantity" id="q-${p.id}"><button type="button" data-q="${p.id}" data-d="1" aria-label="Increase">+</button></div><button type="button" class="rm" data-rm="${p.id}">REMOVE</button></div></div><div class="lp num">${fmt(p.price*q)}</div></div>`;}
+function renderDrawer(){const el=document.getElementById('ditems');const it=cartItems();el.innerHTML=it.length?it.map(({p,q})=>lineHTML(p,q)).join(''):`<div class="empty"><p>Your cart is empty.</p><a class="btn" href="#shop" onclick="closeDrawer()">SHOP EQUIPMENT</a></div>`;document.getElementById('dsub').textContent=fmt(subtotal());document.getElementById('dcheck').style.display=it.length?'':'none';}
+document.addEventListener('click',e=>{
+ const q=e.target.closest('[data-q]');if(q){setQty(q.dataset.q,(cart[q.dataset.q]||0)+ +q.dataset.d);return;}
+ const rm=e.target.closest('[data-rm]');if(rm){setQty(rm.dataset.rm,0);return;}
+ const add=e.target.closest('[data-add]');if(add){const qi=document.getElementById('pqty');addCart(add.dataset.add,qi?Math.max(1,+qi.value||1):1);return;}
+ const w=e.target.closest('[data-wish]');if(w){e.preventDefault();toggleWish(w.dataset.wish);return;}
+});
+document.addEventListener('change',e=>{const i=e.target.closest('[data-qi]');if(i)setQty(i.dataset.qi,Math.max(0,+i.value||0));});
+const sOv=document.getElementById('search'),sIn=document.getElementById('sinput');
+function openSearch(){sOv.classList.add('open');setTimeout(()=>sIn.focus(),50);}
+function closeSearch(){sOv.classList.remove('open');}
+document.getElementById('sbtn').onclick=openSearch;document.getElementById('sclose').onclick=closeSearch;
+sOv.addEventListener('click',e=>{if(e.target===sOv)closeSearch();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();closeDrawer();document.getElementById('mnav').classList.remove('open');}});
+function searchP(q){q=q.trim().toLowerCase();if(!q)return[];return P.filter(p=>[p.name,p.model,p.cat,p.type,p.fam,DIV[p.div],MISSIONS[p.mission]?.name,p.desc].join(' ').toLowerCase().includes(q));}
+sIn.addEventListener('input',()=>{const r=searchP(sIn.value);document.getElementById('scount').textContent=sIn.value?`${r.length} RESULT${r.length===1?'':'S'}`:'TYPE TO SEARCH';document.getElementById('sres').innerHTML=r.slice(0,8).map(p=>`<a href="#product-${p.id}" onclick="closeSearch()"><span class="pic">${art(p,0)}</span><span><div class="t">${p.name}</div><div class="s">${p.model} · ${CATS[p.cat].name.toUpperCase()}</div></span><span class="p num">${fmt(p.price)}</span></a>`).join('')+(r.length>8?`<a href="#search-${encodeURIComponent(sIn.value)}" onclick="closeSearch()"><span class="t">View all ${r.length} results</span></a>`:'');});
+sIn.addEventListener('keydown',e=>{if(e.key==='Enter'){location.hash='search-'+encodeURIComponent(sIn.value);closeSearch();}});
+document.getElementById('burger').onclick=()=>document.getElementById('mnav').classList.add('open');
+document.getElementById('mclose').onclick=()=>document.getElementById('mnav').classList.remove('open');
+document.querySelectorAll('#mnav a').forEach(a=>a.onclick=()=>document.getElementById('mnav').classList.remove('open'));
+</script>
+<script>
+/* ---------- components ---------- */
+const avail=p=>`<span class="avail ${p.av}">${p.av==='in'?'IN STOCK':p.av==='low'?'LOW STOCK':'OUT OF STOCK'}</span>`;
+function card(p){const m=MISSIONS[p.mission];const sp=Object.entries(p.specs).slice(0,2);
+ return `<article class="card"><a class="pic" href="#product-${p.id}">${art(p,0)}<span class="tag">${p.series}</span></a><button type="button" class="wish ${wish.includes(p.id)?'on':''}" data-wish="${p.id}" data-id="${p.id}" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button>
+ <div class="body"><div class="model"><span>MODEL ${p.model}</span><span>${m?m.num:'GEN'}</span></div><h3><a href="#product-${p.id}">${p.name}</a></h3><p class="desc">${p.desc}</p>
+ <div class="row"><span class="price num">${fmt(p.price)}</span>${avail(p)}</div>
+ <div class="specs">${sp.map(([k,v])=>`<span>${k.replace(/([A-Z])/g,' $1').trim().toUpperCase()}: ${v.split(',')[0]}</span>`).join('')}</div>
+ <div class="specs" style="border:0;padding:0;margin:0"><span>${DIV[p.div]}</span>${m?`<span>· ${m.name.toUpperCase()}</span>`:''}</div>
+ <button type="button" class="btn small add ${p.av==='out'?'':'primary'}" data-add="${p.id}" ${p.av==='out'?'disabled':''}>${p.av==='out'?'UNAVAILABLE':p.ffl?'ADD · FFL TRANSFER':'ADD TO CART'}</button></div></article>`;}
+const grid=list=>list.length?`<div class="grid">${list.map(card).join('')}</div>`:`<div class="empty"><p>No equipment matches these filters.</p></div>`;
+const sectionHead=(eye,title,right='')=>`<div class="head"><div><div class="eyebrow">${eye}</div><h2>${title}</h2></div>${right}</div>`;
+const missionCard=m=>`<a class="mcard" href="#mission-${m.id}" style="--accent:${m.accent}">${insignia(m)}<div><h3>${m.name}</h3><div class="meta"><span>MISSION ${m.num}</span><span>${m.dest.toUpperCase()}</span></div></div><p>${m.bg.split('. ')[0]}.</p><span class="eyebrow">${P.filter(p=>p.mission===m.id).length} ITEMS →</span></a>`;
+function hscroll(list){return list.length?`<div class="hscroll">${list.map(card).join('')}</div>`:'';}
+
+/* ---------- pages ---------- */
+const pages={
+ home(){return `<section class="hero wrap"><div class="planet">${planetSVG()}</div><div class="eyebrow">ASTRAEUS EQUIPMENT GROUP · EST. FOR THE LONG HORIZON</div><h1>Built for<br>what comes next</h1><p class="lead">Equipment for Earth and beyond.</p><div class="cta"><a class="btn primary" href="#about">EXPLORE ASTRAEUS</a><a class="btn" href="#shop">SHOP EQUIPMENT</a></div></section>
+ <div class="ticker">${Object.values(DIV).concat(Object.values(DIV)).map(d=>`<span>${d}</span>`).join('')}</div>
+ <section class="section wrap">${sectionHead('CATALOG','Equipment categories')}<div class="cats">${Object.entries(CATS).map(([k,c])=>`<a class="cat" href="#${k}"><div class="art">${catArt(k)}</div><div class="t"><span class="eyebrow">${P.filter(p=>p.cat===k).length} ITEMS</span><h3>${c.name}</h3><p>${c.blurb}</p></div></a>`).join('')}</div></section>
+ <section class="section wrap">${sectionHead('WATCH DIVISION','Flagship instruments','<a class="btn ghost small" href="#watches">ALL WATCHES</a>')}${grid(P.filter(p=>p.cat==='watches').slice(0,4))}</section>
+ <section class="section wrap">${sectionHead('FIELD SYSTEMS','Watch storage, built like hardware','<a class="btn ghost small" href="#storage">ALL STORAGE</a>')}${grid(P.filter(p=>p.cat==='storage').slice(0,4))}</section>
+ <section class="section wrap">${sectionHead('PROGRAMS','Mission collections','<a class="btn ghost small" href="#missions">ALL MISSIONS</a>')}<div class="missions">${['orbital','lunar','deepfield'].map(k=>missionCard(MISSIONS[k])).join('')}</div></section>
+ <section class="section wrap"><div class="strip"><div><span class="k">SHIPPING</span><span class="v">Free over $250</span><span class="dim" style="font-size:12px">Insured, tracked, issued in ASTRAEUS packaging.</span></div><div><span class="k">WARRANTY</span><span class="v">Five years</span><span class="dim" style="font-size:12px">Watches and hard cases. Two years on everything else.</span></div><div><span class="k">SERVICE</span><span class="v">Equipment Lab</span><span class="dim" style="font-size:12px">Repair, refoam, movement service, strap fitting.</span></div><div><span class="k">RETURNS</span><span class="v">30 days</span><span class="dim" style="font-size:12px">Unworn, in original issue packaging.</span></div></div></section>
+ ${recent.length?`<section class="section wrap">${sectionHead('LOG','Recently viewed')}${hscroll(recent.map(id=>BYID[id]).filter(Boolean))}</section>`:''}`;},
+
+ shop(catKey){
+  const f=shopState;const cats=catKey?[catKey]:f.cats;
+  let list=P.filter(p=>(!cats.length||cats.includes(p.cat))&&(!f.missions.length||f.missions.includes(p.mission))&&(!f.divs.length||f.divs.includes(p.div))&&(!f.types.length||f.types.includes(p.type))&&(!f.series.length||f.series.includes(p.series))&&p.price<=f.max&&(!f.instock||p.av!=='out'));
+  const sorts={featured:()=>0,plo:(a,b)=>a.price-b.price,phi:(a,b)=>b.price-a.price,name:(a,b)=>a.name.localeCompare(b.name)};list=[...list].sort(sorts[f.sort]);
+  const c=catKey?CATS[catKey]:null;
+  const chk=(name,vals,sel,lab)=>`<div><h4>${lab}</h4>${vals.map(v=>`<label><input type="checkbox" data-f="${name}" value="${v[0]}" ${sel.includes(v[0])?'checked':''}>${v[1]}</label>`).join('')}</div>`;
+  const types=[...new Set(P.filter(p=>!cats.length||cats.includes(p.cat)).map(p=>p.type))];
+  return `<section class="section wrap"><div class="crumbs"><a href="#home">HOME</a><span>/</span><a href="#shop">SHOP</a>${c?`<span>/</span><span>${c.name.toUpperCase()}</span>`:''}</div>
+  ${sectionHead(c?CATS[catKey].blurb.toUpperCase():'FULL CATALOG',c?c.name:'Shop all equipment')}
+  ${catKey==='firearms'?`<div class="notice" style="margin-bottom:24px"><b>Firearms compliance</b><span>Firearms are sold only to buyers 21 years of age or older and are shipped exclusively to a federally licensed dealer (FFL) of your choice for transfer, background check and any state waiting period. Firearms cannot be shipped to a residence. Some models are restricted or prohibited in certain states and localities; the catalog checks your shipping state at checkout. Ammunition is not sold on this site. Accessories without restriction ship normally.</span></div>`:''}
+  <div class="shop"><aside class="filters" id="filters">
+   ${catKey?'':chk('cats',Object.entries(CATS).map(([k,v])=>[k,v.name]),f.cats,'Category')}
+   ${chk('types',types.map(t=>[t,t]),f.types,'Product type')}
+   ${chk('missions',Object.values(MISSIONS).map(m=>[m.id,m.name]),f.missions,'Mission')}
+   ${chk('divs',Object.entries(DIV).map(([k,v])=>[k,v.replace('ASTRAEUS ','')]),f.divs,'Division')}
+   ${chk('series',[...new Set(P.map(p=>p.series))].map(s=>[s,s]),f.series,'Collection')}
+   <div><h4>Max price · <span class="num" id="maxlab">${fmt(f.max)}</span></h4><input type="range" id="fmax" min="25" max="3500" step="25" value="${f.max}"></div>
+   <div><label><input type="checkbox" data-f="instock" ${f.instock?'checked':''}>In stock only</label></div>
+   <button type="button" class="btn small ghost" id="fclear">CLEAR FILTERS</button></aside>
+  <div><div class="toolbar"><span>${list.length} ITEM${list.length===1?'':'S'} · ASTRAEUS CATALOG</span><span style="display:flex;gap:10px;align-items:center"><button type="button" class="btn small ghost" id="ftoggle">FILTERS</button><select id="fsort" aria-label="Sort"><option value="featured" ${f.sort==='featured'?'selected':''}>FEATURED</option><option value="plo" ${f.sort==='plo'?'selected':''}>PRICE LOW TO HIGH</option><option value="phi" ${f.sort==='phi'?'selected':''}>PRICE HIGH TO LOW</option><option value="name" ${f.sort==='name'?'selected':''}>NAME</option></select></span></div>${grid(list)}</div></div></section>`;
+ },
+
+ product(id){const p=BYID[id];if(!p)return pages.notfound();noteRecent(id);const m=MISSIONS[p.mission];
+  const views=['PRODUCT','DETAIL',p.kind==='watch'?'CASEBACK':'DRAWING','PACKAGING'];
+  const related=P.filter(x=>x.id!==p.id&&(x.cat===p.cat)).slice(0,4);
+  const acc=P.filter(x=>x.id!==p.id&&x.cat!==p.cat&&(x.mission===p.mission||x.cat==='storage'||x.cat==='everyday')).slice(0,4);
+  const specRows=[['Model',p.model],['Division',DIV[p.div]],['Mission',m?`${m.num} · ${m.name}`:'General issue'],['Materials',p.materials],['Dimensions',p.dims],['Weight',p.weight],...Object.entries(p.specs).map(([k,v])=>[k.replace(/([A-Z])/g,' $1').trim(),v])];
+  return `<section class="section wrap"><div class="crumbs"><a href="#home">HOME</a><span>/</span><a href="#${p.cat}">${CATS[p.cat].name.toUpperCase()}</a><span>/</span><span>${p.model}</span></div>
+  <div class="pdp"><div class="gallery"><div class="main" id="gmain">${art(p,0)}<span class="id">${p.model} · VIEW 01 · ${views[0]}</span></div><div class="thumbs">${views.map((v,i)=>`<button type="button" class="${i?'':'on'}" data-view="${i}" aria-label="${v}">${art(p,i)}</button>`).join('')}</div></div>
+  <div class="buy"><div class="eyebrow">${DIV[p.div]} · ${p.series}</div><h1>${p.name}</h1><div class="mono" style="font-size:11px;letter-spacing:.18em;color:var(--silver)">MODEL ${p.model}${p.fam?' · '+p.fam:''}${m?' · MISSION '+m.num:''}</div>
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span class="price num">${fmt(p.price)}</span>${avail(p)}</div>
+   <p class="dim" style="font-size:15px;max-width:52ch">${p.desc}</p>
+   ${p.ffl?`<div class="notice"><b>Licensed dealer transfer required</b><span>Ships only to an FFL dealer you select at checkout. Buyer must be 21 or older and pass a background check at pickup. Not available in all states.</span></div>`:''}
+   <div class="buyrow"><div class="qty"><button type="button" id="qm" aria-label="Decrease">−</button><input type="number" id="pqty" value="1" min="1" aria-label="Quantity"><button type="button" id="qp" aria-label="Increase">+</button></div><button type="button" class="btn primary" data-add="${p.id}" ${p.av==='out'?'disabled':''}>${p.av==='out'?'OUT OF STOCK':'ADD TO CART'}</button><button type="button" class="btn" data-wish="${p.id}">${wish.includes(p.id)?'SAVED':'WISHLIST'}</button></div>
+   <div class="markings"><span>SN 2126-${p.id.toUpperCase().replace(/-/g,'')}</span><span>REV A</span><span>${m?m.num:'AP-00'}</span><span>${p.av==='out'?'BACKORDER':'MISSION READY'}</span></div>
+   <div class="tabs" id="ptabs"><button type="button" class="on" data-tab="spec">SPECIFICATIONS</button><button type="button" data-tab="ship">SHIPPING</button><button type="button" data-tab="care">SERVICE</button></div>
+   <div class="tabpane" data-pane="spec"><table class="spec">${specRows.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</table></div>
+   <div class="tabpane" data-pane="ship" hidden><p>${p.ffl?'Ships to your chosen FFL dealer within 3 business days by insured carrier, adult signature required. The dealer completes the transfer.':'Ships within 2 business days in sealed ASTRAEUS issue packaging. Free insured shipping on orders over $250; $12 flat otherwise.'}</p><p>International shipping to most regions. Duties are calculated at checkout.</p><p>30 day returns on unworn equipment in original packaging${p.ffl?' (not applicable to transferred firearms)':''}.</p></div>
+   <div class="tabpane" data-pane="care" hidden><p>Serviced by the ASTRAEUS Equipment Lab. ${p.kind==='watch'?'Movement service recommended every five years. Bracelet refinishing and strap fitting available.':p.kind==='case'?'Replacement foam, webbing, latch pins and mission discs are stocked. Shells carry a five year warranty.':'Spare parts are stocked for the life of the product line.'}</p></div>
+  </div></div></section>
+  <section class="section wrap">${sectionHead('RELATED','Related equipment')}${grid(related)}</section>
+  <section class="section wrap">${sectionHead('RECOMMENDED','Recommended accessories')}${grid(acc)}</section>
+  ${recent.length>1?`<section class="section wrap">${sectionHead('LOG','Recently viewed')}${hscroll(recent.filter(x=>x!==id).map(i=>BYID[i]).filter(Boolean))}</section>`:''}`;},
+
+ missions(){return `<section class="section wrap">${sectionHead('PROGRAMS','Mission collections')}<p class="dim" style="max-width:62ch;margin-bottom:30px">Every ASTRAEUS program is an equipment line with its own insignia, number, destination and accent. Products carry their mission designation on the dial, the label plate or the packaging.</p><div class="missions">${Object.values(MISSIONS).map(missionCard).join('')}</div></section>`;},
+ mission(k){const m=MISSIONS[k];if(!m)return pages.notfound();const items=P.filter(p=>p.mission===k);const by=c=>items.filter(p=>p.cat===c);
+  return `<section class="section wrap" style="--accent:${m.accent}"><div class="crumbs"><a href="#home">HOME</a><span>/</span><a href="#missions">MISSIONS</a><span>/</span><span>${m.num}</span></div>
+  <div class="mhero">${insignia(m,200)}<div><div class="eyebrow">MISSION ${m.num} · ${m.dest.toUpperCase()}</div><h1 style="font-size:clamp(30px,4.5vw,56px)">${m.name}</h1><p style="margin-top:16px">${m.bg}</p><div class="kv"><div><div class="k">MISSION NUMBER</div>${m.num}</div><div><div class="k">DESTINATION</div>${m.dest}</div><div><div class="k">ACCENT</div><span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:50%;background:${m.accent};border:1px solid var(--line)"></span>${m.accent}</span></div><div><div class="k">ISSUED ITEMS</div>${items.length}</div></div></div></div></section>
+  ${[['watches','Watches'],['storage','Cases'],['equipment','Equipment'],['everyday','Everyday'],['apparel','Clothing'],['firearms','Firearms']].map(([c,l])=>by(c).length?`<section class="section wrap" style="padding-top:0">${sectionHead(m.num+' · '+l.toUpperCase(),l)}${grid(by(c))}</section>`:'').join('')}`;},
+
+ about(){const divs=[['EXP','Expedition gear, bags and apparel for long duration field work.'],['ORB','Compact equipment for crews living and working in orbit.'],['FLD','Hard cases, containers and storage systems.'],['WCH','Mechanical instruments and movement service.'],['LAB','Lights, tools, power and everyday objects. Repair and service.'],['MAT','Metals, textiles and finishes shared across every division.'],['FRO','Field firearms and accessories for frontier personnel.']];
+  return `<section class="hero wrap" style="min-height:0"><div class="eyebrow">ABOUT</div><h1>Equipment for those<br>who go farther</h1><p class="lead">Industrial design, durability and precision for life on Earth and whatever comes next.</p></section>
+  <section class="section wrap" style="padding-top:0"><div class="prose"><p><strong>ASTRAEUS develops equipment for those who go farther.</strong> Our products combine industrial design, durability, precision and exploration inspired engineering for life on Earth and whatever comes next.</p><p>ASTRAEUS draws inspiration from humanity's history of exploration while designing equipment for the future. The catalog is organized into programs, each with a destination in mind, and built by seven divisions that share one material standard.</p><p>ASTRAEUS is an exploration inspired equipment and lifestyle company. It is not a space agency and does not operate spacecraft. The missions and vehicles in our catalog are a design framework, not a flight manifest.</p></div></section>
+  <section class="section wrap">${sectionHead('STRUCTURE','Divisions')}<div class="divs">${divs.map(([k,d],i)=>`<div class="div"><span class="n">DIV ${String(i+1).padStart(2,'0')}</span><h3>${DIV[k]}</h3><p>${d}</p></div>`).join('')}</div></section>
+  <section class="section wrap">${sectionHead('STANDARD','Design principles')}<div class="strip"><div><span class="k">COLOR</span><span class="v">Navy, white, silver</span><span class="dim" style="font-size:12px">Orbital blue only where it means something.</span></div><div><span class="k">MARKINGS</span><span class="v">Legible with gloves</span><span class="dim" style="font-size:12px">Model, division, mission and serial on every item.</span></div><div><span class="k">SERVICE</span><span class="v">Repairable by design</span><span class="dim" style="font-size:12px">Parts stocked for the life of the line.</span></div><div><span class="k">PACKAGING</span><span class="v">Issued, not sold</span><span class="dim" style="font-size:12px">Every box reads like an expedition manifest.</span></div></div></section>`;},
+
+ cart(){const it=cartItems();return `<section class="section wrap light" style="margin-inline:calc(-1 * var(--gutter));padding-inline:var(--gutter)"><div class="head"><div><div class="eyebrow">CART</div><h2>Your equipment</h2></div><a class="btn small" href="#shop">CONTINUE SHOPPING</a></div>
+  ${it.length?`<div class="cartgrid"><div>${it.map(({p,q})=>lineHTML(p,q,true)).join('')}${it.some(x=>x.p.ffl)?`<div class="notice" style="margin-top:18px"><b>This order contains a firearm</b><span>It ships to the licensed dealer you select at checkout. Accessories ship to your address separately.</span></div>`:''}</div>
+  <aside class="summary"><h3>Order summary</h3><div class="r"><span>Subtotal</span><span class="num">${fmt(subtotal())}</span></div><div class="r"><span>Shipping</span><span class="num">${subtotal()>=250?'Free':'$12'}</span></div><div class="r"><span>Estimated tax</span><span class="num">${fmt(Math.round(subtotal()*.07))}</span></div><div class="r total"><span>Total</span><span class="num">${fmt(subtotal()+(subtotal()>=250?0:12)+Math.round(subtotal()*.07))}</span></div><a class="btn primary" href="#checkout">CHECKOUT</a><p class="dim" style="font-size:12px">Insured shipping. 30 day returns. Five year warranty on watches and cases.</p></aside></div>`:`<div class="empty"><p>Your cart is empty.</p><a class="btn" href="#shop">SHOP EQUIPMENT</a></div>`}</section>`;},
+
+ checkout(){const it=cartItems();if(!it.length)return pages.cart();const ffl=it.some(x=>x.p.ffl);const sub=subtotal(),ship=sub>=250?0:12,tax=Math.round(sub*.07);
+  const inp=(id,l,t='text',extra='')=>`<label>${l}<input type="${t}" id="${id}" name="${id}" ${extra}></label>`;
+  return `<section class="section wrap light" style="margin-inline:calc(-1 * var(--gutter));padding-inline:var(--gutter)"><div class="head"><div><div class="eyebrow">CHECKOUT</div><h2>Issue order</h2></div></div>
+  <div class="steps"><span class="on">1 CONTACT</span><span class="on">2 SHIPPING</span><span class="on">3 PAYMENT</span><span>4 CONFIRMATION</span></div>
+  <div class="cartgrid"><form class="form" id="cform" novalidate>
+   <h3 style="margin-top:6px">Contact</h3><div class="two">${inp('email','Email','email','autocomplete="email" required')}${inp('phone','Phone','tel','autocomplete="tel"')}</div>
+   <h3 style="margin-top:14px">Shipping address</h3><div class="two">${inp('first','First name','text','autocomplete="given-name" required')}${inp('last','Last name','text','autocomplete="family-name" required')}</div>${inp('addr','Street address','text','autocomplete="address-line1" required')}<div class="two">${inp('city','City','text','autocomplete="address-level2" required')}<label>State<select id="state" required><option value="">Select</option>${'AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(' ').map(s=>`<option>${s}</option>`).join('')}</select></label></div><div class="two">${inp('zip','ZIP','text','autocomplete="postal-code" required')}<label>Country<select id="country"><option>United States</option><option>Canada</option><option>United Kingdom</option><option>Germany</option><option>Japan</option><option>Australia</option></select></label></div>
+   ${ffl?`<h3 style="margin-top:14px">Firearm transfer</h3><div class="notice"><b>Licensed dealer required</b><span>Enter the FFL dealer who will receive the firearm. We contact the dealer to confirm their license before shipping. You must be 21 or older and pass the background check at pickup.</span></div><div class="two">${inp('fflname','Dealer name','text','required')}${inp('fflnum','FFL license number','text','required placeholder="1-23-456-78-9A-12345"')}</div>${inp('ffladdr','Dealer address','text','required')}<label class="choice" id="agewrap"><input type="checkbox" id="age"><span>I confirm I am 21 years of age or older and legally eligible to purchase a firearm in my state.<div class="sub">Required for firearm orders.</div></span></label>`:''}
+   <h3 style="margin-top:14px">Shipping method</h3><label class="choice on"><input type="radio" name="shipm" value="std" checked><span>Standard insured · 3 to 5 days<div class="sub">${ship?'$12':'Free'}</div></span></label><label class="choice"><input type="radio" name="shipm" value="exp"><span>Expedited · 1 to 2 days<div class="sub">$38</div></span></label>
+   <h3 style="margin-top:14px">Payment</h3><p class="dim" style="font-size:12px">Demo checkout. No payment is processed and no card data is stored.</p>${inp('card','Card number','text','inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" required')}<div class="two">${inp('exp','Expiry','text','placeholder="MM / YY" autocomplete="cc-exp" required')}${inp('cvc','CVC','text','inputmode="numeric" autocomplete="cc-csc" required')}</div>${inp('cname','Name on card','text','autocomplete="cc-name" required')}
+   <button type="submit" class="btn primary" style="margin-top:10px">PLACE ORDER · <span id="ptotal" class="num">${fmt(sub+ship+tax)}</span></button>
+  </form>
+  <aside class="summary"><h3>Order summary</h3>${it.map(({p,q})=>`<div class="r"><span>${p.name} × ${q}</span><span class="num">${fmt(p.price*q)}</span></div>`).join('')}<div class="r" style="border-top:1px solid var(--line);padding-top:10px"><span>Subtotal</span><span class="num">${fmt(sub)}</span></div><div class="r"><span>Shipping</span><span class="num" id="sship">${ship?'$12':'Free'}</span></div><div class="r"><span>Tax</span><span class="num">${fmt(tax)}</span></div><div class="r total"><span>Total</span><span class="num" id="stotal">${fmt(sub+ship+tax)}</span></div></aside></div></section>`;},
+
+ confirm(n){const o=orders.find(x=>x.num===n)||orders[0];if(!o)return pages.cart();
+  return `<section class="section wrap light" style="margin-inline:calc(-1 * var(--gutter));padding-inline:var(--gutter)"><div class="steps"><span class="on">1 CONTACT</span><span class="on">2 SHIPPING</span><span class="on">3 PAYMENT</span><span class="on">4 CONFIRMATION</span></div>
+  <div class="confirm"><span class="logo" style="width:72px;height:72px"><img src="${LOGO}" alt=""></span><div class="eyebrow">ORDER ISSUED</div><h2>Equipment is on its way</h2><span class="ord">ORDER ${o.num}</span><p class="dim">A confirmation was sent to ${o.email}. ${o.ffl?'Firearms ship to your dealer, '+o.ffl+'. ':''}Everything else ships to ${o.city}, ${o.state}.</p>
+  <div style="width:100%;text-align:left;border:1px solid var(--line-soft);padding:16px;border-radius:2px">${o.items.map(i=>`<div class="r" style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0"><span>${i.name} × ${i.q}</span><span class="num">${fmt(i.price*i.q)}</span></div>`).join('')}<div style="display:flex;justify-content:space-between;font-family:var(--display);font-size:18px;border-top:1px solid var(--line);padding-top:10px;margin-top:6px"><span>Total</span><span class="num">${fmt(o.total)}</span></div></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn primary" href="#shop">CONTINUE SHOPPING</a><a class="btn" href="#account">VIEW ORDERS</a></div></div></section>`;},
+
+ account(){return `<section class="section wrap light" style="margin-inline:calc(-1 * var(--gutter));padding-inline:var(--gutter)"><div class="head"><div><div class="eyebrow">ACCOUNT</div><h2>${account?'Welcome back, '+account.name:'Sign in'}</h2></div>${account?'<button type="button" class="btn small" id="signout">SIGN OUT</button>':''}</div>
+  ${account?`<div class="cartgrid"><div><h3 style="margin-bottom:12px">Orders</h3>${orders.length?`<div class="orders">${orders.map(o=>`<div class="order"><span><div>${o.items.map(i=>i.name).join(', ')}</div><div class="m">${o.num} · ${o.date}</div></span><span class="num" style="font-family:var(--display);font-size:16px">${fmt(o.total)}</span></div>`).join('')}</div>`:'<p class="dim">No orders yet.</p>'}</div><aside class="summary"><h3>Profile</h3><div class="r"><span>Name</span><span>${account.name}</span></div><div class="r"><span>Email</span><span>${account.email}</span></div><div class="r"><span>Wishlist</span><a href="#wishlist">${wish.length} items</a></div><div class="r"><span>Clearance</span><span>EARTHSIDE</span></div></aside></div>`
+  :`<form class="form" id="aform" style="max-width:460px" novalidate><label>Name<input type="text" id="aname" required autocomplete="name"></label><label>Email<input type="email" id="aemail" required autocomplete="email"></label><p class="dim" style="font-size:12px">Demo account. Details stay in this browser only.</p><button class="btn primary" type="submit">SIGN IN</button></form>`}</section>`;},
+
+ wishlist(){const l=wish.map(i=>BYID[i]).filter(Boolean);return `<section class="section wrap">${sectionHead('SAVED','Wishlist')}${l.length?grid(l):`<div class="empty"><p>Nothing saved yet.</p><a class="btn" href="#shop">SHOP EQUIPMENT</a></div>`}</section>`;},
+ search(q){q=decodeURIComponent(q||'');const r=searchP(q);return `<section class="section wrap">${sectionHead('SEARCH',`${r.length} result${r.length===1?'':'s'} for “${q}”`)}${grid(r)}</section>`;},
+ shipping(){return `<section class="section wrap"><div class="prose">${sectionHead('POLICY','Shipping and returns')}<p>Orders ship within two business days in sealed ASTRAEUS issue packaging. Shipping is free and insured on orders over $250, otherwise $12 flat. Expedited delivery is available at checkout.</p><p>Returns are accepted within 30 days on unworn equipment in original packaging. Watches and hard cases carry a five year warranty; everything else carries two years. Transferred firearms are not returnable; contact Frontier Operations for warranty service.</p></div></section>`;},
+ intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div><a class="btn enter" href="#home">ENTER ASTRAEUS</a></div><a class="skip" href="#home">SKIP →</a></section>`;},
+ notfound(){return `<section class="section wrap"><div class="empty"><div class="eyebrow">REF 404</div><h2>Nothing at this coordinate</h2><a class="btn" href="#home">RETURN HOME</a></div></section>`;}
+};
+const shopState={cats:[],missions:[],divs:[],types:[],series:[],max:3500,instock:false,sort:'featured'};
+
+/* ---------- router ---------- */
+const app=document.getElementById('app');
+function render(){
+ const h=(location.hash||'#intro').slice(1);let html='',route=h;
+ document.body.classList.toggle('introview',h==='intro');
+ if(h==='intro')html=pages.intro();
+ else if(h==='home')html=pages.home();
+ else if(h==='shop')html=pages.shop();
+ else if(CATS[h])html=pages.shop(h),route=['storage','everyday'].includes(h)?'equipment':h;
+ else if(h.startsWith('product-'))html=pages.product(h.slice(8)),route='shop';
+ else if(h==='missions')html=pages.missions();
+ else if(h.startsWith('mission-'))html=pages.mission(h.slice(8)),route='missions';
+ else if(h.startsWith('search-'))html=pages.search(h.slice(7)),route='shop';
+ else if(h.startsWith('confirm-'))html=pages.confirm(h.slice(8));
+ else if(pages[h])html=pages[h]();
+ else html=pages.notfound();
+ app.innerHTML=`<div class="page">${html}</div>`;
+ document.querySelectorAll('#links a').forEach(a=>a.classList.toggle('on',a.dataset.r===route));
+ window.scrollTo({top:0,behavior:'instant'});
+ bind(h);
+}
+function bind(h){
+ if(h==='intro'){clearTimeout(window._it);clearInterval(window._iw);
+  if(reduced){mode='drift';document.getElementById('imark')?.classList.add('on');window._it=setTimeout(()=>{if(location.hash==='#intro')location.hash='#home';},2500);return;}
+  mode='warp';warpSpeed=0.2;const t0=performance.now();
+  window._iw=setInterval(()=>{const t=(performance.now()-t0)/1000;
+   if(t<1.2)warpSpeed=0.2+t/1.2*3.4;            // accelerate to lightspeed
+   else if(t<3.0)warpSpeed=3.6;                  // cruise
+   else if(t<4.6){const k=(t-3)/1.6;warpSpeed=3.6*(1-k)*(1-k)+0.04;}  // decelerate
+   else{clearInterval(window._iw);mode='drift';document.getElementById('imark')?.classList.add('on');}
+  },40);
+  window._it=setTimeout(()=>{if(location.hash==='#intro')location.hash='#home';},10500);return;}
+ mode='drift';clearInterval(window._iw);
+ // shop filters
+ const F=document.getElementById('filters');
+ if(F){F.querySelectorAll('[data-f]').forEach(i=>i.onchange=()=>{const k=i.dataset.f;if(k==='instock')shopState.instock=i.checked;else{const arr=shopState[k];const idx=arr.indexOf(i.value);i.checked?idx<0&&arr.push(i.value):idx>=0&&arr.splice(idx,1);}render();F.classList.add('open');});
+  const r=document.getElementById('fmax');r.oninput=()=>document.getElementById('maxlab').textContent=fmt(+r.value);r.onchange=()=>{shopState.max=+r.value;render();};
+  document.getElementById('fsort').onchange=e=>{shopState.sort=e.target.value;render();};
+  document.getElementById('fclear').onclick=()=>{Object.assign(shopState,{cats:[],missions:[],divs:[],types:[],series:[],max:3500,instock:false});render();};
+  document.getElementById('ftoggle').onclick=()=>F.classList.toggle('open');}
+ // product
+ if(h.startsWith('product-')){const p=BYID[h.slice(8)];const main=document.getElementById('gmain');const views=['PRODUCT','DETAIL',p.kind==='watch'?'CASEBACK':'DRAWING','PACKAGING'];
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-view]').forEach(x=>x.classList.remove('on'));b.classList.add('on');const v=+b.dataset.view;main.innerHTML=art(p,v)+`<span class="id">${p.model} · VIEW 0${v+1} · ${views[v]}</span>`;});
+  const q=document.getElementById('pqty');document.getElementById('qm').onclick=()=>q.value=Math.max(1,+q.value-1);document.getElementById('qp').onclick=()=>q.value=+q.value+1;
+  document.querySelectorAll('#ptabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#ptabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.tabpane').forEach(pn=>pn.hidden=pn.dataset.pane!==b.dataset.tab);});}
+ // checkout
+ const cf=document.getElementById('cform');
+ if(cf){const sub=subtotal(),tax=Math.round(sub*.07);
+  cf.querySelectorAll('.choice input').forEach(i=>i.onchange=()=>{cf.querySelectorAll('.choice').forEach(c=>c.classList.toggle('on',c.querySelector('input').checked));const exp=cf.shipm.value==='exp';const ship=exp?38:(sub>=250?0:12);document.getElementById('sship').textContent=ship?fmt(ship):'Free';document.getElementById('stotal').textContent=fmt(sub+ship+tax);document.getElementById('ptotal').textContent=fmt(sub+ship+tax);});
+  cf.onsubmit=e=>{e.preventDefault();let ok=true;cf.querySelectorAll('[required]').forEach(i=>{const bad=!i.value.trim()||(i.type==='email'&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(i.value));i.classList.toggle('err',bad);if(bad)ok=false;});
+   const age=document.getElementById('age');if(age&&!age.checked){ok=false;document.getElementById('agewrap').style.borderColor='#B94A48';}
+   if(!ok){toast('CHECK THE HIGHLIGHTED FIELDS');cf.querySelector('.err')?.focus();return;}
+   const exp=cf.shipm.value==='exp';const ship=exp?38:(sub>=250?0:12);
+   const o={num:'AS-'+Date.now().toString(36).toUpperCase().slice(-6),date:new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}),email:cf.email.value,city:cf.city.value,state:cf.state.value,ffl:document.getElementById('fflname')?.value||'',items:cartItems().map(({p,q})=>({id:p.id,name:p.name,price:p.price,q})),total:sub+ship+tax};
+   orders=[o,...orders];store.set('orders',orders);cart={};store.set('cart',cart);syncBadges();renderDrawer();location.hash='confirm-'+o.num;};}
+ // account
+ const af=document.getElementById('aform');if(af){af.onsubmit=e=>{e.preventDefault();const n=af.aname.value.trim(),m=af.aemail.value.trim();if(!n||!m){toast('ENTER NAME AND EMAIL');return;}account={name:n,email:m};store.set('account',account);render();};}
+ const so=document.getElementById('signout');if(so)so.onclick=()=>{account=null;store.set('account',null);render();};
+}
+addEventListener('hashchange',()=>{closeDrawer();closeSearch();render();});
+syncBadges();renderDrawer();render();
+</script>
