@@ -49,6 +49,8 @@ p{margin:0}
 .introp .mark.on .sub{opacity:1}
 .introp .enter{margin-top:18px;opacity:0;transition:opacity 1.2s ease 2s}
 .introp .mark.on .enter{opacity:1}
+.introp .sound-hint{position:absolute;left:var(--gutter);bottom:calc(28px + env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--silver);opacity:.6;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:.75}}
 .introp .skip{position:absolute;right:var(--gutter);bottom:calc(28px + env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--silver);opacity:.7}
 .introp .skip:hover{opacity:1}
 body.introview #nav,body.introview footer{display:none}
@@ -1033,13 +1035,47 @@ document.querySelectorAll('#mnav a').forEach(a=>a.onclick=()=>document.getElemen
 <script>
 /* ---------- music ---------- */
 const theme=document.getElementById('theme'),muteBtn=document.getElementById('mute');
-let muted=store.get('muted',false),started=false;
+let userMuted=store.get('muted',false),audible=false;
 theme.volume=0.55;
-function syncMute(){document.getElementById('snd-on').hidden=muted;document.getElementById('snd-off').hidden=!muted;muteBtn.setAttribute('aria-pressed',String(muted));theme.muted=muted;}
-function startTheme(){if(started)return;const pr=theme.play();if(pr&&pr.then)pr.then(()=>{started=true;}).catch(()=>{});else started=true;}
-syncMute();startTheme();
-['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>startTheme(),{passive:true}));
-muteBtn.onclick=e=>{e.stopPropagation();muted=!muted;store.set('muted',muted);syncMute();if(!muted)startTheme();};
+function paintSound(){
+ document.getElementById('snd-on').hidden=userMuted;
+ document.getElementById('snd-off').hidden=!userMuted;
+ muteBtn.setAttribute('aria-pressed',String(userMuted));
+ const hint=document.getElementById('soundHint');
+ if(hint)hint.hidden=audible||userMuted;
+}
+window.paintSound=paintSound;
+/* try to play with sound; resolves false when the browser blocks it */
+function playAudible(fromStart){
+ if(userMuted)return Promise.resolve(false);
+ theme.muted=false;
+ if(fromStart){try{theme.currentTime=0;}catch(e){}}
+ const pr=theme.play();
+ if(!pr||!pr.then){audible=true;return Promise.resolve(true);}
+ return pr.then(()=>{audible=true;return true;}).catch(()=>false);
+}
+/* silent autoplay is permitted, so keep the track running and ready */
+function playSilent(){theme.muted=true;const pr=theme.play();if(pr&&pr.catch)pr.catch(()=>{});}
+const EVTS=['pointerdown','mousedown','touchstart','keydown','click'];
+function onFirstGesture(){
+ if(userMuted||audible)return;
+ playAudible(true).then(ok=>{if(ok){EVTS.forEach(e=>document.removeEventListener(e,onFirstGesture,true));paintSound();}});
+}
+paintSound();
+playAudible(false).then(ok=>{
+ if(ok){paintSound();return;}
+ playSilent();                                   // already rolling, just inaudible
+ EVTS.forEach(e=>document.addEventListener(e,onFirstGesture,true));
+ paintSound();
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!userMuted&&audible&&theme.paused)theme.play().catch(()=>{});});
+muteBtn.onclick=e=>{
+ e.stopPropagation();
+ userMuted=!userMuted;store.set('muted',userMuted);
+ if(userMuted){theme.muted=true;}
+ else{playAudible(!audible).then(()=>paintSound());}
+ paintSound();
+};
 </script>
 <script>
 /* ---------- components ---------- */
@@ -1155,7 +1191,7 @@ const pages={
  wishlist(){const l=wish.map(i=>BYID[i]).filter(Boolean);return `<section class="section wrap">${sectionHead('SAVED','Wishlist')}${l.length?grid(l):`<div class="empty"><p>Nothing saved yet.</p><a class="btn" href="#shop">SHOP EQUIPMENT</a></div>`}</section>`;},
  search(q){q=decodeURIComponent(q||'');const r=searchP(q);return `<section class="section wrap">${sectionHead('SEARCH',`${r.length} result${r.length===1?'':'s'} for “${q}”`)}${grid(r)}</section>`;},
  shipping(){return `<section class="section wrap"><div class="prose">${sectionHead('POLICY','Shipping and returns')}<p>Orders ship within two business days in sealed ASTRAEUS issue packaging. Shipping is free and insured on orders over $250, otherwise $12 flat. Expedited delivery is available at checkout.</p><p>Returns are accepted within 30 days on unworn equipment in original packaging. Watches and hard cases carry a five year warranty; everything else carries two years. Transferred firearms are not returnable; contact Frontier Operations for warranty service.</p></div></section>`;},
- intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div><a class="btn enter" href="#home">ENTER ASTRAEUS</a></div><a class="skip" href="#home">SKIP →</a></section>`;},
+ intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div><a class="btn enter" href="#home">ENTER ASTRAEUS</a></div><span class="sound-hint" id="soundHint" hidden>CLICK ANYWHERE FOR SOUND</span><a class="skip" href="#home">SKIP →</a></section>`;},
  notfound(){return `<section class="section wrap"><div class="empty"><div class="eyebrow">REF 404</div><h2>Nothing at this coordinate</h2><a class="btn" href="#home">RETURN HOME</a></div></section>`;}
 };
 const shopState={cats:[],missions:[],divs:[],types:[],series:[],max:3500,instock:false,sort:'featured'};
@@ -1182,7 +1218,7 @@ function render(){
  bind(h);
 }
 function bind(h){
- if(h==='intro'){clearTimeout(window._it);clearInterval(window._iw);
+ if(h==='intro'){clearTimeout(window._it);clearInterval(window._iw);window.paintSound&&window.paintSound();
   if(reduced){mode='drift';document.getElementById('imark')?.classList.add('on');window._it=setTimeout(()=>{if(location.hash==='#intro')location.hash='#home';},2500);return;}
   mode='warp';warpSpeed=0.2;const t0=performance.now();
   window._iw=setInterval(()=>{const t=(performance.now()-t0)/1000;

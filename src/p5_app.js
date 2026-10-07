@@ -101,11 +101,45 @@ document.querySelectorAll('#mnav a').forEach(a=>a.onclick=()=>document.getElemen
 <script>
 /* ---------- music ---------- */
 const theme=document.getElementById('theme'),muteBtn=document.getElementById('mute');
-let muted=store.get('muted',false),started=false;
+let userMuted=store.get('muted',false),audible=false;
 theme.volume=0.55;
-function syncMute(){document.getElementById('snd-on').hidden=muted;document.getElementById('snd-off').hidden=!muted;muteBtn.setAttribute('aria-pressed',String(muted));theme.muted=muted;}
-function startTheme(){if(started)return;const pr=theme.play();if(pr&&pr.then)pr.then(()=>{started=true;}).catch(()=>{});else started=true;}
-syncMute();startTheme();
-['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>startTheme(),{passive:true}));
-muteBtn.onclick=e=>{e.stopPropagation();muted=!muted;store.set('muted',muted);syncMute();if(!muted)startTheme();};
+function paintSound(){
+ document.getElementById('snd-on').hidden=userMuted;
+ document.getElementById('snd-off').hidden=!userMuted;
+ muteBtn.setAttribute('aria-pressed',String(userMuted));
+ const hint=document.getElementById('soundHint');
+ if(hint)hint.hidden=audible||userMuted;
+}
+window.paintSound=paintSound;
+/* try to play with sound; resolves false when the browser blocks it */
+function playAudible(fromStart){
+ if(userMuted)return Promise.resolve(false);
+ theme.muted=false;
+ if(fromStart){try{theme.currentTime=0;}catch(e){}}
+ const pr=theme.play();
+ if(!pr||!pr.then){audible=true;return Promise.resolve(true);}
+ return pr.then(()=>{audible=true;return true;}).catch(()=>false);
+}
+/* silent autoplay is permitted, so keep the track running and ready */
+function playSilent(){theme.muted=true;const pr=theme.play();if(pr&&pr.catch)pr.catch(()=>{});}
+const EVTS=['pointerdown','mousedown','touchstart','keydown','click'];
+function onFirstGesture(){
+ if(userMuted||audible)return;
+ playAudible(true).then(ok=>{if(ok){EVTS.forEach(e=>document.removeEventListener(e,onFirstGesture,true));paintSound();}});
+}
+paintSound();
+playAudible(false).then(ok=>{
+ if(ok){paintSound();return;}
+ playSilent();                                   // already rolling, just inaudible
+ EVTS.forEach(e=>document.addEventListener(e,onFirstGesture,true));
+ paintSound();
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!userMuted&&audible&&theme.paused)theme.play().catch(()=>{});});
+muteBtn.onclick=e=>{
+ e.stopPropagation();
+ userMuted=!userMuted;store.set('muted',userMuted);
+ if(userMuted){theme.muted=true;}
+ else{playAudible(!audible).then(()=>paintSound());}
+ paintSound();
+};
 </script>

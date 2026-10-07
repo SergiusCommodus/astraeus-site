@@ -49,6 +49,8 @@ p{margin:0}
 .introp .mark.on .sub{opacity:1}
 .introp .enter{margin-top:18px;opacity:0;transition:opacity 1.2s ease 2s}
 .introp .mark.on .enter{opacity:1}
+.introp .sound-hint{position:absolute;left:var(--gutter);bottom:calc(28px + env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--silver);opacity:.6;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:.75}}
 .introp .skip{position:absolute;right:var(--gutter);bottom:calc(28px + env(safe-area-inset-bottom,0px));font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--silver);opacity:.7}
 .introp .skip:hover{opacity:1}
 body.introview #nav,body.introview footer{display:none}
