@@ -18,7 +18,26 @@ const pages={
  home(){
   const hot=['ap-hood-a01','c-wb4','w-orbital-wc','c-afs01','t-lug','g-head','w-mission','t-exppack'].map(id=>BYID[id]).filter(Boolean);
   const sells=[['watches','Watches'],['storage','Cases'],['travel','Travel'],['apparel','Apparel'],['equipment','Field Gear'],['gaming','Gaming'],['strength','Strength'],['everyday','Everyday']].filter(([k])=>CATS[k]);
-  return `<section class="hero wrap"><div class="planet">${planetSVG()}</div><div class="eyebrow">ASTRAEUS EQUIPMENT GROUP · EST. FOR THE LONG HORIZON</div><h1>Built for<br>what comes next</h1><p class="lead">Watches, protective cases, travel, apparel and field equipment. Designed for Earth and beyond.</p><div class="cta"><a class="btn primary" href="#shop">SHOP EQUIPMENT</a><a class="btn" href="#about">ABOUT ASTRAEUS</a></div><div class="sells">${sells.map(([k,l])=>`<a href="#${k}">${l}</a>`).join('')}</div></section>
+  const star=BYID['ap-hood-a01'];
+  return `<section class="hero wrap"><div class="planet">${planetSVG()}</div>
+  <div class="herogrid">
+   <div class="herotext">
+    <div class="eyebrow">ASTRAEUS EQUIPMENT GROUP · EST. FOR THE LONG HORIZON</div>
+    <h1>Built for<br>what comes next</h1>
+    <p class="lead">Watches, protective cases, travel, apparel and field equipment. Designed for Earth and beyond.</p>
+    <div class="cta"><a class="btn primary" href="#shop">SHOP EQUIPMENT</a><a class="btn" href="#about">ABOUT ASTRAEUS</a></div>
+    <div class="sells">${sells.map(([k,l])=>`<a href="#${k}">${l}</a>`).join('')}</div>
+   </div>
+   <a class="herostar" href="#product-${star.id}">
+    <div class="pic">${photo(star.img[0],star.name)}<span class="flag">FLAGSHIP</span></div>
+    <div class="info">
+     <div class="model"><span>MODEL ${star.model}</span><span>${star.series}</span></div>
+     <h3>${star.name}</h3>
+     <p>${star.desc}</p>
+     <div class="row"><span class="price num">${fmt(star.price)}</span><span class="go">VIEW EQUIPMENT →</span></div>
+    </div>
+   </a>
+  </div></section>
  <div class="ticker">${Object.values(DIV).concat(Object.values(DIV)).map(d=>`<span>${d}</span>`).join('')}</div>
  <section class="section wrap">${sectionHead('MOST ISSUED','Equipment people are buying','<a class="btn ghost small" href="#shop">SHOP ALL</a>')}${grid(hot)}</section>
  <section class="section wrap">${sectionHead('CENTERPIECES','Issued this season')}<div class="look">${[['img/hd-hero.webp','A-01 Expedition Hoodie','#product-ap-hood-a01'],['img/afs-case.webp','AFS-01 Field Case','#product-c-afs01'],['img/wb-open.webp','A-01 Watch Case','#product-c-wb4'],['img/sw-hero.webp','Orbital Wearable Computer','#product-w-orbital-wc']].map(([s,t,h],i)=>`<a href="${h}" class="lk lk${i}">${photo(s,t)}<span><b>${t}</b><i>VIEW EQUIPMENT →</i></span></a>`).join('')}</div></section>

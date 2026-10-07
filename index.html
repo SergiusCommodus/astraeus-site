@@ -101,14 +101,30 @@ body.introview #nav,body.introview footer{display:none}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 
 /* hero */
-.hero{min-height:min(56vh,520px);display:grid;align-content:center;padding-block:clamp(44px,6vw,86px);position:relative}
+.hero{display:grid;align-content:center;padding-block:clamp(36px,5vw,72px);position:relative}
+.herogrid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(24px,4vw,60px);align-items:center;position:relative;z-index:1}
+.herotext{min-width:0}
+.herostar{border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;background:var(--panel);display:grid;transition:transform .35s,border-color .35s,box-shadow .35s;min-width:0}
+.herostar:hover{transform:translateY(-4px);border-color:var(--line);box-shadow:0 26px 54px -28px rgba(14,115,179,.55)}
+.herostar .pic{position:relative;aspect-ratio:16/11;overflow:hidden;background:linear-gradient(160deg,#052a57,#011a36)}
+.herostar .pic .ph{width:100%;height:100%;object-fit:cover}
+.herostar:hover .pic .ph{transform:scale(1.03)}
+.herostar .flag{position:absolute;top:12px;left:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;background:var(--blue);color:#fff;padding:5px 10px;border-radius:2px}
+.herostar .info{padding:18px 20px 20px;display:grid;gap:8px}
+.herostar .model{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--silver);display:flex;justify-content:space-between;gap:10px}
+.herostar h3{font-size:clamp(18px,1.9vw,23px)}
+.herostar p{font-size:13px;color:var(--fg-dim)}
+.herostar .row{display:flex;justify-content:space-between;align-items:center;margin-top:4px;border-top:1px solid var(--line-soft);padding-top:12px}
+.herostar .price{font-family:var(--display);font-size:21px}
+.herostar .go{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--silver)}
+@media(max-width:860px){.herogrid{grid-template-columns:1fr}.herostar{max-width:560px}}
 .hero .eyebrow{margin-bottom:22px}
 .hero p.lead{font-size:clamp(15px,1.5vw,19px);color:var(--fg-dim);max-width:46ch;margin:20px 0 30px;font-weight:300}
 .hero .cta{display:flex;gap:14px;flex-wrap:wrap}
 .sells{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
 .sells a{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--line-soft);border-radius:999px;padding:7px 13px;color:var(--fg-dim);transition:border-color .2s,color .2s}
 .sells a:hover{border-color:var(--silver);color:var(--fg)}
-.hero>*{position:relative;z-index:1}.hero .planet{position:absolute;z-index:0;right:calc(-1 * var(--gutter));bottom:-18%;width:min(44vw,520px);aspect-ratio:1;max-width:100%;pointer-events:none;opacity:.9}
+.hero>*{position:relative;z-index:1}.hero .planet{position:absolute;z-index:0;right:calc(-1 * var(--gutter));bottom:-26%;opacity:.4;width:min(40vw,460px);aspect-ratio:1;max-width:100%;pointer-events:none;opacity:.9}
 .ticker{display:flex;gap:40px;overflow:hidden;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--silver);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);padding:12px 0;white-space:nowrap;mask:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
 .ticker span{flex:none}
 @media(max-width:700px){.hero .planet{width:70vw;right:-20vw;bottom:-6%;opacity:.55}}
@@ -1064,13 +1080,19 @@ function playAudible(fromStart){
 }
 /* silent autoplay is permitted, so keep the track running and ready */
 function playSilent(){theme.muted=true;const pr=theme.play();if(pr&&pr.catch)pr.catch(()=>{});}
+/* one entry point so a single click can't start the track twice */
+function ensureAudible(){
+ if(userMuted)return Promise.resolve(false);
+ if(audible&&!theme.paused){theme.muted=false;return Promise.resolve(true);}
+ return playAudible(!audible);          // restart from the top only if it never played audibly
+}
 /* the gate's ENTER click is the user gesture that unlocks sound */
-window.enterWithSound=function(){userMuted=false;store.set('muted',false);playAudible(true).then(()=>paintSound());};
+window.enterWithSound=function(){userMuted=false;store.set('muted',false);ensureAudible().then(()=>paintSound());};
 window.enterSilent=function(){userMuted=true;store.set('muted',true);theme.muted=true;paintSound();};
 const EVTS=['pointerdown','mousedown','touchstart','keydown','click'];
 function onFirstGesture(){
  if(userMuted||audible)return;
- playAudible(true).then(ok=>{if(ok){EVTS.forEach(e=>document.removeEventListener(e,onFirstGesture,true));paintSound();}});
+ ensureAudible().then(ok=>{if(ok){EVTS.forEach(e=>document.removeEventListener(e,onFirstGesture,true));paintSound();}});
 }
 paintSound();
 playAudible(false).then(ok=>{
@@ -1084,7 +1106,7 @@ muteBtn.onclick=e=>{
  e.stopPropagation();
  userMuted=!userMuted;store.set('muted',userMuted);
  if(userMuted){theme.muted=true;}
- else{playAudible(!audible).then(()=>paintSound());}
+ else{ensureAudible().then(()=>paintSound());}
  paintSound();
 };
 </script>
@@ -1108,7 +1130,26 @@ const pages={
  home(){
   const hot=['ap-hood-a01','c-wb4','w-orbital-wc','c-afs01','t-lug','g-head','w-mission','t-exppack'].map(id=>BYID[id]).filter(Boolean);
   const sells=[['watches','Watches'],['storage','Cases'],['travel','Travel'],['apparel','Apparel'],['equipment','Field Gear'],['gaming','Gaming'],['strength','Strength'],['everyday','Everyday']].filter(([k])=>CATS[k]);
-  return `<section class="hero wrap"><div class="planet">${planetSVG()}</div><div class="eyebrow">ASTRAEUS EQUIPMENT GROUP · EST. FOR THE LONG HORIZON</div><h1>Built for<br>what comes next</h1><p class="lead">Watches, protective cases, travel, apparel and field equipment. Designed for Earth and beyond.</p><div class="cta"><a class="btn primary" href="#shop">SHOP EQUIPMENT</a><a class="btn" href="#about">ABOUT ASTRAEUS</a></div><div class="sells">${sells.map(([k,l])=>`<a href="#${k}">${l}</a>`).join('')}</div></section>
+  const star=BYID['ap-hood-a01'];
+  return `<section class="hero wrap"><div class="planet">${planetSVG()}</div>
+  <div class="herogrid">
+   <div class="herotext">
+    <div class="eyebrow">ASTRAEUS EQUIPMENT GROUP · EST. FOR THE LONG HORIZON</div>
+    <h1>Built for<br>what comes next</h1>
+    <p class="lead">Watches, protective cases, travel, apparel and field equipment. Designed for Earth and beyond.</p>
+    <div class="cta"><a class="btn primary" href="#shop">SHOP EQUIPMENT</a><a class="btn" href="#about">ABOUT ASTRAEUS</a></div>
+    <div class="sells">${sells.map(([k,l])=>`<a href="#${k}">${l}</a>`).join('')}</div>
+   </div>
+   <a class="herostar" href="#product-${star.id}">
+    <div class="pic">${photo(star.img[0],star.name)}<span class="flag">FLAGSHIP</span></div>
+    <div class="info">
+     <div class="model"><span>MODEL ${star.model}</span><span>${star.series}</span></div>
+     <h3>${star.name}</h3>
+     <p>${star.desc}</p>
+     <div class="row"><span class="price num">${fmt(star.price)}</span><span class="go">VIEW EQUIPMENT →</span></div>
+    </div>
+   </a>
+  </div></section>
  <div class="ticker">${Object.values(DIV).concat(Object.values(DIV)).map(d=>`<span>${d}</span>`).join('')}</div>
  <section class="section wrap">${sectionHead('MOST ISSUED','Equipment people are buying','<a class="btn ghost small" href="#shop">SHOP ALL</a>')}${grid(hot)}</section>
  <section class="section wrap">${sectionHead('CENTERPIECES','Issued this season')}<div class="look">${[['img/hd-hero.webp','A-01 Expedition Hoodie','#product-ap-hood-a01'],['img/afs-case.webp','AFS-01 Field Case','#product-c-afs01'],['img/wb-open.webp','A-01 Watch Case','#product-c-wb4'],['img/sw-hero.webp','Orbital Wearable Computer','#product-w-orbital-wc']].map(([s,t,h],i)=>`<a href="${h}" class="lk lk${i}">${photo(s,t)}<span><b>${t}</b><i>VIEW EQUIPMENT →</i></span></a>`).join('')}</div></section>

@@ -124,13 +124,19 @@ function playAudible(fromStart){
 }
 /* silent autoplay is permitted, so keep the track running and ready */
 function playSilent(){theme.muted=true;const pr=theme.play();if(pr&&pr.catch)pr.catch(()=>{});}
+/* one entry point so a single click can't start the track twice */
+function ensureAudible(){
+ if(userMuted)return Promise.resolve(false);
+ if(audible&&!theme.paused){theme.muted=false;return Promise.resolve(true);}
+ return playAudible(!audible);          // restart from the top only if it never played audibly
+}
 /* the gate's ENTER click is the user gesture that unlocks sound */
-window.enterWithSound=function(){userMuted=false;store.set('muted',false);playAudible(true).then(()=>paintSound());};
+window.enterWithSound=function(){userMuted=false;store.set('muted',false);ensureAudible().then(()=>paintSound());};
 window.enterSilent=function(){userMuted=true;store.set('muted',true);theme.muted=true;paintSound();};
 const EVTS=['pointerdown','mousedown','touchstart','keydown','click'];
 function onFirstGesture(){
  if(userMuted||audible)return;
- playAudible(true).then(ok=>{if(ok){EVTS.forEach(e=>document.removeEventListener(e,onFirstGesture,true));paintSound();}});
+ ensureAudible().then(ok=>{if(ok){EVTS.forEach(e=>document.removeEventListener(e,onFirstGesture,true));paintSound();}});
 }
 paintSound();
 playAudible(false).then(ok=>{
@@ -144,7 +150,7 @@ muteBtn.onclick=e=>{
  e.stopPropagation();
  userMuted=!userMuted;store.set('muted',userMuted);
  if(userMuted){theme.muted=true;}
- else{playAudible(!audible).then(()=>paintSound());}
+ else{ensureAudible().then(()=>paintSound());}
  paintSound();
 };
 </script>
