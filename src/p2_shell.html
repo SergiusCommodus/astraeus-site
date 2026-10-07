@@ -1,0 +1,68 @@
+<canvas id="stars" aria-hidden="true"></canvas>
+<div id="veil" aria-hidden="true"></div>
+
+
+<nav id="nav">
+  <a class="brand" href="#home"><span class="logo"><img src="__LOGO__" alt=""></span>ASTRAEUS</a>
+  <div class="links" id="links">
+    <a href="#shop" data-r="shop">SHOP</a>
+    <a href="#watches" data-r="watches">WATCHES</a>
+    <a href="#travel" data-r="travel">TRAVEL</a>
+    <a href="#equipment" data-r="equipment">EQUIPMENT</a>
+    <a href="#gaming" data-r="gaming">GAMING</a>
+    <a href="#apparel" data-r="apparel">APPAREL</a>
+    <a href="#missions" data-r="missions">MISSIONS</a>
+    <a href="#about" data-r="about">ABOUT</a>
+  </div>
+  <div class="icons">
+    <button id="sbtn" type="button" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    <a href="#account" aria-label="Account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></a>
+    <a href="#wishlist" aria-label="Wishlist" id="wbtn"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg><span class="badge" id="wcount" hidden>0</span></a>
+    <button id="cbtn" type="button" aria-label="Cart"><svg viewBox="0 0 24 24"><path d="M4 6h16l-1.5 9h-13z"/><path d="M8 6V4h8v2"/><circle cx="9" cy="19" r="1.3"/><circle cx="16" cy="19" r="1.3"/></svg><span class="badge" id="ccount" hidden>0</span></button>
+    <button id="mute" type="button" aria-label="Sound" aria-pressed="false"><svg viewBox="0 0 24 24" id="snd-on"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg><svg viewBox="0 0 24 24" id="snd-off" hidden><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l4 6M21 9l-4 6"/></svg></button>
+    <button id="burger" type="button" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</nav>
+<div id="mnav">
+  <button class="close" type="button" id="mclose">CLOSE ×</button>
+  <a href="#shop">SHOP</a><a href="#watches">WATCHES</a><a href="#travel">TRAVEL</a><a href="#gaming">GAMING</a><a href="#strength">STRENGTH</a><a href="#equipment">EQUIPMENT</a><a href="#apparel">APPAREL</a><a href="#missions">MISSIONS</a><a href="#about">ABOUT</a><a href="#account">ACCOUNT</a>
+</div>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <div class="brand"><span class="logo"><img src="__LOGO__" alt=""></span>ASTRAEUS</div>
+        <p class="dim" style="font-size:13px;max-width:36ch">Equipment for those who go farther. Designed for life on Earth and whatever comes next.</p>
+        <p class="mono" style="font-size:10px;letter-spacing:.16em;color:var(--silver);margin-top:14px">ASTRAEUS EQUIPMENT GROUP · REF A-2126</p>
+      </div>
+      <div><h4>Shop</h4><ul><li><a href="#watches">Watches</a></li><li><a href="#storage">Watch Storage</a></li><li><a href="#equipment">Field Equipment</a></li><li><a href="#everyday">Everyday Equipment</a></li><li><a href="#travel">Travel</a></li><li><a href="#gaming">Gaming &amp; Audio</a></li><li><a href="#strength">Strength</a></li><li><a href="#apparel">Apparel</a></li></ul></div>
+      <div><h4>Programs</h4><ul><li><a href="#mission-lunar">Lunar Program</a></li><li><a href="#mission-mars">Mars Expedition</a></li><li><a href="#mission-deepfield">Deep Field</a></li><li><a href="#mission-orbital">Orbital Operations</a></li><li><a href="#mission-frontier">Frontier Series</a></li><li><a href="#mission-earthside">Earthside</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#about">About ASTRAEUS</a></li><li><a href="#about">Divisions</a></li><li><a href="#account">Account</a></li><li><a href="#wishlist">Wishlist</a></li><li><a href="#shipping">Shipping &amp; Returns</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 ASTRAEUS. A concept brand of Carlisle Capital LLC. ASTRAEUS is not a space agency.</span><span>ORIGINAL DESIGN SYSTEM · NAVY 01274E · BLUE 0E73B3 · SILVER ADAEB1</span></div>
+  </div>
+</footer>
+
+<div id="search" role="dialog" aria-label="Search">
+  <div class="box">
+    <input id="sinput" type="search" placeholder="Search equipment, watches, missions…" autocomplete="off">
+    <div class="hint"><span id="scount">TYPE TO SEARCH</span><button id="sclose" type="button">ESC · CLOSE</button></div>
+    <div id="sres"></div>
+  </div>
+</div>
+
+<div id="dim"></div>
+<aside id="drawer" aria-label="Cart">
+  <div class="hd"><span>CART</span><button id="dclose" type="button">CLOSE ×</button></div>
+  <div class="items" id="ditems"></div>
+  <div class="ft">
+    <div class="r"><span>Subtotal</span><span id="dsub">$0</span></div>
+    <a class="btn primary" href="#checkout" id="dcheck">CHECKOUT</a>
+    <a class="btn" href="#cart">VIEW CART</a>
+  </div>
+</aside>
+<div id="toast"></div>
+<audio id="theme" src="audio/astraeus-theme.mp3" loop preload="auto"></audio>
