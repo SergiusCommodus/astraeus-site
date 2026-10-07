@@ -626,6 +626,31 @@ T({id:"d-mug",cat:"everyday",type:"Mug",name:"A-01 Expedition Mug",model:"EM-01"
 T({id:"d-laptop",cat:"everyday",type:"Shell",name:"Laptop Shell",model:"LS-01",price:89,mission:"orbital",div:"MAT",kind:"wallet",series:ES,img:I("eqp-laptop"),desc:"Hard shell laptop cover with navy corner bumpers and the insignia.",materials:"Polycarbonate, TPU bumpers",dims:"Fits 14 and 16 inch",weight:"340 g",specs:{Fit:"14 or 16 inch",Bumpers:"Navy TPU"}});
 T({id:"d-tablet",cat:"everyday",type:"Folio",name:"Tablet Folio",model:"TF-01",price:79,mission:"orbital",div:"MAT",kind:"wallet",series:ES,img:I("eqp-tablet"),desc:"Folio case with a silver shell and a navy stand cover.",materials:"Aluminum look shell, microfiber",dims:"11 and 13 inch",weight:"280 g",specs:{Fit:"11 or 13 inch",Stand:"Two angle"}});
 T({id:"d-pouch",cat:"everyday",type:"Pouch",name:"Field Pouch",model:"TP-01",price:48,mission:"orbital",div:"FLD",kind:"wallet",series:FS,img:I("eqp-pouch"),desc:"Zip organizer pouch for cables, pens and chargers.",materials:"Navy nylon, elastic organizer",dims:"240 × 160 × 50 mm",weight:"160 g",specs:{Organizer:"Elastic loops, mesh pocket"}});
+
+// ---- round 2 ----
+T({id:"c-afs01",cat:"storage",type:"Gear case",name:"AFS-01 Field Case",model:"AFS-01",price:420,mission:"orbital",div:"FLD",kind:"case",size:0,series:FS,img:I("afs-case"),
+ desc:"The Field Systems flagship case. Warm white shell, brushed rails, navy armored corners and a single center draw latch, with serial plate on the lid.",materials:"Glass filled polymer shell, brushed aluminum rails, navy TPU corner armor, stainless hardware",dims:"420 × 300 × 160 mm",weight:"3.4 kg",
+ specs:{Capacity:"Watches, optics or tools with modular foam",Closure:"Center draw latch, padlock eye",WaterResistance:"IP67, pressure valve",Impact:"2 m drop rated",Serial:"Lid plate, SER. 2407 series"}});
+T({id:"w-mission",cat:"watches",type:"Hybrid",fam:"ASTRAEUS ORBITAL",name:"Orbital A-01 Mission Watch",model:"A-01M",price:1950,mission:"orbital",div:"WCH",kind:"watch",dial:"black",strap:"rubber",series:ORBS,img:I("afs-watch"),
+ desc:"Analog and digital mission instrument. Analog hours and minutes, a 24 hour UTC subdial, and a digital window for mission time, date and sol count.",materials:"Grade 5 titanium case, navy ceramic bezel, sapphire crystal, rubber and textile strap",dims:"46 mm case, 15.8 mm thick",weight:"112 g",
+ specs:{Movement:"Hybrid quartz with digital module",Functions:"Hours, minutes, seconds, UTC 24 hour, mission elapsed time, sol counter, date",Bezel:"Octagonal navy ceramic, 12 screws",WaterResistance:"200 m",Battery:"2 year cell, low power mode"}});
+T({id:"e-afslaptop",cat:"equipment",type:"Compute",name:"AFS-01 Expedition Compute",model:"AFS-01C",price:2400,mission:"deepfield",div:"FLD",kind:"tool",series:FS,img:I("afs-laptop"),
+ desc:"Rugged field laptop with armored corners, sealed ports and a sunlight readable display. Ships with the ASTRAEUS mission interface.",materials:"Magnesium alloy chassis, navy corner armor, sealed port doors",dims:"340 × 270 × 42 mm",weight:"3.2 kg",
+ specs:{Display:"14 inch, 1,400 nit, glove touch",Rating:"IP65, MIL-STD-810H",Battery:"Dual hot swap, 18 hours",Ports:"Sealed USB C, USB A, HDMI, RJ45"}});
+T({id:"ap-tee-a01",cat:"apparel",type:"Shirt",name:"A-01 Expedition Tee",model:"AT-A01",price:58,mission:"lunar",div:"EXP",kind:"tee",series:EXP,img:I("tee-hero tee-collar tee-patch tee-sleeve tee-hem tee-colors tee-mat tee-scene"),
+ desc:"Heavyweight expedition tee with a woven sleeve patch, A-01 sleeve print, coordinate collar label and woven hem tag.",materials:"Premium cotton and tech fabric blend, reinforced seams",dims:"Sizes XS to XXL",weight:"260 g",
+ specs:{Colors:"Lunar White, Orbital Navy, Graphite",Patch:"Woven, sleeve",Label:"Coordinates printed collar label",Hem:"Woven tag"}});
+T({id:"ap-belt",cat:"apparel",type:"Accessory",name:"Expedition Belt",model:"EB-01",price:78,mission:"frontier",div:"EXP",kind:"tee",series:EXP,img:I("belt-hero belt-buckle belt-lock belt-web belt-tip belt-keeper belt-rear belt-worn belt-colors belt-extras"),
+ desc:"Low profile field belt with a CNC machined aluminum buckle, mil spec nylon webbing and an anodized keeper.",materials:"CNC machined 6061 aluminum buckle, mil spec nylon webbing, polymer tip",dims:"Waist 28 to 44 · 1.25 or 1.75 inch",weight:"140 g",
+ specs:{Buckle:"6061 aluminum, locking, low profile",Colors:"Orbital Navy, Terra Coyote, Shadow Black",Widths:"1.25 inch standard, 1.75 inch tactical",Extras:"D ring, utility keeper, gear pouch"}});
+// watch case line gets photography and board dimensions
+const wc=(id,s,d)=>{const p=P.find(x=>x.id===id);if(p){p.img=I(s);if(d)p.dims=d;}};
+wc("c-w2","wc-closed wc-open wc-2 wc-latch wc-seal wc-cush wc-int","180 × 110 × 80 mm");
+wc("c-w4","wc-open wc-closed wc-4 wc-latch wc-vent wc-cush wc-int wc-lineup","300 × 120 × 90 mm");
+wc("c-w4p","wc-serial wc-closed wc-open wc-4p wc-mat wc-seal wc-cush wc-lineup","300 × 120 × 90 mm");
+wc("c-g4","wc-mod wc-int wc-tech wc-latch wc-lineup","300 × 120 × 120 mm");
+CATS.storage.hero="img/afs-case.webp";CATS.watches.hero="img/afs-watch.webp";
+
 for(const p of P)if(p.img)p.img=p.img;
 P.forEach(p=>BYID[p.id]=p);
 Object.keys(BYID).forEach(k=>{if(!P.includes(BYID[k]))delete BYID[k];});
