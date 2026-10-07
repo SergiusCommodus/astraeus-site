@@ -112,7 +112,7 @@ const pages={
  wishlist(){const l=wish.map(i=>BYID[i]).filter(Boolean);return `<section class="section wrap">${sectionHead('SAVED','Wishlist')}${l.length?grid(l):`<div class="empty"><p>Nothing saved yet.</p><a class="btn" href="#shop">SHOP EQUIPMENT</a></div>`}</section>`;},
  search(q){q=decodeURIComponent(q||'');const r=searchP(q);return `<section class="section wrap">${sectionHead('SEARCH',`${r.length} result${r.length===1?'':'s'} for “${q}”`)}${grid(r)}</section>`;},
  shipping(){return `<section class="section wrap"><div class="prose">${sectionHead('POLICY','Shipping and returns')}<p>Orders ship within two business days in sealed ASTRAEUS issue packaging. Shipping is free and insured on orders over $250, otherwise $12 flat. Expedited delivery is available at checkout.</p><p>Returns are accepted within 30 days on unworn equipment in original packaging. Watches and hard cases carry a five year warranty; everything else carries two years. Transferred firearms are not returnable; contact Frontier Operations for warranty service.</p></div></section>`;},
- gate(){return `<section class="gatep"><div class="gatemark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="rule"></div><div class="tag">EQUIPMENT FOR EARTH AND BEYOND</div><button type="button" class="btn primary enterbtn" id="enterBtn">ENTER</button><button type="button" class="quiet" id="enterQuiet">ENTER WITHOUT SOUND</button></div></section>`;},
+ gate(){return `<section class="gatep"><div class="gatemark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><button type="button" class="btn primary enterbtn" id="enterBtn">ENTER</button></div></section>`;},
  intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div></div><a class="skip" href="#home">SKIP →</a></section>`;},
  notfound(){return `<section class="section wrap"><div class="empty"><div class="eyebrow">REF 404</div><h2>Nothing at this coordinate</h2><a class="btn" href="#home">RETURN HOME</a></div></section>`;}
 };
@@ -142,9 +142,7 @@ function render(){
 }
 function bind(h){
  if(h==='gate'){
-  const go=withSound=>{if(withSound&&window.enterWithSound)window.enterWithSound();else if(window.enterSilent)window.enterSilent();location.hash='#intro';};
-  document.getElementById('enterBtn').onclick=()=>go(true);
-  document.getElementById('enterQuiet').onclick=()=>go(false);
+  document.getElementById('enterBtn').onclick=()=>{if(window.enterWithSound)window.enterWithSound();location.hash='#intro';};
   return;}
  if(h==='intro'){clearTimeout(window._it);clearInterval(window._iw);window.paintSound&&window.paintSound();
   if(reduced){mode='drift';document.getElementById('imark')?.classList.add('on');window._it=setTimeout(()=>{if(location.hash==='#intro')location.hash='#home';},2500);return;}
