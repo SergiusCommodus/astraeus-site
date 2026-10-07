@@ -107,14 +107,14 @@ body.introview #nav,body.introview footer{display:none}
 /* category tiles */
 .cats{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
 .cat{grid-column:span 2;min-height:300px;position:relative;border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;background:var(--panel);display:flex;flex-direction:column;justify-content:end;padding:22px;transition:transform .3s,border-color .3s}
-.cat:nth-child(1),.cat:nth-child(2){grid-column:span 3;min-height:380px}
+.cat{min-height:320px}
 .cat:hover{transform:translateY(-4px);border-color:var(--line)}
 .cat .art{position:absolute;inset:0;opacity:.9}
 .cat .art svg{width:100%;height:100%}
 .cat .t{position:relative;display:grid;gap:8px}
 .cat h3{font-size:clamp(20px,2.2vw,28px);text-transform:uppercase;letter-spacing:.08em}
 .cat p{color:var(--fg-dim);font-size:13px;max-width:36ch}
-@media(max-width:900px){.cats{grid-template-columns:1fr 1fr}.cat,.cat:nth-child(1),.cat:nth-child(2){grid-column:span 1;min-height:260px}}
+@media(max-width:900px){.cats{grid-template-columns:1fr 1fr}.cat{grid-column:span 1;min-height:260px}}
 @media(max-width:560px){.cats{grid-template-columns:1fr}}
 
 /* product grid + card */
@@ -304,6 +304,23 @@ footer .brand .logo{width:40px;height:40px}
 .strip .v{font-family:var(--display);font-size:18px}
 .hscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
 .hscroll .card{flex:0 0 250px;scroll-snap-align:start}
+.ph{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.card:hover .ph{transform:scale(1.04)}
+.cat .art .ph{opacity:.8}
+.cat .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,19,49,.1) 30%,rgba(1,19,49,.92))}
+.cat:hover .art .ph{transform:scale(1.04)}
+.gallery .main .ph{object-fit:contain;background:#020f24}
+.thumbs{grid-template-columns:repeat(auto-fill,minmax(72px,1fr))}
+.look{display:grid;grid-template-columns:2fr 1fr;grid-auto-rows:260px;gap:12px}
+.lk{position:relative;overflow:hidden;border:1px solid var(--line-soft);border-radius:var(--radius)}
+.lk0{grid-row:span 2}
+.lk3{grid-column:1 / -1}
+.lk::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(1,19,49,.88))}
+.lk span{position:absolute;left:18px;bottom:16px;z-index:1;display:grid;gap:4px}
+.lk b{font-family:var(--display);font-weight:500;font-size:clamp(18px,2.2vw,26px);letter-spacing:.08em;text-transform:uppercase}
+.lk i{font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--silver)}
+.lk:hover .ph{transform:scale(1.03)}
+@media(max-width:700px){.look{grid-template-columns:1fr;grid-auto-rows:220px}.lk0{grid-row:auto}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 <canvas id="stars" aria-hidden="true"></canvas>
@@ -315,7 +332,9 @@ footer .brand .logo{width:40px;height:40px}
   <div class="links" id="links">
     <a href="#shop" data-r="shop">SHOP</a>
     <a href="#watches" data-r="watches">WATCHES</a>
+    <a href="#travel" data-r="travel">TRAVEL</a>
     <a href="#equipment" data-r="equipment">EQUIPMENT</a>
+    <a href="#gaming" data-r="gaming">GAMING</a>
     <a href="#apparel" data-r="apparel">APPAREL</a>
     <a href="#missions" data-r="missions">MISSIONS</a>
     <a href="#about" data-r="about">ABOUT</a>
@@ -330,7 +349,7 @@ footer .brand .logo{width:40px;height:40px}
 </nav>
 <div id="mnav">
   <button class="close" type="button" id="mclose">CLOSE ×</button>
-  <a href="#shop">SHOP</a><a href="#watches">WATCHES</a><a href="#equipment">EQUIPMENT</a><a href="#apparel">APPAREL</a><a href="#firearms">FIREARMS</a><a href="#missions">MISSIONS</a><a href="#about">ABOUT</a><a href="#account">ACCOUNT</a>
+  <a href="#shop">SHOP</a><a href="#watches">WATCHES</a><a href="#travel">TRAVEL</a><a href="#gaming">GAMING</a><a href="#strength">STRENGTH</a><a href="#equipment">EQUIPMENT</a><a href="#apparel">APPAREL</a><a href="#firearms">FIREARMS</a><a href="#missions">MISSIONS</a><a href="#about">ABOUT</a><a href="#account">ACCOUNT</a>
 </div>
 
 <main id="app"></main>
@@ -343,7 +362,7 @@ footer .brand .logo{width:40px;height:40px}
         <p class="dim" style="font-size:13px;max-width:36ch">Equipment for those who go farther. Designed for life on Earth and whatever comes next.</p>
         <p class="mono" style="font-size:10px;letter-spacing:.16em;color:var(--silver);margin-top:14px">ASTRAEUS EQUIPMENT GROUP · REF A-2126</p>
       </div>
-      <div><h4>Shop</h4><ul><li><a href="#watches">Watches</a></li><li><a href="#storage">Watch Storage</a></li><li><a href="#equipment">Field Equipment</a></li><li><a href="#everyday">Everyday Equipment</a></li><li><a href="#apparel">Apparel</a></li><li><a href="#firearms">Firearms</a></li></ul></div>
+      <div><h4>Shop</h4><ul><li><a href="#watches">Watches</a></li><li><a href="#storage">Watch Storage</a></li><li><a href="#equipment">Field Equipment</a></li><li><a href="#everyday">Everyday Equipment</a></li><li><a href="#travel">Travel</a></li><li><a href="#gaming">Gaming &amp; Audio</a></li><li><a href="#strength">Strength</a></li><li><a href="#apparel">Apparel</a></li><li><a href="#firearms">Firearms</a></li></ul></div>
       <div><h4>Programs</h4><ul><li><a href="#mission-lunar">Lunar Program</a></li><li><a href="#mission-mars">Mars Expedition</a></li><li><a href="#mission-deepfield">Deep Field</a></li><li><a href="#mission-orbital">Orbital Operations</a></li><li><a href="#mission-frontier">Frontier Series</a></li><li><a href="#mission-earthside">Earthside</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="#about">About ASTRAEUS</a></li><li><a href="#about">Divisions</a></li><li><a href="#account">Account</a></li><li><a href="#wishlist">Wishlist</a></li><li><a href="#shipping">Shipping &amp; Returns</a></li><li><a href="#firearms">Firearms Compliance</a></li></ul></div>
     </div>
@@ -509,6 +528,108 @@ const P=[
 ];
 const BYID=Object.fromEntries(P.map(p=>[p.id,p]));
 const fmt=n=>"$"+n.toLocaleString("en-US");
+</script>
+<script>
+{
+/* ---------- photographed lines (from concept boards) ---------- */
+DIV.STR="ASTRAEUS STRENGTH SYSTEMS";
+Object.assign(CATS,{
+ travel:{name:"Travel",blurb:"Hardside luggage, packs, duffels and cases. One travel system, Earth and beyond.",hero:"img/trv-luggage.webp"},
+ gaming:{name:"Gaming & Audio",blurb:"Headsets, keyboards, mice, controllers and desk equipment for long sessions.",hero:"img/gam-desk.webp"},
+ strength:{name:"Strength",blurb:"Racks, plates, bars and benches built with industrial materials for home or field.",hero:"img/str-hero.webp"}
+});
+CATS.watches.hero="img/eqp-watch.webp";CATS.storage.hero="img/eqp-ec01.webp";CATS.equipment.hero="img/pak-hero.webp";
+CATS.everyday.hero="img/mug-hero.webp";CATS.apparel.hero="img/app-hero.webp";
+const I=s=>s.split(' ').map(x=>'img/'+x+'.webp');
+// drop SVG apparel that the photographed line replaces
+["a-tee","a-cap","a-fleece","a-jacket"].forEach(id=>{const i=P.findIndex(p=>p.id===id);if(i>=0)P.splice(i,1);});
+// photos for existing items
+const addImg=(id,s)=>{const p=P.find(x=>x.id===id);if(p)p.img=I(s);};
+addImg("e-bottle","eqp-bottle");addImg("d-pen","eqp-pens");addImg("d-note","eqp-notebook eqp-journal");
+const T=(o)=>P.push(Object.assign({av:"in",specs:{}},o));
+const EXP="EXPEDITION SERIES",ORBS="ORBITAL SERIES",ES="EARTHSIDE CERTIFIED",FS="FIELD SYSTEMS",MR="MISSION READY";
+// WATCH + CASE
+T({id:"w-a01",cat:"watches",type:"Three hand",fam:"ASTRAEUS ORBITAL",name:"Orbital A-01 Automatic",model:"A-01",price:1650,mission:"orbital",div:"WCH",kind:"watch",dial:"navy",strap:"nato",series:ORBS,img:I("eqp-watch"),
+ desc:"The A-01. Sunburst navy dial, applied indices and the insignia at twelve, on a navy canvas strap with a steel keeper.",materials:"316L stainless case, sapphire crystal, canvas strap with leather lining",dims:"40 mm case, 11.6 mm thick",weight:"84 g",
+ specs:{Movement:"ASTRAEUS cal. A-200 automatic, 42 hour reserve",WaterResistance:"100 m",Crystal:"Sapphire, flat",Strap:"20 mm canvas, quick release"}});
+T({id:"c-ec01",cat:"storage",type:"Gear case",name:"EC-01 Equipment Case",model:"EC-01",price:360,mission:"frontier",div:"FLD",kind:"case",size:0,series:FS,img:I("eqp-ec01"),
+ desc:"Hard shell equipment case with twin draw latches, navy corner armor and a recessed carry handle.",materials:"Polymer shell, aluminum frame, navy corner guards",dims:"460 × 330 × 150 mm",weight:"3.1 kg",
+ specs:{Capacity:"Tools, cameras or 6 watches with insert",Closure:"Two draw latches, padlock eyes",WaterResistance:"IP67",Impact:"2 m drop rated"}});
+// TRAVEL
+const trv=[
+ ["t-lug","Hardside Travel System","TS-A01",695,"Luggage","luggage lug-int lug-latch lug-wheel","Three piece hardside set: cabin, medium and large. Aluminum frame, TSA latches, insignia wheel caps.","Polycarbonate shell, aluminum frame and corners, TSA combination latches","Cabin 55 × 38 × 22 cm · Medium 68 × 45 × 27 cm · Large 78 × 52 × 31 cm","3.4 / 4.6 / 5.8 kg",{Wheels:"Eight, 360 degree, replaceable",Interior:"Split compression, zip mesh panels",Handle:"Aluminum telescoping, three stops",Warranty:"Ten years"},"orbital"],
+ ["t-exppack","Expedition Backpack","EB-45",295,"Backpack","exp-pack","35 to 45 liter expedition pack with MOLLE front panel and load lifters.","Ripstop nylon, Hypalon panel, aluminum hardware","58 × 34 × 26 cm","1.7 kg",{Volume:"35 L, expands to 45 L",Harness:"Load lifters, hip belt",Sleeve:"16 inch laptop"},"frontier"],
+ ["t-day","Daypack 20","DP-20",165,"Backpack","daypack","Compact 20 liter daypack with a clamshell main compartment.","Navy nylon, silver trim","46 × 29 × 16 cm","0.9 kg",{Volume:"20 L",Sleeve:"14 inch laptop",Access:"Clamshell"},"earthside"],
+ ["t-comm","Commuter Roll Top","CB-25",185,"Backpack","commuter","25 liter roll top commuter pack in warm white with navy panels.","Coated nylon, aluminum buckle","50 × 30 × 15 cm","1.0 kg",{Volume:"25 L",Closure:"Roll top, metal buckle",Weather:"Water resistant"},"earthside"],
+ ["t-duffel","Expedition Duffel","ED-70",245,"Bag","duffel","50 or 70 liter duffel with shoulder strap and end pockets.","Laminated nylon, webbing handles","70 × 35 × 35 cm","1.4 kg",{Volume:"50 L or 70 L",Carry:"Handles, padded shoulder strap",Pockets:"Two end, one internal"},"mars"],
+ ["t-sling","Sling Bag 6","SB-06",95,"Bag","sling","Six liter sling for passport, phone and daily carry.","Nylon, silver hardware","30 × 18 × 10 cm","0.35 kg",{Volume:"6 L",Strap:"Adjustable, quick release"},"earthside"],
+ ["t-garment","Garment Travel Case","GT-01",425,"Luggage","garment","Hardside garment case with a suit side and a tech organizer side.","Polycarbonate shell, navy lining","56 × 40 × 20 cm","3.9 kg",{Interior:"Suit hanger, tech panel",Latches:"TSA"},"orbital"],
+ ["t-week","Weekender 35","WK-35",210,"Bag","weekender","35 liter weekender with leather grab handles and shoe compartment.","Nylon canvas, leather trim","55 × 30 × 28 cm","1.3 kg",{Volume:"35 L",Compartments:"Main, shoe, two exterior"},"lunar"],
+ ["t-tech","Tech Case","TC-01",260,"Case","techcase","Aluminum framed laptop and accessory case in orbital navy.","Navy polymer, aluminum frame","42 × 32 × 12 cm","2.2 kg",{Fits:"16 inch laptop plus accessories",Latches:"Two, combination"},"orbital"],
+ ["t-tote","Travel Tote 20","TT-20",120,"Bag","tote","Waxed canvas tote with leather straps and an insignia panel.","Waxed canvas, leather","40 × 38 × 16 cm","0.8 kg",{Volume:"20 L",Closure:"Zip top"},"earthside"]
+];
+trv.forEach(([id,name,model,price,type,img,desc,mat,dims,wt,specs,mission])=>T({id,cat:"travel",type,name,model,price,mission,div:"EXP",kind:"bag",series:EXP,img:I(img.split(' ').map(x=>'trv-'+x).join(' ')),desc,materials:mat,dims,weight:wt,specs}));
+// FIELD PACK (equipment)
+T({id:"e-a01pack",cat:"equipment",type:"Bag",name:"A-01 Field Pack",model:"FP-A01",price:325,mission:"lunar",div:"EXP",kind:"pack",series:EXP,img:I("pak-hero pak-back pak-int pak-colors pak-hw pak-patch pak-l1 pak-l4"),
+ desc:"Modular field pack with machined aluminum buckles, YKK AquaGuard zips and a clamshell interior with removable pouches.",materials:"Ripstop nylon, anodized aluminum hardware, YKK AquaGuard zips",dims:"520 × 320 × 220 mm",weight:"1.9 kg",
+ specs:{Volume:"32 L",Sleeve:"Up to 16 inch",Modular:"Attach pouches, tools, accessories",Colorways:"Lunar White, Orbital Navy, Graphite"}});
+// GAMING & AUDIO
+const gam=[
+ ["g-head","A-01 Field Headset","HA-01",349,"Headset","aud-hero aud-colors aud-band aud-cup aud-case aud-life aud-dims","Over ear wireless headset with CNC aluminum frame, replaceable panels and a rugged carry case.","CNC aluminum frame, memory foam cushions, anodized cups","195 × 170 × 90 mm","310 g",{Connectivity:"Bluetooth 5.4, USB C",Noise:"ANC and transparency",Controls:"Tactile buttons, volume wheel",Case:"Hard shell, included"},"lunar"],
+ ["g-kbd","A-01 Mechanical Keyboard","KB-01",229,"Keyboard","key-hero key-colors key-kbd key-cap key-dims gam-keyboard","75 percent mechanical keyboard in a CNC aluminum frame with dye sub keycaps.","CNC aluminum case, PBT dye sub keycaps","365 × 135 × 42 mm","1.6 kg",{Layout:"75 percent, hot swap",Switches:"Linear, factory lubed",Connectivity:"USB C, 2.4 GHz, Bluetooth",Colorways:"Lunar White, Orbital Navy, Graphite"},"orbital"],
+ ["g-mouse","Field Mouse","GM-01",99,"Mouse","gam-mouse key-mice","Lightweight wireless mouse with a navy and silver shell.","Polymer shell, PTFE feet","126 × 68 × 42 mm","64 g",{Sensor:"26,000 DPI",Battery:"90 hours",Connectivity:"2.4 GHz, USB C"},"orbital"],
+ ["g-mat","Orbital Desk Mat","DM-01",45,"Desk mat","key-pads key-pad gam-deskmat","Extended desk mat in three designs: Lunar Survey, Orbital Chart, Topographic.","Micro weave cloth, stitched edges, rubber base","900 × 400 × 4 mm","620 g",{Surface:"Water resistant",Designs:"Lunar Survey, Orbital Chart, Topographic"},"lunar"],
+ ["g-ctrl","Field Controller","GC-01",89,"Controller","gam-controller","Wireless controller with textured grips and remappable rear paddles.","Polymer, textured grips","155 × 106 × 62 mm","265 g",{Connectivity:"Bluetooth, USB C",Paddles:"Four, remappable"},"orbital"],
+ ["g-chair","Station Chair","CH-01",549,"Chair","gam-chair","All day chair with navy and silver upholstery, 4D arms and lumbar support.","Steel frame, PU leather, cold cure foam","Seat height 46 to 56 cm","24 kg",{Recline:"90 to 165 degrees",Arms:"4D",Support:"Lumbar and head pillows"},"orbital"],
+ ["g-dock","Charge Dock","CD-01",79,"Accessory","gam-access","Charging stand, puck and hub set in navy aluminum.","Aluminum, silicone","Hub 110 × 45 mm","420 g",{Output:"65 W total",Includes:"Stand, puck, hub"},"earthside"],
+ ["g-skin","Console Skin","SK-01",39,"Accessory","gam-skin","Precision cut skin with orbital chart print for consoles and PCs.","3M vinyl, matte laminate","Model specific","40 g",{Finish:"Matte",Fit:"Model specific"},"deepfield"],
+ ["g-model","AV-2126 Display Model","CM-01",149,"Collectible","gam-model","1:200 display model of the ASTRAEUS AV-2126 transit vehicle on a navy stand.","Die cast metal, painted","280 mm long","540 g",{Scale:"1:200",Stand:"Weighted, engraved plate"},"orbital"],
+ ["g-mon","Ultrawide Display","UW-34",899,"Monitor","gam-monitor","34 inch curved ultrawide display in a navy and silver housing.","Aluminum stand, polymer housing","34 inch, 1800R","7.8 kg",{Resolution:"3440 × 1440",Refresh:"165 Hz",Ports:"USB C 90 W, DP, HDMI"},"deepfield"]
+];
+gam.forEach(([id,name,model,price,type,img,desc,mat,dims,wt,specs,mission])=>T({id,cat:"gaming",type,name,model,price,mission,div:"LAB",kind:"tool",series:type==="Headset"||type==="Keyboard"?MR:ES,img:I(img),desc,materials:mat,dims,weight:wt,specs}));
+// STRENGTH
+const str=[
+ ["s-rack","Strength Series Power Rack","PR-01",1495,"Rack","str-hero str-rack str-jcup str-bstore","Full power rack with Westside hole spacing, lined J-cups and integrated bar storage.","11 gauge steel, powder coat, lined J-cups","2,290 × 1,250 × 1,220 mm","145 kg",{Uprights:"3 × 3 inch, 11 gauge",Spacing:"Westside, numbered",Capacity:"1,000 lb",Colorways:"Orbital, Terra, Shadow"}],
+ ["s-plates","Bumper Plate Set","PS-01",689,"Plates","str-plates str-plate str-pstore","Engraved bumper plates in navy, sand and black.","Virgin rubber, stainless hub","450 mm diameter","260 lb set",{Set:"2 × 45, 2 × 35, 2 × 25, 2 × 10 lb",Tolerance:"±1 percent",Hub:"Stainless steel"}],
+ ["s-db","Hex Dumbbell Set","DS-01",899,"Dumbbells","str-dbs str-db","Rubber coated hex dumbbells with knurled chrome handles, 5 to 50 lb.","Cast iron, rubber coat, chrome handle","5 to 50 lb pairs","550 lb set",{Pairs:"10",Handle:"Knurled chrome"}],
+ ["s-kb","Kettlebell","KT-01",119,"Kettlebell","str-kb","Powder coated cast iron kettlebell with the insignia cast in.","Cast iron, powder coat","12 to 32 kg","12 to 32 kg",{Sizes:"12, 16, 20, 24, 28, 32 kg",Finish:"Powder coat"}],
+ ["s-bar","Strength Barbell","BB-20",395,"Barbell","str-bars str-bar","20 kg barbell with brushed steel shaft and precision knurling.","Brushed steel, bronze bushings","2,200 mm, 28.5 mm shaft","20 kg",{Tensile:"205,000 PSI",Knurl:"Medium, center knurl",Sleeves:"Bronze bushings"}],
+ ["s-bench","Adjustable Bench","AB-01",425,"Bench","str-bench str-benchd","Multi angle bench with a heavy duty frame and navy pad.","Steel frame, navy pad","1,350 × 640 × 450 mm","34 kg",{Angles:"Flat to 85 degrees",Capacity:"1,000 lb"}]
+];
+str.forEach(([id,name,model,price,type,img,desc,mat,dims,wt,specs])=>T({id,cat:"strength",type,name,model,price,mission:"earthside",div:"STR",kind:"tool",series:FS,img:I(img),desc,materials:mat,dims,weight:wt,specs}));
+// APPAREL
+const app=[
+ ["ap-tee-orb","Orbital Tee","AT-10",44,"Shirt","tee-orb","Navy tee with a small chest mark.","Navy","orbital"],
+ ["ap-tee-hor","Horizon Tee","AT-11",44,"Shirt","tee-hor","White tee with a vehicle blueprint print.","White","orbital"],
+ ["ap-tee-ter","Terra Tee","AT-12",44,"Shirt","tee-ter","Olive tee with a mountain range print.","Olive","frontier"],
+ ["ap-tee-luna","Luna Tee","AT-13",48,"Shirt","tee-luna","Charcoal tee with a lunar survey print.","Charcoal","lunar"],
+ ["ap-hood-exp","Expedition Hoodie","AH-01",98,"Hoodie","hood-exp","Heavyweight navy hoodie with a sleeve zip pocket.","Navy","frontier"],
+ ["ap-hood-ter","Terra Hoodie","AH-02",98,"Hoodie","hood-ter","Bone hoodie with a sleeve zip pocket.","Bone","earthside"],
+ ["ap-hood-orb","Orbital Hoodie","AH-03",105,"Hoodie","hood-orb","Charcoal hoodie with an orbital schematic back print.","Charcoal","orbital"],
+ ["ap-jacket","Field Jacket","AJ-10",245,"Jacket","jacket","Navy technical field jacket with sleeve pocket and storm hood.","Navy","frontier"],
+ ["ap-soft","Softshell","AJ-11",215,"Jacket","softshell","Olive softshell with a brushed interior.","Olive","mars"],
+ ["ap-vest","Insulated Vest","AV-01",165,"Vest","vest","Black insulated vest with a stand collar.","Black","deepfield"],
+ ["ap-pant","Expedition Pant","AP-10",125,"Pants","pants","Cargo pant in four colors with articulated knees.","Navy, Tan, Olive, Black","mars"],
+ ["ap-short","Training Short","AS-01",65,"Shorts","shorts","Training short with zip pockets.","Navy, Tan","earthside"],
+ ["ap-cap","Expedition Cap","AC-10",36,"Hat","caps","Six panel cap with woven patch.","Navy, Tan, Black","frontier"],
+ ["ap-beanie","Beanie","AB-10",32,"Hat","beanie","Rib knit beanie with a woven label.","Navy, Olive, Charcoal","deepfield"],
+ ["ap-sock","Performance Sock 3 Pack","AK-01",28,"Accessory","socks","Cushioned crew socks.","Black, White, Olive","earthside"],
+ ["ap-towel","Field Towel","AT-20",38,"Accessory","towel","Quick dry towel with a topographic print.","Navy, Gray","frontier"]
+];
+app.forEach(([id,name,model,price,type,img,desc,colors,mission])=>T({id,cat:"apparel",type,name,model,price,mission,div:"EXP",kind:"tee",series:EXP,img:I("app-"+img+" app-label app-detail app-life"),desc,materials:"Technical cotton and nylon blends, woven ASTRAEUS labels",dims:"Sizes XS to XXL",weight:"Varies by size",specs:{Colors:colors,Label:"Woven, serial ASN-3206"}}));
+// EVERYDAY
+T({id:"d-mug",cat:"everyday",type:"Mug",name:"A-01 Expedition Mug",model:"EM-01",price:42,mission:"lunar",div:"MAT",kind:"mug",series:ES,img:I("mug-hero mug-colors mug-lid mug-dims mug-l1 mug-l2 mug-l3"),
+ desc:"Insulated stainless mug with a machined aluminum handle, sealed lid and non slip base.",materials:"Stainless steel, ceramic coat, aluminum handle",dims:"118 × 90 mm",weight:"360 g",
+ specs:{Volume:"400 ml",Lid:"Spill resistant, insulated",Base:"Rubberized, engraved",Colorways:"Lunar White, Orbital Navy, Graphite"}});
+// remove old SVG mug, now photographed
+{const i=P.findIndex(p=>p.id==="d-mug"&&!p.img);if(i>=0)P.splice(i,1);}
+T({id:"d-laptop",cat:"everyday",type:"Shell",name:"Laptop Shell",model:"LS-01",price:89,mission:"orbital",div:"MAT",kind:"wallet",series:ES,img:I("eqp-laptop"),desc:"Hard shell laptop cover with navy corner bumpers and the insignia.",materials:"Polycarbonate, TPU bumpers",dims:"Fits 14 and 16 inch",weight:"340 g",specs:{Fit:"14 or 16 inch",Bumpers:"Navy TPU"}});
+T({id:"d-tablet",cat:"everyday",type:"Folio",name:"Tablet Folio",model:"TF-01",price:79,mission:"orbital",div:"MAT",kind:"wallet",series:ES,img:I("eqp-tablet"),desc:"Folio case with a silver shell and a navy stand cover.",materials:"Aluminum look shell, microfiber",dims:"11 and 13 inch",weight:"280 g",specs:{Fit:"11 or 13 inch",Stand:"Two angle"}});
+T({id:"d-pouch",cat:"everyday",type:"Pouch",name:"Field Pouch",model:"TP-01",price:48,mission:"orbital",div:"FLD",kind:"wallet",series:FS,img:I("eqp-pouch"),desc:"Zip organizer pouch for cables, pens and chargers.",materials:"Navy nylon, elastic organizer",dims:"240 × 160 × 50 mm",weight:"160 g",specs:{Organizer:"Elastic loops, mesh pocket"}});
+for(const p of P)if(p.img)p.img=p.img;
+P.forEach(p=>BYID[p.id]=p);
+Object.keys(BYID).forEach(k=>{if(!P.includes(BYID[k]))delete BYID[k];});
+}
 </script>
 <script>
 /* ---------- illustration engine (all inline SVG) ---------- */
@@ -763,8 +884,14 @@ function catArt(cat){
 }
 </script>
 <script>
+/* photo helpers */
+function photo(src,alt){return `<img class="ph" src="${src}" alt="${alt||''}" loading="lazy" decoding="async">`;}
+function pic(p,i=0){return p.img&&p.img[i]?photo(p.img[i],p.name):art(p,p.img?3:i);}
+function gviews(p){if(p.img)return p.img.map((s,i)=>({l:i?'VIEW':'PRODUCT',h:photo(s,p.name)})).concat([{l:'PACKAGING',h:art(p,3)}]);
+ return ['PRODUCT','DETAIL',p.kind==='watch'?'CASEBACK':'DRAWING','PACKAGING'].map((l,i)=>({l,h:art(p,i)}));}
 /* simpler category art: nested svg */
 function catArt(cat){
+ if(CATS[cat].hero)return photo(CATS[cat].hero,CATS[cat].name);
  const kinds={watches:"watch",storage:"case",equipment:"pack",everyday:"bottle",apparel:"jacket",firearms:"longcase"};
  const sample=P.find(p=>p.cat===cat&&p.kind===kinds[cat])||P.find(p=>p.cat===cat);
  return `<svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g opacity=".75"><svg x="60" y="-20" width="340" height="340" viewBox="0 0 400 400">${art(sample,0)}</svg></g><path d="M0 240q200 -60 400 20v140h-400z" fill="#011A36" opacity=".9"/></svg>`;
@@ -834,7 +961,7 @@ function closeDrawer(){drawer.classList.remove('open');dim.classList.remove('on'
 document.getElementById('cbtn').onclick=()=>{renderDrawer();openDrawer();};
 document.getElementById('dclose').onclick=closeDrawer;dim.onclick=closeDrawer;
 document.getElementById('dcheck').onclick=closeDrawer;drawer.querySelector('a[href="#cart"]').onclick=closeDrawer;
-function lineHTML(p,q,light){return `<div class="lineitem"><div class="pic">${art(p,0)}</div><div><h4><a href="#product-${p.id}">${p.name}</a></h4><div class="sm">${p.model} · ${DIV[p.div]}${p.ffl?' · FFL TRANSFER':''}</div><div class="ctl"><div class="qty"><button type="button" data-q="${p.id}" data-d="-1" aria-label="Decrease">−</button><input type="number" value="${q}" min="0" data-qi="${p.id}" aria-label="Quantity" id="q-${p.id}"><button type="button" data-q="${p.id}" data-d="1" aria-label="Increase">+</button></div><button type="button" class="rm" data-rm="${p.id}">REMOVE</button></div></div><div class="lp num">${fmt(p.price*q)}</div></div>`;}
+function lineHTML(p,q,light){return `<div class="lineitem"><div class="pic">${pic(p)}</div><div><h4><a href="#product-${p.id}">${p.name}</a></h4><div class="sm">${p.model} · ${DIV[p.div]}${p.ffl?' · FFL TRANSFER':''}</div><div class="ctl"><div class="qty"><button type="button" data-q="${p.id}" data-d="-1" aria-label="Decrease">−</button><input type="number" value="${q}" min="0" data-qi="${p.id}" aria-label="Quantity" id="q-${p.id}"><button type="button" data-q="${p.id}" data-d="1" aria-label="Increase">+</button></div><button type="button" class="rm" data-rm="${p.id}">REMOVE</button></div></div><div class="lp num">${fmt(p.price*q)}</div></div>`;}
 function renderDrawer(){const el=document.getElementById('ditems');const it=cartItems();el.innerHTML=it.length?it.map(({p,q})=>lineHTML(p,q)).join(''):`<div class="empty"><p>Your cart is empty.</p><a class="btn" href="#shop" onclick="closeDrawer()">SHOP EQUIPMENT</a></div>`;document.getElementById('dsub').textContent=fmt(subtotal());document.getElementById('dcheck').style.display=it.length?'':'none';}
 document.addEventListener('click',e=>{
  const q=e.target.closest('[data-q]');if(q){setQty(q.dataset.q,(cart[q.dataset.q]||0)+ +q.dataset.d);return;}
@@ -850,7 +977,7 @@ document.getElementById('sbtn').onclick=openSearch;document.getElementById('sclo
 sOv.addEventListener('click',e=>{if(e.target===sOv)closeSearch();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();closeDrawer();document.getElementById('mnav').classList.remove('open');}});
 function searchP(q){q=q.trim().toLowerCase();if(!q)return[];return P.filter(p=>[p.name,p.model,p.cat,p.type,p.fam,DIV[p.div],MISSIONS[p.mission]?.name,p.desc].join(' ').toLowerCase().includes(q));}
-sIn.addEventListener('input',()=>{const r=searchP(sIn.value);document.getElementById('scount').textContent=sIn.value?`${r.length} RESULT${r.length===1?'':'S'}`:'TYPE TO SEARCH';document.getElementById('sres').innerHTML=r.slice(0,8).map(p=>`<a href="#product-${p.id}" onclick="closeSearch()"><span class="pic">${art(p,0)}</span><span><div class="t">${p.name}</div><div class="s">${p.model} · ${CATS[p.cat].name.toUpperCase()}</div></span><span class="p num">${fmt(p.price)}</span></a>`).join('')+(r.length>8?`<a href="#search-${encodeURIComponent(sIn.value)}" onclick="closeSearch()"><span class="t">View all ${r.length} results</span></a>`:'');});
+sIn.addEventListener('input',()=>{const r=searchP(sIn.value);document.getElementById('scount').textContent=sIn.value?`${r.length} RESULT${r.length===1?'':'S'}`:'TYPE TO SEARCH';document.getElementById('sres').innerHTML=r.slice(0,8).map(p=>`<a href="#product-${p.id}" onclick="closeSearch()"><span class="pic">${pic(p)}</span><span><div class="t">${p.name}</div><div class="s">${p.model} · ${CATS[p.cat].name.toUpperCase()}</div></span><span class="p num">${fmt(p.price)}</span></a>`).join('')+(r.length>8?`<a href="#search-${encodeURIComponent(sIn.value)}" onclick="closeSearch()"><span class="t">View all ${r.length} results</span></a>`:'');});
 sIn.addEventListener('keydown',e=>{if(e.key==='Enter'){location.hash='search-'+encodeURIComponent(sIn.value);closeSearch();}});
 document.getElementById('burger').onclick=()=>document.getElementById('mnav').classList.add('open');
 document.getElementById('mclose').onclick=()=>document.getElementById('mnav').classList.remove('open');
@@ -860,7 +987,7 @@ document.querySelectorAll('#mnav a').forEach(a=>a.onclick=()=>document.getElemen
 /* ---------- components ---------- */
 const avail=p=>`<span class="avail ${p.av}">${p.av==='in'?'IN STOCK':p.av==='low'?'LOW STOCK':'OUT OF STOCK'}</span>`;
 function card(p){const m=MISSIONS[p.mission];const sp=Object.entries(p.specs).slice(0,2);
- return `<article class="card"><a class="pic" href="#product-${p.id}">${art(p,0)}<span class="tag">${p.series}</span></a><button type="button" class="wish ${wish.includes(p.id)?'on':''}" data-wish="${p.id}" data-id="${p.id}" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button>
+ return `<article class="card"><a class="pic" href="#product-${p.id}">${pic(p)}<span class="tag">${p.series}</span></a><button type="button" class="wish ${wish.includes(p.id)?'on':''}" data-wish="${p.id}" data-id="${p.id}" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button>
  <div class="body"><div class="model"><span>MODEL ${p.model}</span><span>${m?m.num:'GEN'}</span></div><h3><a href="#product-${p.id}">${p.name}</a></h3><p class="desc">${p.desc}</p>
  <div class="row"><span class="price num">${fmt(p.price)}</span>${avail(p)}</div>
  <div class="specs">${sp.map(([k,v])=>`<span>${k.replace(/([A-Z])/g,' $1').trim().toUpperCase()}: ${v.split(',')[0]}</span>`).join('')}</div>
@@ -876,6 +1003,7 @@ const pages={
  home(){return `<section class="hero wrap"><div class="planet">${planetSVG()}</div><div class="eyebrow">ASTRAEUS EQUIPMENT GROUP · EST. FOR THE LONG HORIZON</div><h1>Built for<br>what comes next</h1><p class="lead">Equipment for Earth and beyond.</p><div class="cta"><a class="btn primary" href="#about">EXPLORE ASTRAEUS</a><a class="btn" href="#shop">SHOP EQUIPMENT</a></div></section>
  <div class="ticker">${Object.values(DIV).concat(Object.values(DIV)).map(d=>`<span>${d}</span>`).join('')}</div>
  <section class="section wrap">${sectionHead('CATALOG','Equipment categories')}<div class="cats">${Object.entries(CATS).map(([k,c])=>`<a class="cat" href="#${k}"><div class="art">${catArt(k)}</div><div class="t"><span class="eyebrow">${P.filter(p=>p.cat===k).length} ITEMS</span><h3>${c.name}</h3><p>${c.blurb}</p></div></a>`).join('')}</div></section>
+ <section class="section wrap">${sectionHead('FIELD RECORD','One system, Earth and beyond')}<div class="look">${[['img/trv-luggage.webp','Travel System','#travel'],['img/gam-desk.webp','Gaming & Audio','#gaming'],['img/str-hero.webp','Strength Series','#strength'],['img/app-life.webp','Expedition Apparel','#apparel']].map(([s,t,h],i)=>`<a href="${h}" class="lk lk${i}">${photo(s,t)}<span><b>${t}</b><i>VIEW COLLECTION →</i></span></a>`).join('')}</div></section>
  <section class="section wrap">${sectionHead('WATCH DIVISION','Flagship instruments','<a class="btn ghost small" href="#watches">ALL WATCHES</a>')}${grid(P.filter(p=>p.cat==='watches').slice(0,4))}</section>
  <section class="section wrap">${sectionHead('FIELD SYSTEMS','Watch storage, built like hardware','<a class="btn ghost small" href="#storage">ALL STORAGE</a>')}${grid(P.filter(p=>p.cat==='storage').slice(0,4))}</section>
  <section class="section wrap">${sectionHead('PROGRAMS','Mission collections','<a class="btn ghost small" href="#missions">ALL MISSIONS</a>')}<div class="missions">${['orbital','lunar','deepfield'].map(k=>missionCard(MISSIONS[k])).join('')}</div></section>
@@ -905,12 +1033,12 @@ const pages={
  },
 
  product(id){const p=BYID[id];if(!p)return pages.notfound();noteRecent(id);const m=MISSIONS[p.mission];
-  const views=['PRODUCT','DETAIL',p.kind==='watch'?'CASEBACK':'DRAWING','PACKAGING'];
+  const G=gviews(p);
   const related=P.filter(x=>x.id!==p.id&&(x.cat===p.cat)).slice(0,4);
   const acc=P.filter(x=>x.id!==p.id&&x.cat!==p.cat&&(x.mission===p.mission||x.cat==='storage'||x.cat==='everyday')).slice(0,4);
   const specRows=[['Model',p.model],['Division',DIV[p.div]],['Mission',m?`${m.num} · ${m.name}`:'General issue'],['Materials',p.materials],['Dimensions',p.dims],['Weight',p.weight],...Object.entries(p.specs).map(([k,v])=>[k.replace(/([A-Z])/g,' $1').trim(),v])];
   return `<section class="section wrap"><div class="crumbs"><a href="#home">HOME</a><span>/</span><a href="#${p.cat}">${CATS[p.cat].name.toUpperCase()}</a><span>/</span><span>${p.model}</span></div>
-  <div class="pdp"><div class="gallery"><div class="main" id="gmain">${art(p,0)}<span class="id">${p.model} · VIEW 01 · ${views[0]}</span></div><div class="thumbs">${views.map((v,i)=>`<button type="button" class="${i?'':'on'}" data-view="${i}" aria-label="${v}">${art(p,i)}</button>`).join('')}</div></div>
+  <div class="pdp"><div class="gallery"><div class="main" id="gmain">${G[0].h}<span class="id">${p.model} · VIEW 01 · ${G[0].l}</span></div><div class="thumbs">${G.map((v,i)=>`<button type="button" class="${i?'':'on'}" data-view="${i}" aria-label="${v.l}">${v.h}</button>`).join('')}</div></div>
   <div class="buy"><div class="eyebrow">${DIV[p.div]} · ${p.series}</div><h1>${p.name}</h1><div class="mono" style="font-size:11px;letter-spacing:.18em;color:var(--silver)">MODEL ${p.model}${p.fam?' · '+p.fam:''}${m?' · MISSION '+m.num:''}</div>
    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span class="price num">${fmt(p.price)}</span>${avail(p)}</div>
    <p class="dim" style="font-size:15px;max-width:52ch">${p.desc}</p>
@@ -982,7 +1110,7 @@ function render(){
  if(h==='intro')html=pages.intro();
  else if(h==='home')html=pages.home();
  else if(h==='shop')html=pages.shop();
- else if(CATS[h])html=pages.shop(h),route=['storage','everyday'].includes(h)?'equipment':h;
+ else if(CATS[h])html=pages.shop(h),route=['storage','everyday','strength'].includes(h)?'equipment':h;
  else if(h.startsWith('product-'))html=pages.product(h.slice(8)),route='shop';
  else if(h==='missions')html=pages.missions();
  else if(h.startsWith('mission-'))html=pages.mission(h.slice(8)),route='missions';
@@ -1015,8 +1143,8 @@ function bind(h){
   document.getElementById('fclear').onclick=()=>{Object.assign(shopState,{cats:[],missions:[],divs:[],types:[],series:[],max:3500,instock:false});render();};
   document.getElementById('ftoggle').onclick=()=>F.classList.toggle('open');}
  // product
- if(h.startsWith('product-')){const p=BYID[h.slice(8)];const main=document.getElementById('gmain');const views=['PRODUCT','DETAIL',p.kind==='watch'?'CASEBACK':'DRAWING','PACKAGING'];
-  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-view]').forEach(x=>x.classList.remove('on'));b.classList.add('on');const v=+b.dataset.view;main.innerHTML=art(p,v)+`<span class="id">${p.model} · VIEW 0${v+1} · ${views[v]}</span>`;});
+ if(h.startsWith('product-')){const p=BYID[h.slice(8)];const main=document.getElementById('gmain');const G=gviews(p);
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-view]').forEach(x=>x.classList.remove('on'));b.classList.add('on');const v=+b.dataset.view;main.innerHTML=G[v].h+`<span class="id">${p.model} · VIEW ${String(v+1).padStart(2,'0')} · ${G[v].l}</span>`;});
   const q=document.getElementById('pqty');document.getElementById('qm').onclick=()=>q.value=Math.max(1,+q.value-1);document.getElementById('qp').onclick=()=>q.value=+q.value+1;
   document.querySelectorAll('#ptabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#ptabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.tabpane').forEach(pn=>pn.hidden=pn.dataset.pane!==b.dataset.tab);});}
  // checkout
