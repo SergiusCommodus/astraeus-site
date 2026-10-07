@@ -15,8 +15,12 @@ function hscroll(list){return list.length?`<div class="hscroll">${list.map(card)
 
 /* ---------- pages ---------- */
 const pages={
- home(){return `<section class="hero wrap"><div class="planet">${planetSVG()}</div><div class="eyebrow">ASTRAEUS EQUIPMENT GROUP · EST. FOR THE LONG HORIZON</div><h1>Built for<br>what comes next</h1><p class="lead">Equipment for Earth and beyond.</p><div class="cta"><a class="btn primary" href="#about">EXPLORE ASTRAEUS</a><a class="btn" href="#shop">SHOP EQUIPMENT</a></div></section>
+ home(){
+  const hot=['ap-hood-a01','c-wb4','w-orbital-wc','c-afs01','t-lug','g-head','w-mission','t-exppack'].map(id=>BYID[id]).filter(Boolean);
+  const sells=[['watches','Watches'],['storage','Cases'],['travel','Travel'],['apparel','Apparel'],['equipment','Field Gear'],['gaming','Gaming'],['strength','Strength'],['everyday','Everyday']].filter(([k])=>CATS[k]);
+  return `<section class="hero wrap"><div class="planet">${planetSVG()}</div><div class="eyebrow">ASTRAEUS EQUIPMENT GROUP · EST. FOR THE LONG HORIZON</div><h1>Built for<br>what comes next</h1><p class="lead">Watches, protective cases, travel, apparel and field equipment. Designed for Earth and beyond.</p><div class="cta"><a class="btn primary" href="#shop">SHOP EQUIPMENT</a><a class="btn" href="#about">ABOUT ASTRAEUS</a></div><div class="sells">${sells.map(([k,l])=>`<a href="#${k}">${l}</a>`).join('')}</div></section>
  <div class="ticker">${Object.values(DIV).concat(Object.values(DIV)).map(d=>`<span>${d}</span>`).join('')}</div>
+ <section class="section wrap">${sectionHead('MOST ISSUED','Equipment people are buying','<a class="btn ghost small" href="#shop">SHOP ALL</a>')}${grid(hot)}</section>
  <section class="section wrap">${sectionHead('CENTERPIECES','Issued this season')}<div class="look">${[['img/hd-hero.webp','A-01 Expedition Hoodie','#product-ap-hood-a01'],['img/afs-case.webp','AFS-01 Field Case','#product-c-afs01'],['img/wb-open.webp','A-01 Watch Case','#product-c-wb4'],['img/sw-hero.webp','Orbital Wearable Computer','#product-w-orbital-wc']].map(([s,t,h],i)=>`<a href="${h}" class="lk lk${i}">${photo(s,t)}<span><b>${t}</b><i>VIEW EQUIPMENT →</i></span></a>`).join('')}</div></section>
  <section class="section wrap">${sectionHead('CATALOG','Equipment categories')}<div class="cats">${Object.entries(CATS).map(([k,c])=>`<a class="cat" href="#${k}"><div class="art">${catArt(k)}</div><div class="t"><span class="eyebrow">${P.filter(p=>p.cat===k).length} ITEMS</span><h3>${c.name}</h3><p>${c.blurb}</p></div></a>`).join('')}</div></section>
  <section class="section wrap">${sectionHead('WATCH DIVISION','Flagship instruments','<a class="btn ghost small" href="#watches">ALL WATCHES</a>')}${grid(P.filter(p=>p.cat==='watches').slice(0,4))}</section>
