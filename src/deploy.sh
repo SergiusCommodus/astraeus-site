@@ -20,9 +20,13 @@ if(bad){console.error("BUILD FAILED - not deploying");process.exit(1)}
 '
 
 # 3. stage into the git clone
-cp astraeus.html repo/index.html
+python3 wrap.py                      # real doctype/head for GitHub Pages
+cp og-image.jpg favicon-32.png apple-touch-icon.png icon-512.png repo/
+printf 'User-agent: *\nAllow: /\nSitemap: https://sergiuscommodus.github.io/astraeus-site/sitemap.xml\n' > repo/robots.txt
+printf '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://sergiuscommodus.github.io/astraeus-site/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url></urlset>\n' > repo/sitemap.xml
+cp repo/index.html repo/404.html
 mkdir -p repo/src
-cp p1_style.html p2_shell.html p3_data.js p3b_more.js p4_art.js p5_app.js p6_pages.js build.py logo_b64.txt crops.py deploy.sh repo/src/
+cp p1_style.html p2_shell.html p3_data.js p3b_more.js p4_art.js p5_app.js p6_pages.js build.py wrap.py logo_b64.txt crops.py deploy.sh repo/src/
 rm -rf repo/img repo/audio
 cp -r img audio repo/
 
