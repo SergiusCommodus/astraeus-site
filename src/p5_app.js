@@ -56,16 +56,33 @@ requestAnimationFrame(draw);
 
 mode='drift';
 
+
+/* ---------- product options ---------- */
+const SIZED=new Set(['Shirt','Hoodie','Jacket','Vest','Pants','Shorts','Fleece']);
+const SIZES=['XS','S','M','L','XL','XXL'];
+function optGroups(p){
+ const g=[];
+ if(SIZED.has(p.type)) g.push({key:'Size',opts:SIZES});
+ const c=p.specs&&(p.specs.Colors||p.specs.Colorways||p.specs.Colorway);
+ if(c){const o=String(c).split(',').map(s=>s.trim()).filter(Boolean);if(o.length>1)g.push({key:'Finish',opts:o});}
+ if(p.specs&&p.specs.Widths){const o=String(p.specs.Widths).split(',').map(s=>s.trim()).filter(Boolean);if(o.length>1)g.push({key:'Width',opts:o});}
+ if(p.specs&&p.specs.Sizes&&!SIZED.has(p.type)){const o=String(p.specs.Sizes).split(',').map(s=>s.trim()).filter(Boolean);if(o.length>1)g.push({key:'Size',opts:o});}
+ return g;
+}
+const hasOpts=p=>optGroups(p).length>0;
+const keyOf=(id,v)=>v?id+'|'+v:id;
+const splitKey=k=>{const i=k.indexOf('|');return i<0?[k,'']:[k.slice(0,i),k.slice(i+1)];};
+
 /* ---------- state ---------- */
 const store={get(k,d){try{return JSON.parse(localStorage.getItem('astraeus.'+k))??d;}catch(e){return d;}},set(k,v){try{localStorage.setItem('astraeus.'+k,JSON.stringify(v));}catch(e){}}};
 let cart=store.get('cart',{}),wish=store.get('wish',[]),recent=store.get('recent',[]),orders=store.get('orders',[]),account=store.get('account',null);
 const cartCount=()=>Object.values(cart).reduce((a,b)=>a+b,0);
-const cartItems=()=>Object.entries(cart).map(([id,q])=>({p:BYID[id],q})).filter(x=>x.p);
+const cartItems=()=>Object.entries(cart).map(([k,q])=>{const[id,v]=splitKey(k);return{p:BYID[id],q,v,k};}).filter(x=>x.p);
 const subtotal=()=>cartItems().reduce((a,{p,q})=>a+p.price*q,0);
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200);}
 function syncBadges(){const c=document.getElementById('ccount'),w=document.getElementById('wcount');const n=cartCount();c.textContent=n;c.hidden=!n;w.textContent=wish.length;w.hidden=!wish.length;}
-function addCart(id,q=1){const p=BYID[id];if(!p||p.av==='out')return;cart[id]=(cart[id]||0)+q;store.set('cart',cart);syncBadges();renderDrawer();toast(p.name.toUpperCase()+' · ADDED TO CART');openDrawer();}
-function setQty(id,q){if(q<=0)delete cart[id];else cart[id]=q;store.set('cart',cart);syncBadges();renderDrawer();if(location.hash==='#cart')render();}
+function addCart(id,q=1,v=''){const p=BYID[id];if(!p||p.av==='out')return;const k=keyOf(id,v);cart[k]=(cart[k]||0)+q;store.set('cart',cart);syncBadges();renderDrawer();toast(p.name.toUpperCase()+(v?' · '+v.toUpperCase():'')+' · ADDED TO CART');openDrawer();}
+function setQty(k,q){if(q<=0)delete cart[k];else cart[k]=q;store.set('cart',cart);syncBadges();renderDrawer();if(location.hash==='#cart')render();}
 function toggleWish(id){const i=wish.indexOf(id);if(i<0){wish.push(id);toast('SAVED TO WISHLIST');}else{wish.splice(i,1);toast('REMOVED FROM WISHLIST');}store.set('wish',wish);syncBadges();document.querySelectorAll(`.wish[data-id="${id}"]`).forEach(b=>b.classList.toggle('on',i<0));if(location.hash==='#wishlist')render();}
 function noteRecent(id){recent=[id,...recent.filter(x=>x!==id)].slice(0,8);store.set('recent',recent);}
 
@@ -76,12 +93,12 @@ function closeDrawer(){drawer.classList.remove('open');dim.classList.remove('on'
 document.getElementById('cbtn').onclick=()=>{renderDrawer();openDrawer();};
 document.getElementById('dclose').onclick=closeDrawer;dim.onclick=closeDrawer;
 document.getElementById('dcheck').onclick=closeDrawer;drawer.querySelector('a[href="#cart"]').onclick=closeDrawer;
-function lineHTML(p,q,light){return `<div class="lineitem"><div class="pic">${pic(p)}</div><div><h4><a href="#product-${p.id}">${p.name}</a></h4><div class="sm">${p.model} · ${DIV[p.div]}${p.ffl?' · FFL TRANSFER':''}</div><div class="ctl"><div class="qty"><button type="button" data-q="${p.id}" data-d="-1" aria-label="Decrease">−</button><input type="number" value="${q}" min="0" data-qi="${p.id}" aria-label="Quantity" id="q-${p.id}"><button type="button" data-q="${p.id}" data-d="1" aria-label="Increase">+</button></div><button type="button" class="rm" data-rm="${p.id}">REMOVE</button></div></div><div class="lp num">${fmt(p.price*q)}</div></div>`;}
-function renderDrawer(){const el=document.getElementById('ditems');const it=cartItems();el.innerHTML=it.length?it.map(({p,q})=>lineHTML(p,q)).join(''):`<div class="empty"><p>Your cart is empty.</p><a class="btn" href="#shop" onclick="closeDrawer()">SHOP EQUIPMENT</a></div>`;document.getElementById('dsub').textContent=fmt(subtotal());document.getElementById('dcheck').style.display=it.length?'':'none';}
+function lineHTML(p,q,v,k){k=k||keyOf(p.id,v);return `<div class="lineitem"><div class="pic">${pic(p)}</div><div><h4><a href="#product-${p.id}">${p.name}</a></h4><div class="sm">${p.model} · ${DIV[p.div]}${p.ffl?' · FFL TRANSFER':''}</div>${v?`<div class="sm variant">${v}</div>`:''}<div class="ctl"><div class="qty"><button type="button" data-q="${k}" data-d="-1" aria-label="Decrease">−</button><input type="number" value="${q}" min="0" data-qi="${k}" aria-label="Quantity"><button type="button" data-q="${k}" data-d="1" aria-label="Increase">+</button></div><button type="button" class="rm" data-rm="${k}">REMOVE</button></div></div><div class="lp num">${fmt(p.price*q)}</div></div>`;}
+function renderDrawer(){const el=document.getElementById('ditems');const it=cartItems();el.innerHTML=it.length?it.map(({p,q,v,k})=>lineHTML(p,q,v,k)).join(''):`<div class="empty"><p>Your cart is empty.</p><a class="btn" href="#shop" onclick="closeDrawer()">SHOP EQUIPMENT</a></div>`;document.getElementById('dsub').textContent=fmt(subtotal());document.getElementById('dcheck').style.display=it.length?'':'none';}
 document.addEventListener('click',e=>{
  const q=e.target.closest('[data-q]');if(q){setQty(q.dataset.q,(cart[q.dataset.q]||0)+ +q.dataset.d);return;}
  const rm=e.target.closest('[data-rm]');if(rm){setQty(rm.dataset.rm,0);return;}
- const add=e.target.closest('[data-add]');if(add){const qi=document.getElementById('pqty');addCart(add.dataset.add,qi?Math.max(1,+qi.value||1):1);return;}
+ const add=e.target.closest('[data-add]');if(add){const qi=document.getElementById('pqty');addCart(add.dataset.add,qi?Math.max(1,+qi.value||1):1,add.dataset.variant||'');return;}
  const w=e.target.closest('[data-wish]');if(w){e.preventDefault();toggleWish(w.dataset.wish);return;}
 });
 document.addEventListener('change',e=>{const i=e.target.closest('[data-qi]');if(i)setQty(i.dataset.qi,Math.max(0,+i.value||0));});

@@ -33,6 +33,8 @@ p{margin:0}
 .dim{color:var(--fg-dim)}
 .num{font-variant-numeric:tabular-nums}
 :focus-visible{outline:2px solid var(--blue-soft);outline-offset:2px}
+.skiplink{position:fixed;left:50%;top:-60px;transform:translateX(-50%);z-index:70;background:var(--white);color:#0B1E36;font-family:var(--mono);font-size:12px;letter-spacing:.16em;padding:12px 20px;border-radius:0 0 3px 3px;transition:top .2s}
+.skiplink:focus{top:0}
 
 /* star canvas */
 #stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -112,7 +114,7 @@ body.introview #nav,body.introview footer{display:none}
 .herostar .flag{position:absolute;top:12px;left:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;background:var(--blue);color:#fff;padding:5px 10px;border-radius:2px}
 .herostar .info{padding:18px 20px 20px;display:grid;gap:8px}
 .herostar .model{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--silver);display:flex;justify-content:space-between;gap:10px}
-.herostar h3{font-size:clamp(18px,1.9vw,23px)}
+.herostar h2{font-size:clamp(18px,1.9vw,23px);text-transform:none;letter-spacing:.02em;font-weight:500}
 .herostar p{font-size:13px;color:var(--fg-dim)}
 .herostar .row{display:flex;justify-content:space-between;align-items:center;margin-top:4px;border-top:1px solid var(--line-soft);padding-top:12px}
 .herostar .price{font-family:var(--display);font-size:21px}
@@ -196,6 +198,14 @@ select{appearance:auto}
 .qty{display:inline-flex;border:1px solid var(--line);border-radius:2px;height:48px}
 .qty button{width:46px;font-size:18px}
 .qty input{width:52px;text-align:center;border:0;border-inline:1px solid var(--line);background:transparent;min-height:0;padding:0;font-family:var(--mono)}
+.opts{display:grid;gap:14px}
+.optgrp{display:grid;gap:8px}
+.optlabel{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--silver);text-transform:uppercase}
+.optrow{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:2px;padding:10px 14px;min-height:42px;color:var(--fg-dim);transition:border-color .2s,color .2s,background .2s}
+.opt:hover{border-color:var(--silver);color:var(--fg)}
+.opt.on{border-color:var(--blue);background:rgba(14,115,179,.16);color:var(--fg)}
+.lineitem .variant{color:var(--fg);letter-spacing:.1em}
 .buyrow{display:flex;gap:12px;flex-wrap:wrap}
 .buyrow .btn.primary{flex:1;min-width:200px}
 .spec{width:100%;border-collapse:collapse;font-size:13px}

@@ -67,6 +67,8 @@ p{margin:0}
 .dim{color:var(--fg-dim)}
 .num{font-variant-numeric:tabular-nums}
 :focus-visible{outline:2px solid var(--blue-soft);outline-offset:2px}
+.skiplink{position:fixed;left:50%;top:-60px;transform:translateX(-50%);z-index:70;background:var(--white);color:#0B1E36;font-family:var(--mono);font-size:12px;letter-spacing:.16em;padding:12px 20px;border-radius:0 0 3px 3px;transition:top .2s}
+.skiplink:focus{top:0}
 
 /* star canvas */
 #stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -146,7 +148,7 @@ body.introview #nav,body.introview footer{display:none}
 .herostar .flag{position:absolute;top:12px;left:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;background:var(--blue);color:#fff;padding:5px 10px;border-radius:2px}
 .herostar .info{padding:18px 20px 20px;display:grid;gap:8px}
 .herostar .model{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--silver);display:flex;justify-content:space-between;gap:10px}
-.herostar h3{font-size:clamp(18px,1.9vw,23px)}
+.herostar h2{font-size:clamp(18px,1.9vw,23px);text-transform:none;letter-spacing:.02em;font-weight:500}
 .herostar p{font-size:13px;color:var(--fg-dim)}
 .herostar .row{display:flex;justify-content:space-between;align-items:center;margin-top:4px;border-top:1px solid var(--line-soft);padding-top:12px}
 .herostar .price{font-family:var(--display);font-size:21px}
@@ -230,6 +232,14 @@ select{appearance:auto}
 .qty{display:inline-flex;border:1px solid var(--line);border-radius:2px;height:48px}
 .qty button{width:46px;font-size:18px}
 .qty input{width:52px;text-align:center;border:0;border-inline:1px solid var(--line);background:transparent;min-height:0;padding:0;font-family:var(--mono)}
+.opts{display:grid;gap:14px}
+.optgrp{display:grid;gap:8px}
+.optlabel{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--silver);text-transform:uppercase}
+.optrow{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:2px;padding:10px 14px;min-height:42px;color:var(--fg-dim);transition:border-color .2s,color .2s,background .2s}
+.opt:hover{border-color:var(--silver);color:var(--fg)}
+.opt.on{border-color:var(--blue);background:rgba(14,115,179,.16);color:var(--fg)}
+.lineitem .variant{color:var(--fg);letter-spacing:.1em}
 .buyrow{display:flex;gap:12px;flex-wrap:wrap}
 .buyrow .btn.primary{flex:1;min-width:200px}
 .spec{width:100%;border-collapse:collapse;font-size:13px}
@@ -382,6 +392,7 @@ footer .brand .logo{width:40px;height:40px}
 @media(max-width:700px){.look{grid-template-columns:1fr;grid-auto-rows:220px}.lk0{grid-row:auto}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
+<a class="skiplink" href="#app">Skip to content</a>
 <canvas id="stars" aria-hidden="true"></canvas>
 <div id="veil" aria-hidden="true"></div>
 
@@ -412,7 +423,7 @@ footer .brand .logo{width:40px;height:40px}
   <a href="#shop">SHOP</a><a href="#watches">WATCHES</a><a href="#travel">TRAVEL</a><a href="#gaming">GAMING</a><a href="#strength">STRENGTH</a><a href="#equipment">EQUIPMENT</a><a href="#apparel">APPAREL</a><a href="#missions">MISSIONS</a><a href="#about">ABOUT</a><a href="#account">ACCOUNT</a>
 </div>
 
-<main id="app"></main>
+<main id="app" tabindex="-1"></main>
 
 <footer>
   <div class="wrap">
@@ -1046,16 +1057,33 @@ requestAnimationFrame(draw);
 
 mode='drift';
 
+
+/* ---------- product options ---------- */
+const SIZED=new Set(['Shirt','Hoodie','Jacket','Vest','Pants','Shorts','Fleece']);
+const SIZES=['XS','S','M','L','XL','XXL'];
+function optGroups(p){
+ const g=[];
+ if(SIZED.has(p.type)) g.push({key:'Size',opts:SIZES});
+ const c=p.specs&&(p.specs.Colors||p.specs.Colorways||p.specs.Colorway);
+ if(c){const o=String(c).split(',').map(s=>s.trim()).filter(Boolean);if(o.length>1)g.push({key:'Finish',opts:o});}
+ if(p.specs&&p.specs.Widths){const o=String(p.specs.Widths).split(',').map(s=>s.trim()).filter(Boolean);if(o.length>1)g.push({key:'Width',opts:o});}
+ if(p.specs&&p.specs.Sizes&&!SIZED.has(p.type)){const o=String(p.specs.Sizes).split(',').map(s=>s.trim()).filter(Boolean);if(o.length>1)g.push({key:'Size',opts:o});}
+ return g;
+}
+const hasOpts=p=>optGroups(p).length>0;
+const keyOf=(id,v)=>v?id+'|'+v:id;
+const splitKey=k=>{const i=k.indexOf('|');return i<0?[k,'']:[k.slice(0,i),k.slice(i+1)];};
+
 /* ---------- state ---------- */
 const store={get(k,d){try{return JSON.parse(localStorage.getItem('astraeus.'+k))??d;}catch(e){return d;}},set(k,v){try{localStorage.setItem('astraeus.'+k,JSON.stringify(v));}catch(e){}}};
 let cart=store.get('cart',{}),wish=store.get('wish',[]),recent=store.get('recent',[]),orders=store.get('orders',[]),account=store.get('account',null);
 const cartCount=()=>Object.values(cart).reduce((a,b)=>a+b,0);
-const cartItems=()=>Object.entries(cart).map(([id,q])=>({p:BYID[id],q})).filter(x=>x.p);
+const cartItems=()=>Object.entries(cart).map(([k,q])=>{const[id,v]=splitKey(k);return{p:BYID[id],q,v,k};}).filter(x=>x.p);
 const subtotal=()=>cartItems().reduce((a,{p,q})=>a+p.price*q,0);
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200);}
 function syncBadges(){const c=document.getElementById('ccount'),w=document.getElementById('wcount');const n=cartCount();c.textContent=n;c.hidden=!n;w.textContent=wish.length;w.hidden=!wish.length;}
-function addCart(id,q=1){const p=BYID[id];if(!p||p.av==='out')return;cart[id]=(cart[id]||0)+q;store.set('cart',cart);syncBadges();renderDrawer();toast(p.name.toUpperCase()+' · ADDED TO CART');openDrawer();}
-function setQty(id,q){if(q<=0)delete cart[id];else cart[id]=q;store.set('cart',cart);syncBadges();renderDrawer();if(location.hash==='#cart')render();}
+function addCart(id,q=1,v=''){const p=BYID[id];if(!p||p.av==='out')return;const k=keyOf(id,v);cart[k]=(cart[k]||0)+q;store.set('cart',cart);syncBadges();renderDrawer();toast(p.name.toUpperCase()+(v?' · '+v.toUpperCase():'')+' · ADDED TO CART');openDrawer();}
+function setQty(k,q){if(q<=0)delete cart[k];else cart[k]=q;store.set('cart',cart);syncBadges();renderDrawer();if(location.hash==='#cart')render();}
 function toggleWish(id){const i=wish.indexOf(id);if(i<0){wish.push(id);toast('SAVED TO WISHLIST');}else{wish.splice(i,1);toast('REMOVED FROM WISHLIST');}store.set('wish',wish);syncBadges();document.querySelectorAll(`.wish[data-id="${id}"]`).forEach(b=>b.classList.toggle('on',i<0));if(location.hash==='#wishlist')render();}
 function noteRecent(id){recent=[id,...recent.filter(x=>x!==id)].slice(0,8);store.set('recent',recent);}
 
@@ -1066,12 +1094,12 @@ function closeDrawer(){drawer.classList.remove('open');dim.classList.remove('on'
 document.getElementById('cbtn').onclick=()=>{renderDrawer();openDrawer();};
 document.getElementById('dclose').onclick=closeDrawer;dim.onclick=closeDrawer;
 document.getElementById('dcheck').onclick=closeDrawer;drawer.querySelector('a[href="#cart"]').onclick=closeDrawer;
-function lineHTML(p,q,light){return `<div class="lineitem"><div class="pic">${pic(p)}</div><div><h4><a href="#product-${p.id}">${p.name}</a></h4><div class="sm">${p.model} · ${DIV[p.div]}${p.ffl?' · FFL TRANSFER':''}</div><div class="ctl"><div class="qty"><button type="button" data-q="${p.id}" data-d="-1" aria-label="Decrease">−</button><input type="number" value="${q}" min="0" data-qi="${p.id}" aria-label="Quantity" id="q-${p.id}"><button type="button" data-q="${p.id}" data-d="1" aria-label="Increase">+</button></div><button type="button" class="rm" data-rm="${p.id}">REMOVE</button></div></div><div class="lp num">${fmt(p.price*q)}</div></div>`;}
-function renderDrawer(){const el=document.getElementById('ditems');const it=cartItems();el.innerHTML=it.length?it.map(({p,q})=>lineHTML(p,q)).join(''):`<div class="empty"><p>Your cart is empty.</p><a class="btn" href="#shop" onclick="closeDrawer()">SHOP EQUIPMENT</a></div>`;document.getElementById('dsub').textContent=fmt(subtotal());document.getElementById('dcheck').style.display=it.length?'':'none';}
+function lineHTML(p,q,v,k){k=k||keyOf(p.id,v);return `<div class="lineitem"><div class="pic">${pic(p)}</div><div><h4><a href="#product-${p.id}">${p.name}</a></h4><div class="sm">${p.model} · ${DIV[p.div]}${p.ffl?' · FFL TRANSFER':''}</div>${v?`<div class="sm variant">${v}</div>`:''}<div class="ctl"><div class="qty"><button type="button" data-q="${k}" data-d="-1" aria-label="Decrease">−</button><input type="number" value="${q}" min="0" data-qi="${k}" aria-label="Quantity"><button type="button" data-q="${k}" data-d="1" aria-label="Increase">+</button></div><button type="button" class="rm" data-rm="${k}">REMOVE</button></div></div><div class="lp num">${fmt(p.price*q)}</div></div>`;}
+function renderDrawer(){const el=document.getElementById('ditems');const it=cartItems();el.innerHTML=it.length?it.map(({p,q,v,k})=>lineHTML(p,q,v,k)).join(''):`<div class="empty"><p>Your cart is empty.</p><a class="btn" href="#shop" onclick="closeDrawer()">SHOP EQUIPMENT</a></div>`;document.getElementById('dsub').textContent=fmt(subtotal());document.getElementById('dcheck').style.display=it.length?'':'none';}
 document.addEventListener('click',e=>{
  const q=e.target.closest('[data-q]');if(q){setQty(q.dataset.q,(cart[q.dataset.q]||0)+ +q.dataset.d);return;}
  const rm=e.target.closest('[data-rm]');if(rm){setQty(rm.dataset.rm,0);return;}
- const add=e.target.closest('[data-add]');if(add){const qi=document.getElementById('pqty');addCart(add.dataset.add,qi?Math.max(1,+qi.value||1):1);return;}
+ const add=e.target.closest('[data-add]');if(add){const qi=document.getElementById('pqty');addCart(add.dataset.add,qi?Math.max(1,+qi.value||1):1,add.dataset.variant||'');return;}
  const w=e.target.closest('[data-wish]');if(w){e.preventDefault();toggleWish(w.dataset.wish);return;}
 });
 document.addEventListener('change',e=>{const i=e.target.closest('[data-qi]');if(i)setQty(i.dataset.qi,Math.max(0,+i.value||0));});
@@ -1153,7 +1181,7 @@ function card(p){const m=MISSIONS[p.mission];const sp=Object.entries(p.specs).sl
  <div class="row"><span class="price num">${fmt(p.price)}</span>${avail(p)}</div>
  <div class="specs">${sp.map(([k,v])=>`<span>${k.replace(/([A-Z])/g,' $1').trim().toUpperCase()}: ${v.split(',')[0]}</span>`).join('')}</div>
  <div class="specs" style="border:0;padding:0;margin:0"><span>${DIV[p.div]}</span>${m?`<span>· ${m.name.toUpperCase()}</span>`:''}</div>
- <button type="button" class="btn small add ${p.av==='out'?'':'primary'}" data-add="${p.id}" ${p.av==='out'?'disabled':''}>${p.av==='out'?'UNAVAILABLE':p.ffl?'ADD · FFL TRANSFER':'ADD TO CART'}</button></div></article>`;}
+ ${p.av==='out'?`<button type="button" class="btn small add" disabled>UNAVAILABLE</button>`:hasOpts(p)?`<a class="btn small add primary" href="#product-${p.id}">CHOOSE OPTIONS</a>`:`<button type="button" class="btn small add primary" data-add="${p.id}">${p.ffl?'ADD · FFL TRANSFER':'ADD TO CART'}</button>`}</div></article>`;}
 const grid=list=>list.length?`<div class="grid">${list.map(card).join('')}</div>`:`<div class="empty"><p>No equipment matches these filters.</p></div>`;
 const sectionHead=(eye,title,right='')=>`<div class="head"><div><div class="eyebrow">${eye}</div><h2>${title}</h2></div>${right}</div>`;
 const missionCard=m=>`<a class="mcard" href="#mission-${m.id}" style="--accent:${m.accent}">${insignia(m)}<div><h3>${m.name}</h3><div class="meta"><span>MISSION ${m.num}</span><span>${m.dest.toUpperCase()}</span></div></div><p>${m.bg.split('. ')[0]}.</p><span class="eyebrow">${P.filter(p=>p.mission===m.id).length} ITEMS →</span></a>`;
@@ -1178,7 +1206,7 @@ const pages={
     <div class="pic">${photo(star.img[0],star.name)}<span class="flag">FLAGSHIP</span></div>
     <div class="info">
      <div class="model"><span>MODEL ${star.model}</span><span>${star.series}</span></div>
-     <h3>${star.name}</h3>
+     <h2>${star.name}</h2>
      <p>${star.desc}</p>
      <div class="row"><span class="price num">${fmt(star.price)}</span><span class="go">VIEW EQUIPMENT →</span></div>
     </div>
@@ -1227,7 +1255,8 @@ const pages={
    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span class="price num">${fmt(p.price)}</span>${avail(p)}</div>
    <p class="dim" style="font-size:15px;max-width:52ch">${p.desc}</p>
    ${p.ffl?`<div class="notice"><b>Licensed dealer transfer required</b><span>Ships only to an FFL dealer you select at checkout. Buyer must be 21 or older and pass a background check at pickup. Not available in all states.</span></div>`:''}
-   <div class="buyrow"><div class="qty"><button type="button" id="qm" aria-label="Decrease">−</button><input type="number" id="pqty" value="1" min="1" aria-label="Quantity"><button type="button" id="qp" aria-label="Increase">+</button></div><button type="button" class="btn primary" data-add="${p.id}" ${p.av==='out'?'disabled':''}>${p.av==='out'?'OUT OF STOCK':'ADD TO CART'}</button><button type="button" class="btn" data-wish="${p.id}">${wish.includes(p.id)?'SAVED':'WISHLIST'}</button></div>
+   ${(()=>{const G=optGroups(p);return G.length?`<div class="opts" id="popts">${G.map((g,gi)=>`<div class="optgrp" data-key="${g.key}"><div class="optlabel">${g.key}</div><div class="optrow">${g.opts.map((o,oi)=>`<button type="button" class="opt${oi===0?' on':''}" data-grp="${gi}" data-val="${o}">${o}</button>`).join('')}</div></div>`).join('')}</div>`:'';})()}
+   <div class="buyrow"><div class="qty"><button type="button" id="qm" aria-label="Decrease">−</button><input type="number" id="pqty" value="1" min="1" aria-label="Quantity"><button type="button" id="qp" aria-label="Increase">+</button></div><button type="button" class="btn primary" id="paddbtn" data-add="${p.id}" data-variant="${optGroups(p).map(g=>g.opts[0]).join(' · ')}" ${p.av==='out'?'disabled':''}>${p.av==='out'?'OUT OF STOCK':'ADD TO CART'}</button><button type="button" class="btn" data-wish="${p.id}">${wish.includes(p.id)?'SAVED':'WISHLIST'}</button></div>
    <div class="markings"><span>SN 2126-${p.id.toUpperCase().replace(/-/g,'')}</span><span>REV A</span><span>${m?m.num:'AP-00'}</span><span>${p.av==='out'?'BACKORDER':'MISSION READY'}</span></div>
    <div class="tabs" id="ptabs"><button type="button" class="on" data-tab="spec">SPECIFICATIONS</button><button type="button" data-tab="ship">SHIPPING</button><button type="button" data-tab="care">SERVICE</button></div>
    <div class="tabpane" data-pane="spec"><table class="spec">${specRows.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</table></div>
@@ -1251,7 +1280,7 @@ const pages={
   <section class="section wrap">${sectionHead('STANDARD','Design principles')}<div class="strip"><div><span class="k">COLOR</span><span class="v">Navy, white, silver</span><span class="dim" style="font-size:12px">Orbital blue only where it means something.</span></div><div><span class="k">MARKINGS</span><span class="v">Legible with gloves</span><span class="dim" style="font-size:12px">Model, division, mission and serial on every item.</span></div><div><span class="k">SERVICE</span><span class="v">Repairable by design</span><span class="dim" style="font-size:12px">Parts stocked for the life of the line.</span></div><div><span class="k">PACKAGING</span><span class="v">Issued, not sold</span><span class="dim" style="font-size:12px">Every box reads like an expedition manifest.</span></div></div></section>`;},
 
  cart(){const it=cartItems();return `<section class="section wrap light" style="margin-inline:calc(-1 * var(--gutter));padding-inline:var(--gutter)"><div class="head"><div><div class="eyebrow">CART</div><h2>Your equipment</h2></div><a class="btn small" href="#shop">CONTINUE SHOPPING</a></div>
-  ${it.length?`<div class="cartgrid"><div>${it.map(({p,q})=>lineHTML(p,q,true)).join('')}${it.some(x=>x.p.ffl)?`<div class="notice" style="margin-top:18px"><b>This order contains a firearm</b><span>It ships to the licensed dealer you select at checkout. Accessories ship to your address separately.</span></div>`:''}</div>
+  ${it.length?`<div class="cartgrid"><div>${it.map(({p,q,v,k})=>lineHTML(p,q,v,k)).join('')}${it.some(x=>x.p.ffl)?`<div class="notice" style="margin-top:18px"><b>This order contains a firearm</b><span>It ships to the licensed dealer you select at checkout. Accessories ship to your address separately.</span></div>`:''}</div>
   <aside class="summary"><h3>Order summary</h3><div class="r"><span>Subtotal</span><span class="num">${fmt(subtotal())}</span></div><div class="r"><span>Shipping</span><span class="num">${subtotal()>=250?'Free':'$12'}</span></div><div class="r"><span>Estimated tax</span><span class="num">${fmt(Math.round(subtotal()*.07))}</span></div><div class="r total"><span>Total</span><span class="num">${fmt(subtotal()+(subtotal()>=250?0:12)+Math.round(subtotal()*.07))}</span></div><a class="btn primary" href="#checkout">CHECKOUT</a><p class="dim" style="font-size:12px">Insured shipping. 30 day returns. Five year warranty on watches and cases.</p></aside></div>`:`<div class="empty"><p>Your cart is empty.</p><a class="btn" href="#shop">SHOP EQUIPMENT</a></div>`}</section>`;},
 
  checkout(){const it=cartItems();if(!it.length)return pages.cart();const ffl=it.some(x=>x.p.ffl);const sub=subtotal(),ship=sub>=250?0:12,tax=Math.round(sub*.07);
@@ -1266,12 +1295,12 @@ const pages={
    <h3 style="margin-top:14px">Payment</h3><p class="dim" style="font-size:12px">Demo checkout. No payment is processed and no card data is stored.</p>${inp('card','Card number','text','inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" required')}<div class="two">${inp('exp','Expiry','text','placeholder="MM / YY" autocomplete="cc-exp" required')}${inp('cvc','CVC','text','inputmode="numeric" autocomplete="cc-csc" required')}</div>${inp('cname','Name on card','text','autocomplete="cc-name" required')}
    <button type="submit" class="btn primary" style="margin-top:10px">PLACE ORDER · <span id="ptotal" class="num">${fmt(sub+ship+tax)}</span></button>
   </form>
-  <aside class="summary"><h3>Order summary</h3>${it.map(({p,q})=>`<div class="r"><span>${p.name} × ${q}</span><span class="num">${fmt(p.price*q)}</span></div>`).join('')}<div class="r" style="border-top:1px solid var(--line);padding-top:10px"><span>Subtotal</span><span class="num">${fmt(sub)}</span></div><div class="r"><span>Shipping</span><span class="num" id="sship">${ship?'$12':'Free'}</span></div><div class="r"><span>Tax</span><span class="num">${fmt(tax)}</span></div><div class="r total"><span>Total</span><span class="num" id="stotal">${fmt(sub+ship+tax)}</span></div></aside></div></section>`;},
+  <aside class="summary"><h3>Order summary</h3>${it.map(({p,q,v})=>`<div class="r"><span>${p.name}${v?' · '+v:''} × ${q}</span><span class="num">${fmt(p.price*q)}</span></div>`).join('')}<div class="r" style="border-top:1px solid var(--line);padding-top:10px"><span>Subtotal</span><span class="num">${fmt(sub)}</span></div><div class="r"><span>Shipping</span><span class="num" id="sship">${ship?'$12':'Free'}</span></div><div class="r"><span>Tax</span><span class="num">${fmt(tax)}</span></div><div class="r total"><span>Total</span><span class="num" id="stotal">${fmt(sub+ship+tax)}</span></div></aside></div></section>`;},
 
  confirm(n){const o=orders.find(x=>x.num===n)||orders[0];if(!o)return pages.cart();
   return `<section class="section wrap light" style="margin-inline:calc(-1 * var(--gutter));padding-inline:var(--gutter)"><div class="steps"><span class="on">1 CONTACT</span><span class="on">2 SHIPPING</span><span class="on">3 PAYMENT</span><span class="on">4 CONFIRMATION</span></div>
   <div class="confirm"><span class="logo" style="width:72px;height:72px"><img src="${LOGO}" alt=""></span><div class="eyebrow">ORDER ISSUED</div><h2>Equipment is on its way</h2><span class="ord">ORDER ${o.num}</span><p class="dim">A confirmation was sent to ${o.email}. ${o.ffl?'Firearms ship to your dealer, '+o.ffl+'. ':''}Everything else ships to ${o.city}, ${o.state}.</p>
-  <div style="width:100%;text-align:left;border:1px solid var(--line-soft);padding:16px;border-radius:2px">${o.items.map(i=>`<div class="r" style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0"><span>${i.name} × ${i.q}</span><span class="num">${fmt(i.price*i.q)}</span></div>`).join('')}<div style="display:flex;justify-content:space-between;font-family:var(--display);font-size:18px;border-top:1px solid var(--line);padding-top:10px;margin-top:6px"><span>Total</span><span class="num">${fmt(o.total)}</span></div></div>
+  <div style="width:100%;text-align:left;border:1px solid var(--line-soft);padding:16px;border-radius:2px">${o.items.map(i=>`<div class="r" style="display:flex;justify-content:space-between;font-size:14px;padding:6px 0"><span>${i.name}${i.v?' · '+i.v:''} × ${i.q}</span><span class="num">${fmt(i.price*i.q)}</span></div>`).join('')}<div style="display:flex;justify-content:space-between;font-family:var(--display);font-size:18px;border-top:1px solid var(--line);padding-top:10px;margin-top:6px"><span>Total</span><span class="num">${fmt(o.total)}</span></div></div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center"><a class="btn primary" href="#shop">CONTINUE SHOPPING</a><a class="btn" href="#account">VIEW ORDERS</a></div></div></section>`;},
 
  account(){return `<section class="section wrap light" style="margin-inline:calc(-1 * var(--gutter));padding-inline:var(--gutter)"><div class="head"><div><div class="eyebrow">ACCOUNT</div><h2>${account?'Welcome back, '+account.name:'Sign in'}</h2></div>${account?'<button type="button" class="btn small" id="signout">SIGN OUT</button>':''}</div>
@@ -1334,6 +1363,9 @@ function bind(h){
  // product
  if(h.startsWith('product-')){const p=BYID[h.slice(8)];const main=document.getElementById('gmain');const G=gviews(p);
   document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-view]').forEach(x=>x.classList.remove('on'));b.classList.add('on');const v=+b.dataset.view;main.innerHTML=G[v].h+`<span class="id">${p.model} · VIEW ${String(v+1).padStart(2,'0')} · ${G[v].l}</span>`;});
+  const po=document.getElementById('popts');
+  if(po){const sync=()=>{const vals=[...po.querySelectorAll('.optgrp')].map(g=>g.querySelector('.opt.on')?.dataset.val).filter(Boolean);document.getElementById('paddbtn').dataset.variant=vals.join(' · ');};
+   po.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>{btn.parentElement.querySelectorAll('.opt').forEach(x=>x.classList.remove('on'));btn.classList.add('on');sync();});sync();}
   const q=document.getElementById('pqty');document.getElementById('qm').onclick=()=>q.value=Math.max(1,+q.value-1);document.getElementById('qp').onclick=()=>q.value=+q.value+1;
   document.querySelectorAll('#ptabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#ptabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.tabpane').forEach(pn=>pn.hidden=pn.dataset.pane!==b.dataset.tab);});}
  // checkout
@@ -1344,7 +1376,7 @@ function bind(h){
    const age=document.getElementById('age');if(age&&!age.checked){ok=false;document.getElementById('agewrap').style.borderColor='#B94A48';}
    if(!ok){toast('CHECK THE HIGHLIGHTED FIELDS');cf.querySelector('.err')?.focus();return;}
    const exp=cf.shipm.value==='exp';const ship=exp?38:(sub>=250?0:12);
-   const o={num:'AS-'+Date.now().toString(36).toUpperCase().slice(-6),date:new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}),email:cf.email.value,city:cf.city.value,state:cf.state.value,ffl:document.getElementById('fflname')?.value||'',items:cartItems().map(({p,q})=>({id:p.id,name:p.name,price:p.price,q})),total:sub+ship+tax};
+   const o={num:'AS-'+Date.now().toString(36).toUpperCase().slice(-6),date:new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}),email:cf.email.value,city:cf.city.value,state:cf.state.value,ffl:document.getElementById('fflname')?.value||'',items:cartItems().map(({p,q,v})=>({id:p.id,name:p.name,price:p.price,q,v})),total:sub+ship+tax};
    orders=[o,...orders];store.set('orders',orders);cart={};store.set('cart',cart);syncBadges();renderDrawer();location.hash='confirm-'+o.num;};}
  // account
  const af=document.getElementById('aform');if(af){af.onsubmit=e=>{e.preventDefault();const n=af.aname.value.trim(),m=af.aemail.value.trim();if(!n||!m){toast('ENTER NAME AND EMAIL');return;}account={name:n,email:m};store.set('account',account);render();};}
