@@ -243,6 +243,8 @@ select{appearance:auto}
 .buyrow{display:flex;gap:12px;flex-wrap:wrap}
 .buyrow .btn.primary{flex:1;min-width:200px}
 .spec{width:100%;border-collapse:collapse;font-size:13px}
+.spec.sizes td,.spec.sizes th{width:auto;text-align:left}
+.spec.sizes th{color:var(--silver)}
 .spec th,.spec td{text-align:left;padding:10px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
 .spec th{font-family:var(--mono);font-weight:400;font-size:10.5px;letter-spacing:.14em;color:var(--silver);width:42%;text-transform:uppercase}
 .tabs{display:flex;gap:22px;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:11px;letter-spacing:.18em}
@@ -281,6 +283,7 @@ select{appearance:auto}
 .div h3{font-size:16px;text-transform:uppercase;letter-spacing:.08em}
 .div p{font-size:13px;color:var(--fg-dim)}
 .prose{max-width:64ch;display:grid;gap:18px;font-size:16px;color:var(--fg-dim);font-weight:300}
+.prose h3{color:var(--fg);font-size:17px;text-transform:uppercase;letter-spacing:.1em;margin-top:10px}
 .prose strong{color:var(--fg);font-weight:500}
 
 /* light surface: cart, checkout, account */
@@ -356,6 +359,8 @@ select{appearance:auto}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* footer */
+footer{display:none}
+body.ready footer{display:block}
 footer{position:relative;z-index:1;border-top:1px solid var(--line-soft);background:rgba(1,19,49,.7);padding-block:48px 32px}
 footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
 footer h4{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:12px}
@@ -373,7 +378,7 @@ footer .brand .logo{width:40px;height:40px}
 .strip .v{font-family:var(--display);font-size:18px}
 .hscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
 .hscroll .card{flex:0 0 250px;scroll-snap-align:start}
-.ph{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.ph{width:100%;height:100%;max-width:100%;object-fit:cover;display:block;transition:transform .6s ease}
 .card:hover .ph{transform:scale(1.04)}
 .cat .art .ph{opacity:.8}
 .cat .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,19,49,.1) 30%,rgba(1,19,49,.92))}
@@ -435,7 +440,7 @@ footer .brand .logo{width:40px;height:40px}
       </div>
       <div><h4>Shop</h4><ul><li><a href="#watches">Watches</a></li><li><a href="#storage">Watch Storage</a></li><li><a href="#equipment">Field Equipment</a></li><li><a href="#everyday">Everyday Equipment</a></li><li><a href="#travel">Travel</a></li><li><a href="#gaming">Gaming &amp; Audio</a></li><li><a href="#strength">Strength</a></li><li><a href="#apparel">Apparel</a></li></ul></div>
       <div><h4>Programs</h4><ul><li><a href="#mission-lunar">Lunar Program</a></li><li><a href="#mission-mars">Mars Expedition</a></li><li><a href="#mission-deepfield">Deep Field</a></li><li><a href="#mission-orbital">Orbital Operations</a></li><li><a href="#mission-frontier">Frontier Series</a></li><li><a href="#mission-earthside">Earthside</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="#about">About ASTRAEUS</a></li><li><a href="#about">Divisions</a></li><li><a href="#account">Account</a></li><li><a href="#wishlist">Wishlist</a></li><li><a href="#shipping">Shipping &amp; Returns</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#about">About ASTRAEUS</a></li><li><a href="#about">Divisions</a></li><li><a href="#account">Account</a></li><li><a href="#wishlist">Wishlist</a></li><li><a href="#support">Support &amp; Shipping</a></li><li><a href="#support">Returns &amp; Warranty</a></li></ul></div>
     </div>
     <div class="legal"><span>© 2026 ASTRAEUS. A concept brand of Carlisle Capital LLC. ASTRAEUS is not a space agency.</span><span>ORIGINAL DESIGN SYSTEM · NAVY 01274E · BLUE 0E73B3 · SILVER ADAEB1</span></div>
   </div>
@@ -671,21 +676,21 @@ const str=[
 str.forEach(([id,name,model,price,type,img,desc,mat,dims,wt,specs])=>T({id,cat:"strength",type,name,model,price,mission:"earthside",div:"STR",kind:"tool",series:FS,img:I(img),desc,materials:mat,dims,weight:wt,specs}));
 // APPAREL
 const app=[
- ["ap-tee-orb","Orbital Tee","AT-10",44,"Shirt","tee-orb","Navy tee with a small chest mark.","Navy","orbital"],
- ["ap-tee-hor","Horizon Tee","AT-11",44,"Shirt","tee-hor","White tee with a vehicle blueprint print.","White","orbital"],
- ["ap-tee-ter","Terra Tee","AT-12",44,"Shirt","tee-ter","Olive tee with a mountain range print.","Olive","frontier"],
- ["ap-tee-luna","Luna Tee","AT-13",48,"Shirt","tee-luna","Charcoal tee with a lunar survey print.","Charcoal","lunar"],
+ ["ap-tee-orb","Orbital Tee","AT-10",44,"Shirt","tee-orb","Midweight navy tee in combed cotton with a small silver chest mark and a woven hem tag. Pre shrunk, with a set in collar that holds its shape.","Navy","orbital"],
+ ["ap-tee-hor","Horizon Tee","AT-11",44,"Shirt","tee-hor","White tee carrying a technical blueprint of the AV-2126 transit vehicle across the back, printed in water based navy ink so it stays soft.","White","orbital"],
+ ["ap-tee-ter","Terra Tee","AT-12",44,"Shirt","tee-ter","Olive tee with a printed ridge line and the ASTRAEUS mark above it. Garment dyed, so the colour settles rather than fades.","Olive","frontier"],
+ ["ap-tee-luna","Luna Tee","AT-13",48,"Shirt","tee-luna","Charcoal tee printed with a lunar survey chart of Mare Serenitatis, the Lunar Program landing site marked in silver.","Charcoal","lunar"],
  ["ap-hood-exp","Expedition Hoodie","AH-01",98,"Hoodie","hood-exp","Heavyweight navy hoodie with a sleeve zip pocket.","Navy","frontier"],
- ["ap-hood-ter","Terra Hoodie","AH-02",98,"Hoodie","hood-ter","Bone hoodie with a sleeve zip pocket.","Bone","earthside"],
+ ["ap-hood-ter","Terra Hoodie","AH-02",98,"Hoodie","hood-ter","Bone hoodie in heavyweight brushed fleece with a lined hood, zip sleeve pocket and ribbed cuffs that keep their tension.","Bone","earthside"],
  ["ap-hood-orb","Orbital Hoodie","AH-03",105,"Hoodie","hood-orb","Charcoal hoodie with an orbital schematic back print.","Charcoal","orbital"],
  ["ap-jacket","Field Jacket","AJ-10",245,"Jacket","jacket","Navy technical field jacket with sleeve pocket and storm hood.","Navy","frontier"],
  ["ap-soft","Softshell","AJ-11",215,"Jacket","softshell","Olive softshell with a brushed interior.","Olive","mars"],
  ["ap-vest","Insulated Vest","AV-01",165,"Vest","vest","Black insulated vest with a stand collar.","Black","deepfield"],
  ["ap-pant","Expedition Pant","AP-10",125,"Pants","pants","Cargo pant in four colors with articulated knees.","Navy, Tan, Olive, Black","mars"],
- ["ap-short","Training Short","AS-01",65,"Shorts","shorts","Training short with zip pockets.","Navy, Tan","earthside"],
- ["ap-cap","Expedition Cap","AC-10",36,"Hat","caps","Six panel cap with woven patch.","Navy, Tan, Black","frontier"],
- ["ap-beanie","Beanie","AB-10",32,"Hat","beanie","Rib knit beanie with a woven label.","Navy, Olive, Charcoal","deepfield"],
- ["ap-sock","Performance Sock 3 Pack","AK-01",28,"Accessory","socks","Cushioned crew socks.","Black, White, Olive","earthside"],
+ ["ap-short","Training Short","AS-01",65,"Shorts","shorts","Training short in four way stretch with zip hand pockets, a secured rear pocket and a seven inch inseam.","Navy, Tan","earthside"],
+ ["ap-cap","Expedition Cap","AC-10",36,"Hat","caps","Six panel cap in navy ripstop with a woven insignia patch, a pre curved brim and a metal slide adjuster.","Navy, Tan, Black","frontier"],
+ ["ap-beanie","Beanie","AB-10",32,"Hat","beanie","Rib knit beanie in a merino and acrylic blend, double layered over the ears, with a woven label at the fold.","Navy, Olive, Charcoal","deepfield"],
+ ["ap-sock","Performance Sock 3 Pack","AK-01",28,"Accessory","socks","Cushioned crew socks in a three pack. Reinforced heel and toe, arch support band, and a mesh panel across the instep.","Black, White, Olive","earthside"],
  ["ap-towel","Field Towel","AT-20",38,"Accessory","towel","Quick dry towel with a topographic print.","Navy, Gray","frontier"]
 ];
 app.forEach(([id,name,model,price,type,img,desc,colors,mission])=>T({id,cat:"apparel",type,name,model,price,mission,div:"EXP",kind:"tee",series:EXP,img:I("app-"+img+" app-label app-detail app-life"),desc,materials:"Technical cotton and nylon blends, woven ASTRAEUS labels",dims:"Sizes XS to XXL",weight:"Varies by size",specs:{Colors:colors,Label:"Woven, serial ASN-3206"}}));
@@ -746,6 +751,9 @@ for(const p of P)if(p.img)p.img=p.img;
 P.forEach(p=>BYID[p.id]=p);
 Object.keys(BYID).forEach(k=>{if(!P.includes(BYID[k]))delete BYID[k];});
 }
+</script>
+<script>
+const IMGD={"img/afs-case.webp":[1100,825],"img/afs-laptop.webp":[1100,825],"img/afs-watch.webp":[1100,825],"img/app-beanie.webp":[185,172],"img/app-caps.webp":[310,172],"img/app-detail.webp":[925,192],"img/app-hero.webp":[1100,364],"img/app-hood-exp.webp":[175,210],"img/app-hood-orb.webp":[172,210],"img/app-hood-ter.webp":[155,210],"img/app-jacket.webp":[170,210],"img/app-label.webp":[326,245],"img/app-life.webp":[611,192],"img/app-pants.webp":[290,172],"img/app-shorts.webp":[202,172],"img/app-socks.webp":[142,172],"img/app-softshell.webp":[180,210],"img/app-tee-hor.webp":[135,205],"img/app-tee-luna.webp":[150,205],"img/app-tee-orb.webp":[150,205],"img/app-tee-ter.webp":[135,205],"img/app-towel.webp":[176,172],"img/app-vest.webp":[161,210],"img/aud-band.webp":[288,175],"img/aud-case.webp":[355,224],"img/aud-colors.webp":[760,260],"img/aud-cup.webp":[288,165],"img/aud-dims.webp":[305,260],"img/aud-hero.webp":[1065,520],"img/aud-life.webp":[310,224],"img/belt-buckle.webp":[275,200],"img/belt-colors.webp":[845,304],"img/belt-extras.webp":[691,304],"img/belt-hero.webp":[1100,460],"img/belt-keeper.webp":[245,200],"img/belt-lock.webp":[250,200],"img/belt-rear.webp":[261,200],"img/belt-tip.webp":[260,200],"img/belt-web.webp":[245,200],"img/belt-worn.webp":[436,460],"img/eqp-bottle.webp":[110,314],"img/eqp-ec01.webp":[850,485],"img/eqp-journal.webp":[227,314],"img/eqp-laptop.webp":[690,385],"img/eqp-notebook.webp":[290,314],"img/eqp-pack.webp":[260,314],"img/eqp-pens.webp":[100,314],"img/eqp-pouch.webp":[215,314],"img/eqp-tablet.webp":[617,385],"img/eqp-watch.webp":[454,485],"img/gam-access.webp":[382,170],"img/gam-chair.webp":[228,170],"img/gam-controller.webp":[245,185],"img/gam-desk.webp":[1100,293],"img/gam-deskmat.webp":[424,185],"img/gam-headset.webp":[265,185],"img/gam-keyboard.webp":[385,185],"img/gam-model.webp":[344,170],"img/gam-monitor.webp":[345,170],"img/gam-mouse.webp":[200,185],"img/gam-skin.webp":[225,170],"img/hd-colors.webp":[780,240],"img/hd-hero.webp":[1030,565],"img/hd-hood.webp":[330,150],"img/hd-label.webp":[330,160],"img/hd-mat.webp":[740,150],"img/hd-patch.webp":[330,160],"img/hd-shoulder.webp":[330,150],"img/hd-sleeve.webp":[330,140],"img/hd-tech.webp":[370,150],"img/key-cap.webp":[260,220],"img/key-colors.webp":[850,180],"img/key-dims.webp":[270,180],"img/key-hero.webp":[1100,545],"img/key-kbd.webp":[260,230],"img/key-mice.webp":[501,240],"img/key-pad.webp":[260,225],"img/key-pads.webp":[1030,240],"img/mug-colors.webp":[775,235],"img/mug-dims.webp":[335,235],"img/mug-hero.webp":[1040,540],"img/mug-l1.webp":[395,239],"img/mug-l2.webp":[360,239],"img/mug-l3.webp":[370,239],"img/mug-lid.webp":[305,175],"img/pak-back.webp":[350,505],"img/pak-colors.webp":[590,285],"img/pak-dims.webp":[350,285],"img/pak-hero.webp":[590,505],"img/pak-hw.webp":[180,130],"img/pak-int.webp":[591,285],"img/pak-l1.webp":[385,219],"img/pak-l2.webp":[330,219],"img/pak-l3.webp":[425,219],"img/pak-l4.webp":[396,219],"img/pak-patch.webp":[281,180],"img/str-bar.webp":[200,175],"img/str-bars.webp":[245,234],"img/str-bench.webp":[366,234],"img/str-benchd.webp":[190,175],"img/str-bstore.webp":[186,175],"img/str-db.webp":[195,175],"img/str-dbs.webp":[310,160],"img/str-hero.webp":[1100,383],"img/str-jcup.webp":[190,175],"img/str-kb.webp":[222,160],"img/str-plate.webp":[200,175],"img/str-plates.webp":[380,160],"img/str-pstore.webp":[185,175],"img/str-rack.webp":[190,175],"img/sw-dock.webp":[320,350],"img/sw-hero.webp":[700,630],"img/sw-mod.webp":[520,350],"img/sw-straps.webp":[340,350],"img/sw-ui.webp":[836,220],"img/sw-views.webp":[836,410],"img/sw-worn.webp":[356,384],"img/tee-collar.webp":[305,185],"img/tee-colors.webp":[750,230],"img/tee-hem.webp":[305,190],"img/tee-hero.webp":[1095,560],"img/tee-inspo.webp":[610,194],"img/tee-mat.webp":[780,170],"img/tee-patch.webp":[305,190],"img/tee-scene.webp":[345,240],"img/tee-sleeve.webp":[305,185],"img/trv-commuter.webp":[210,300],"img/trv-daypack.webp":[220,285],"img/trv-duffel.webp":[390,240],"img/trv-exp-pack.webp":[275,305],"img/trv-garment.webp":[370,280],"img/trv-lug-int.webp":[302,325],"img/trv-lug-latch.webp":[252,175],"img/trv-lug-wheel.webp":[149,160],"img/trv-luggage.webp":[780,505],"img/trv-sling.webp":[207,190],"img/trv-techcase.webp":[305,280],"img/trv-tote.webp":[254,280],"img/trv-weekender.webp":[370,280],"img/wb-closed.webp":[870,535],"img/wb-colors.webp":[836,220],"img/wb-cush.webp":[380,230],"img/wb-dims.webp":[700,220],"img/wb-end.webp":[385,230],"img/wb-latch.webp":[385,230],"img/wb-open.webp":[666,535],"img/wb-rail.webp":[386,230],"img/wc-2.webp":[700,700],"img/wc-4.webp":[700,700],"img/wc-4p.webp":[700,700],"img/wc-closed.webp":[920,500],"img/wc-cush.webp":[220,175],"img/wc-int.webp":[506,200],"img/wc-latch.webp":[220,175],"img/wc-lineup.webp":[1030,200],"img/wc-mat.webp":[220,175],"img/wc-mod.webp":[216,175],"img/wc-open.webp":[616,500],"img/wc-seal.webp":[220,175],"img/wc-serial.webp":[225,175],"img/wc-tech.webp":[700,700],"img/wc-vent.webp":[215,175]};
 </script>
 <script>
 /* ---------- illustration engine (all inline SVG) ---------- */
@@ -1001,7 +1009,7 @@ function catArt(cat){
 </script>
 <script>
 /* photo helpers */
-function photo(src,alt){return `<img class="ph" src="${src}" alt="${alt||''}" loading="lazy" decoding="async">`;}
+function photo(src,alt,eager){const d=(typeof IMGD!=='undefined'&&IMGD[src])||null;return `<img class="ph" src="${src}" alt="${alt||''}"${d?` width="${d[0]}" height="${d[1]}"`:''} loading="${eager?'eager':'lazy'}" decoding="async">`;}
 function pic(p,i=0){return p.img&&p.img[i]?photo(p.img[i],p.name):art(p,p.img?3:i);}
 function gviews(p){if(p.img)return p.img.map((s,i)=>({l:i?'VIEW':'PRODUCT',h:photo(s,p.name)})).concat([{l:'PACKAGING',h:art(p,3)}]);
  return ['PRODUCT','DETAIL',p.kind==='watch'?'CASEBACK':'DRAWING','PACKAGING'].map((l,i)=>({l,h:art(p,i)}));}
@@ -1203,7 +1211,7 @@ const pages={
     <div class="sells">${sells.map(([k,l])=>`<a href="#${k}">${l}</a>`).join('')}</div>
    </div>
    <a class="herostar" href="#product-${star.id}">
-    <div class="pic">${photo(star.img[0],star.name)}<span class="flag">FLAGSHIP</span></div>
+    <div class="pic">${photo(star.img[0],star.name,true)}<span class="flag">FLAGSHIP</span></div>
     <div class="info">
      <div class="model"><span>MODEL ${star.model}</span><span>${star.series}</span></div>
      <h2>${star.name}</h2>
@@ -1258,8 +1266,9 @@ const pages={
    ${(()=>{const G=optGroups(p);return G.length?`<div class="opts" id="popts">${G.map((g,gi)=>`<div class="optgrp" data-key="${g.key}"><div class="optlabel">${g.key}</div><div class="optrow">${g.opts.map((o,oi)=>`<button type="button" class="opt${oi===0?' on':''}" data-grp="${gi}" data-val="${o}">${o}</button>`).join('')}</div></div>`).join('')}</div>`:'';})()}
    <div class="buyrow"><div class="qty"><button type="button" id="qm" aria-label="Decrease">−</button><input type="number" id="pqty" value="1" min="1" aria-label="Quantity"><button type="button" id="qp" aria-label="Increase">+</button></div><button type="button" class="btn primary" id="paddbtn" data-add="${p.id}" data-variant="${optGroups(p).map(g=>g.opts[0]).join(' · ')}" ${p.av==='out'?'disabled':''}>${p.av==='out'?'OUT OF STOCK':'ADD TO CART'}</button><button type="button" class="btn" data-wish="${p.id}">${wish.includes(p.id)?'SAVED':'WISHLIST'}</button></div>
    <div class="markings"><span>SN 2126-${p.id.toUpperCase().replace(/-/g,'')}</span><span>REV A</span><span>${m?m.num:'AP-00'}</span><span>${p.av==='out'?'BACKORDER':'MISSION READY'}</span></div>
-   <div class="tabs" id="ptabs"><button type="button" class="on" data-tab="spec">SPECIFICATIONS</button><button type="button" data-tab="ship">SHIPPING</button><button type="button" data-tab="care">SERVICE</button></div>
+   <div class="tabs" id="ptabs"><button type="button" class="on" data-tab="spec">SPECIFICATIONS</button>${SIZED.has(p.type)?`<button type="button" data-tab="size">SIZE GUIDE</button>`:''}<button type="button" data-tab="ship">SHIPPING</button><button type="button" data-tab="care">SERVICE</button></div>
    <div class="tabpane" data-pane="spec"><table class="spec">${specRows.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</table></div>
+   ${SIZED.has(p.type)?`<div class="tabpane" data-pane="size" hidden><p>Measurements are of the garment, laid flat, in inches. Between sizes, take the larger for a relaxed fit.</p><table class="spec sizes"><tr><th>Size</th><th>Chest</th><th>Body length</th><th>Sleeve</th></tr>${[['XS',36,26,24],['S',38,27,24.5],['M',40,28,25],['L',42,29,25.5],['XL',44,30,26],['XXL',46,31,26.5]].map(([s,c,l,sl])=>`<tr><td>${s}</td><td>${c}</td><td>${l}</td><td>${sl}</td></tr>`).join('')}</table><p class="dim" style="font-size:12px">Not sure? Measure a garment you already wear across the chest, seam to seam, and double it.</p></div>`:''}
    <div class="tabpane" data-pane="ship" hidden><p>${p.ffl?'Ships to your chosen FFL dealer within 3 business days by insured carrier, adult signature required. The dealer completes the transfer.':'Ships within 2 business days in sealed ASTRAEUS issue packaging. Free insured shipping on orders over $250; $12 flat otherwise.'}</p><p>International shipping to most regions. Duties are calculated at checkout.</p><p>30 day returns on unworn equipment in original packaging${p.ffl?' (not applicable to transferred firearms)':''}.</p></div>
    <div class="tabpane" data-pane="care" hidden><p>Serviced by the ASTRAEUS Equipment Lab. ${p.kind==='watch'?'Movement service recommended every five years. Bracelet refinishing and strap fitting available.':p.kind==='case'?'Replacement foam, webbing, latch pins and mission discs are stocked. Shells carry a five year warranty.':'Spare parts are stocked for the life of the product line.'}</p></div>
   </div></div></section>
@@ -1309,7 +1318,25 @@ const pages={
 
  wishlist(){const l=wish.map(i=>BYID[i]).filter(Boolean);return `<section class="section wrap">${sectionHead('SAVED','Wishlist')}${l.length?grid(l):`<div class="empty"><p>Nothing saved yet.</p><a class="btn" href="#shop">SHOP EQUIPMENT</a></div>`}</section>`;},
  search(q){q=decodeURIComponent(q||'');const r=searchP(q);return `<section class="section wrap">${sectionHead('SEARCH',`${r.length} result${r.length===1?'':'s'} for “${q}”`)}${grid(r)}</section>`;},
- shipping(){return `<section class="section wrap"><div class="prose">${sectionHead('POLICY','Shipping and returns')}<p>Orders ship within two business days in sealed ASTRAEUS issue packaging. Shipping is free and insured on orders over $250, otherwise $12 flat. Expedited delivery is available at checkout.</p><p>Returns are accepted within 30 days on unworn equipment in original packaging. Watches and hard cases carry a five year warranty; everything else carries two years. Transferred firearms are not returnable; contact Frontier Operations for warranty service.</p></div></section>`;},
+ shipping(){return pages.support();},
+ support(){return `<section class="section wrap"><div class="crumbs"><a href="#home">HOME</a><span>/</span><span>SUPPORT</span></div>
+  ${sectionHead('SUPPORT','Shipping, returns and service')}
+  <div class="strip" style="margin-bottom:34px"><div><span class="k">ORDERS</span><span class="v">orders@astraeus.example</span><span class="dim" style="font-size:12px">Order status, changes and address corrections.</span></div><div><span class="k">SERVICE</span><span class="v">lab@astraeus.example</span><span class="dim" style="font-size:12px">Repairs, movement service, replacement foam and parts.</span></div><div><span class="k">HOURS</span><span class="v">Mon to Fri</span><span class="dim" style="font-size:12px">09:00 to 18:00 ET. Replies within one business day.</span></div><div><span class="k">RETURNS</span><span class="v">30 days</span><span class="dim" style="font-size:12px">Unworn equipment in original issue packaging.</span></div></div>
+  <div class="prose">
+   <h3>Shipping</h3>
+   <p>Orders leave the Field Systems depot within two business days, sealed in ASTRAEUS issue packaging. Standard insured shipping is free over $250 and $12 below that; expedited delivery is $38 and arrives in one to two business days. Every parcel is tracked, and anything over $500 requires a signature.</p>
+   <p>We ship internationally to most regions. Duties and import taxes are calculated at checkout so nothing is owed on delivery.</p>
+   <h3>Returns and exchanges</h3>
+   <p>Return anything unworn within 30 days in its original packaging for a full refund. Apparel can be exchanged for another size once at no cost. Start a return by emailing orders@astraeus.example with your order number, which begins with AS.</p>
+   <p>Refunds are issued to the original payment method within five business days of the parcel arriving back with us.</p>
+   <h3>Warranty</h3>
+   <p>Watches and hard cases carry a five year warranty against defects in materials and workmanship. Everything else carries two years. The warranty does not cover ordinary wear, impact damage or water ingress on a case left unlatched.</p>
+   <h3>Service</h3>
+   <p>The ASTRAEUS Equipment Lab services what it builds. Mechanical movements should be serviced roughly every five years. We stock replacement foam, webbing, latch pins, mission discs, straps and bracelet links for the life of each product line, so a worn part never means a replaced product.</p>
+   <h3>Care</h3>
+   <p>Rinse cases and bags in fresh water after salt or dust exposure and dry them open. Wash apparel cold and hang to dry; do not iron printed panels. Keep watches away from magnets and have gaskets checked before any dive.</p>
+  </div></section>`;},
+
  gate(){return `<section class="gatep"><div class="gatemark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><button type="button" class="btn primary enterbtn" id="enterBtn">ENTER</button></div></section>`;},
  intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div></div><a class="skip" href="#home">SKIP →</a></section>`;},
  notfound(){return `<section class="section wrap"><div class="empty"><div class="eyebrow">REF 404</div><h2>Nothing at this coordinate</h2><a class="btn" href="#home">RETURN HOME</a></div></section>`;}
@@ -1331,9 +1358,10 @@ function render(){
  else if(h.startsWith('mission-'))html=pages.mission(h.slice(8)),route='missions';
  else if(h.startsWith('search-'))html=pages.search(h.slice(7)),route='shop';
  else if(h.startsWith('confirm-'))html=pages.confirm(h.slice(8));
- else if(pages[h])html=pages[h]();
+ else if(pages[h])html=pages[h](),route=(h==='support'||h==='shipping')?'support':route;
  else html=pages.notfound();
  app.innerHTML=`<div class="page">${html}</div>`;
+ document.body.classList.add('ready');
  document.querySelectorAll('#links a').forEach(a=>a.classList.toggle('on',a.dataset.r===route));
  window.scrollTo({top:0,behavior:'instant'});
  bind(h);

@@ -1,6 +1,6 @@
 <script>
 /* photo helpers */
-function photo(src,alt){return `<img class="ph" src="${src}" alt="${alt||''}" loading="lazy" decoding="async">`;}
+function photo(src,alt,eager){const d=(typeof IMGD!=='undefined'&&IMGD[src])||null;return `<img class="ph" src="${src}" alt="${alt||''}"${d?` width="${d[0]}" height="${d[1]}"`:''} loading="${eager?'eager':'lazy'}" decoding="async">`;}
 function pic(p,i=0){return p.img&&p.img[i]?photo(p.img[i],p.name):art(p,p.img?3:i);}
 function gviews(p){if(p.img)return p.img.map((s,i)=>({l:i?'VIEW':'PRODUCT',h:photo(s,p.name)})).concat([{l:'PACKAGING',h:art(p,3)}]);
  return ['PRODUCT','DETAIL',p.kind==='watch'?'CASEBACK':'DRAWING','PACKAGING'].map((l,i)=>({l,h:art(p,i)}));}

@@ -29,7 +29,7 @@ const pages={
     <div class="sells">${sells.map(([k,l])=>`<a href="#${k}">${l}</a>`).join('')}</div>
    </div>
    <a class="herostar" href="#product-${star.id}">
-    <div class="pic">${photo(star.img[0],star.name)}<span class="flag">FLAGSHIP</span></div>
+    <div class="pic">${photo(star.img[0],star.name,true)}<span class="flag">FLAGSHIP</span></div>
     <div class="info">
      <div class="model"><span>MODEL ${star.model}</span><span>${star.series}</span></div>
      <h2>${star.name}</h2>
@@ -84,8 +84,9 @@ const pages={
    ${(()=>{const G=optGroups(p);return G.length?`<div class="opts" id="popts">${G.map((g,gi)=>`<div class="optgrp" data-key="${g.key}"><div class="optlabel">${g.key}</div><div class="optrow">${g.opts.map((o,oi)=>`<button type="button" class="opt${oi===0?' on':''}" data-grp="${gi}" data-val="${o}">${o}</button>`).join('')}</div></div>`).join('')}</div>`:'';})()}
    <div class="buyrow"><div class="qty"><button type="button" id="qm" aria-label="Decrease">−</button><input type="number" id="pqty" value="1" min="1" aria-label="Quantity"><button type="button" id="qp" aria-label="Increase">+</button></div><button type="button" class="btn primary" id="paddbtn" data-add="${p.id}" data-variant="${optGroups(p).map(g=>g.opts[0]).join(' · ')}" ${p.av==='out'?'disabled':''}>${p.av==='out'?'OUT OF STOCK':'ADD TO CART'}</button><button type="button" class="btn" data-wish="${p.id}">${wish.includes(p.id)?'SAVED':'WISHLIST'}</button></div>
    <div class="markings"><span>SN 2126-${p.id.toUpperCase().replace(/-/g,'')}</span><span>REV A</span><span>${m?m.num:'AP-00'}</span><span>${p.av==='out'?'BACKORDER':'MISSION READY'}</span></div>
-   <div class="tabs" id="ptabs"><button type="button" class="on" data-tab="spec">SPECIFICATIONS</button><button type="button" data-tab="ship">SHIPPING</button><button type="button" data-tab="care">SERVICE</button></div>
+   <div class="tabs" id="ptabs"><button type="button" class="on" data-tab="spec">SPECIFICATIONS</button>${SIZED.has(p.type)?`<button type="button" data-tab="size">SIZE GUIDE</button>`:''}<button type="button" data-tab="ship">SHIPPING</button><button type="button" data-tab="care">SERVICE</button></div>
    <div class="tabpane" data-pane="spec"><table class="spec">${specRows.map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('')}</table></div>
+   ${SIZED.has(p.type)?`<div class="tabpane" data-pane="size" hidden><p>Measurements are of the garment, laid flat, in inches. Between sizes, take the larger for a relaxed fit.</p><table class="spec sizes"><tr><th>Size</th><th>Chest</th><th>Body length</th><th>Sleeve</th></tr>${[['XS',36,26,24],['S',38,27,24.5],['M',40,28,25],['L',42,29,25.5],['XL',44,30,26],['XXL',46,31,26.5]].map(([s,c,l,sl])=>`<tr><td>${s}</td><td>${c}</td><td>${l}</td><td>${sl}</td></tr>`).join('')}</table><p class="dim" style="font-size:12px">Not sure? Measure a garment you already wear across the chest, seam to seam, and double it.</p></div>`:''}
    <div class="tabpane" data-pane="ship" hidden><p>${p.ffl?'Ships to your chosen FFL dealer within 3 business days by insured carrier, adult signature required. The dealer completes the transfer.':'Ships within 2 business days in sealed ASTRAEUS issue packaging. Free insured shipping on orders over $250; $12 flat otherwise.'}</p><p>International shipping to most regions. Duties are calculated at checkout.</p><p>30 day returns on unworn equipment in original packaging${p.ffl?' (not applicable to transferred firearms)':''}.</p></div>
    <div class="tabpane" data-pane="care" hidden><p>Serviced by the ASTRAEUS Equipment Lab. ${p.kind==='watch'?'Movement service recommended every five years. Bracelet refinishing and strap fitting available.':p.kind==='case'?'Replacement foam, webbing, latch pins and mission discs are stocked. Shells carry a five year warranty.':'Spare parts are stocked for the life of the product line.'}</p></div>
   </div></div></section>
@@ -135,7 +136,25 @@ const pages={
 
  wishlist(){const l=wish.map(i=>BYID[i]).filter(Boolean);return `<section class="section wrap">${sectionHead('SAVED','Wishlist')}${l.length?grid(l):`<div class="empty"><p>Nothing saved yet.</p><a class="btn" href="#shop">SHOP EQUIPMENT</a></div>`}</section>`;},
  search(q){q=decodeURIComponent(q||'');const r=searchP(q);return `<section class="section wrap">${sectionHead('SEARCH',`${r.length} result${r.length===1?'':'s'} for “${q}”`)}${grid(r)}</section>`;},
- shipping(){return `<section class="section wrap"><div class="prose">${sectionHead('POLICY','Shipping and returns')}<p>Orders ship within two business days in sealed ASTRAEUS issue packaging. Shipping is free and insured on orders over $250, otherwise $12 flat. Expedited delivery is available at checkout.</p><p>Returns are accepted within 30 days on unworn equipment in original packaging. Watches and hard cases carry a five year warranty; everything else carries two years. Transferred firearms are not returnable; contact Frontier Operations for warranty service.</p></div></section>`;},
+ shipping(){return pages.support();},
+ support(){return `<section class="section wrap"><div class="crumbs"><a href="#home">HOME</a><span>/</span><span>SUPPORT</span></div>
+  ${sectionHead('SUPPORT','Shipping, returns and service')}
+  <div class="strip" style="margin-bottom:34px"><div><span class="k">ORDERS</span><span class="v">orders@astraeus.example</span><span class="dim" style="font-size:12px">Order status, changes and address corrections.</span></div><div><span class="k">SERVICE</span><span class="v">lab@astraeus.example</span><span class="dim" style="font-size:12px">Repairs, movement service, replacement foam and parts.</span></div><div><span class="k">HOURS</span><span class="v">Mon to Fri</span><span class="dim" style="font-size:12px">09:00 to 18:00 ET. Replies within one business day.</span></div><div><span class="k">RETURNS</span><span class="v">30 days</span><span class="dim" style="font-size:12px">Unworn equipment in original issue packaging.</span></div></div>
+  <div class="prose">
+   <h3>Shipping</h3>
+   <p>Orders leave the Field Systems depot within two business days, sealed in ASTRAEUS issue packaging. Standard insured shipping is free over $250 and $12 below that; expedited delivery is $38 and arrives in one to two business days. Every parcel is tracked, and anything over $500 requires a signature.</p>
+   <p>We ship internationally to most regions. Duties and import taxes are calculated at checkout so nothing is owed on delivery.</p>
+   <h3>Returns and exchanges</h3>
+   <p>Return anything unworn within 30 days in its original packaging for a full refund. Apparel can be exchanged for another size once at no cost. Start a return by emailing orders@astraeus.example with your order number, which begins with AS.</p>
+   <p>Refunds are issued to the original payment method within five business days of the parcel arriving back with us.</p>
+   <h3>Warranty</h3>
+   <p>Watches and hard cases carry a five year warranty against defects in materials and workmanship. Everything else carries two years. The warranty does not cover ordinary wear, impact damage or water ingress on a case left unlatched.</p>
+   <h3>Service</h3>
+   <p>The ASTRAEUS Equipment Lab services what it builds. Mechanical movements should be serviced roughly every five years. We stock replacement foam, webbing, latch pins, mission discs, straps and bracelet links for the life of each product line, so a worn part never means a replaced product.</p>
+   <h3>Care</h3>
+   <p>Rinse cases and bags in fresh water after salt or dust exposure and dry them open. Wash apparel cold and hang to dry; do not iron printed panels. Keep watches away from magnets and have gaskets checked before any dive.</p>
+  </div></section>`;},
+
  gate(){return `<section class="gatep"><div class="gatemark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><button type="button" class="btn primary enterbtn" id="enterBtn">ENTER</button></div></section>`;},
  intro(){return `<section class="introp"><div class="mark" id="imark"><div class="logo"><img src="${LOGO}" alt="ASTRAEUS insignia"></div><div class="word">ASTRAEUS</div><div class="sub">EQUIPMENT FOR EARTH AND BEYOND</div></div><a class="skip" href="#home">SKIP →</a></section>`;},
  notfound(){return `<section class="section wrap"><div class="empty"><div class="eyebrow">REF 404</div><h2>Nothing at this coordinate</h2><a class="btn" href="#home">RETURN HOME</a></div></section>`;}
@@ -157,9 +176,10 @@ function render(){
  else if(h.startsWith('mission-'))html=pages.mission(h.slice(8)),route='missions';
  else if(h.startsWith('search-'))html=pages.search(h.slice(7)),route='shop';
  else if(h.startsWith('confirm-'))html=pages.confirm(h.slice(8));
- else if(pages[h])html=pages[h]();
+ else if(pages[h])html=pages[h](),route=(h==='support'||h==='shipping')?'support':route;
  else html=pages.notfound();
  app.innerHTML=`<div class="page">${html}</div>`;
+ document.body.classList.add('ready');
  document.querySelectorAll('#links a').forEach(a=>a.classList.toggle('on',a.dataset.r===route));
  window.scrollTo({top:0,behavior:'instant'});
  bind(h);

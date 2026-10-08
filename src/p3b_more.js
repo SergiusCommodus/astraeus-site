@@ -68,21 +68,21 @@ const str=[
 str.forEach(([id,name,model,price,type,img,desc,mat,dims,wt,specs])=>T({id,cat:"strength",type,name,model,price,mission:"earthside",div:"STR",kind:"tool",series:FS,img:I(img),desc,materials:mat,dims,weight:wt,specs}));
 // APPAREL
 const app=[
- ["ap-tee-orb","Orbital Tee","AT-10",44,"Shirt","tee-orb","Navy tee with a small chest mark.","Navy","orbital"],
- ["ap-tee-hor","Horizon Tee","AT-11",44,"Shirt","tee-hor","White tee with a vehicle blueprint print.","White","orbital"],
- ["ap-tee-ter","Terra Tee","AT-12",44,"Shirt","tee-ter","Olive tee with a mountain range print.","Olive","frontier"],
- ["ap-tee-luna","Luna Tee","AT-13",48,"Shirt","tee-luna","Charcoal tee with a lunar survey print.","Charcoal","lunar"],
+ ["ap-tee-orb","Orbital Tee","AT-10",44,"Shirt","tee-orb","Midweight navy tee in combed cotton with a small silver chest mark and a woven hem tag. Pre shrunk, with a set in collar that holds its shape.","Navy","orbital"],
+ ["ap-tee-hor","Horizon Tee","AT-11",44,"Shirt","tee-hor","White tee carrying a technical blueprint of the AV-2126 transit vehicle across the back, printed in water based navy ink so it stays soft.","White","orbital"],
+ ["ap-tee-ter","Terra Tee","AT-12",44,"Shirt","tee-ter","Olive tee with a printed ridge line and the ASTRAEUS mark above it. Garment dyed, so the colour settles rather than fades.","Olive","frontier"],
+ ["ap-tee-luna","Luna Tee","AT-13",48,"Shirt","tee-luna","Charcoal tee printed with a lunar survey chart of Mare Serenitatis, the Lunar Program landing site marked in silver.","Charcoal","lunar"],
  ["ap-hood-exp","Expedition Hoodie","AH-01",98,"Hoodie","hood-exp","Heavyweight navy hoodie with a sleeve zip pocket.","Navy","frontier"],
- ["ap-hood-ter","Terra Hoodie","AH-02",98,"Hoodie","hood-ter","Bone hoodie with a sleeve zip pocket.","Bone","earthside"],
+ ["ap-hood-ter","Terra Hoodie","AH-02",98,"Hoodie","hood-ter","Bone hoodie in heavyweight brushed fleece with a lined hood, zip sleeve pocket and ribbed cuffs that keep their tension.","Bone","earthside"],
  ["ap-hood-orb","Orbital Hoodie","AH-03",105,"Hoodie","hood-orb","Charcoal hoodie with an orbital schematic back print.","Charcoal","orbital"],
  ["ap-jacket","Field Jacket","AJ-10",245,"Jacket","jacket","Navy technical field jacket with sleeve pocket and storm hood.","Navy","frontier"],
  ["ap-soft","Softshell","AJ-11",215,"Jacket","softshell","Olive softshell with a brushed interior.","Olive","mars"],
  ["ap-vest","Insulated Vest","AV-01",165,"Vest","vest","Black insulated vest with a stand collar.","Black","deepfield"],
  ["ap-pant","Expedition Pant","AP-10",125,"Pants","pants","Cargo pant in four colors with articulated knees.","Navy, Tan, Olive, Black","mars"],
- ["ap-short","Training Short","AS-01",65,"Shorts","shorts","Training short with zip pockets.","Navy, Tan","earthside"],
- ["ap-cap","Expedition Cap","AC-10",36,"Hat","caps","Six panel cap with woven patch.","Navy, Tan, Black","frontier"],
- ["ap-beanie","Beanie","AB-10",32,"Hat","beanie","Rib knit beanie with a woven label.","Navy, Olive, Charcoal","deepfield"],
- ["ap-sock","Performance Sock 3 Pack","AK-01",28,"Accessory","socks","Cushioned crew socks.","Black, White, Olive","earthside"],
+ ["ap-short","Training Short","AS-01",65,"Shorts","shorts","Training short in four way stretch with zip hand pockets, a secured rear pocket and a seven inch inseam.","Navy, Tan","earthside"],
+ ["ap-cap","Expedition Cap","AC-10",36,"Hat","caps","Six panel cap in navy ripstop with a woven insignia patch, a pre curved brim and a metal slide adjuster.","Navy, Tan, Black","frontier"],
+ ["ap-beanie","Beanie","AB-10",32,"Hat","beanie","Rib knit beanie in a merino and acrylic blend, double layered over the ears, with a woven label at the fold.","Navy, Olive, Charcoal","deepfield"],
+ ["ap-sock","Performance Sock 3 Pack","AK-01",28,"Accessory","socks","Cushioned crew socks in a three pack. Reinforced heel and toe, arch support band, and a mesh panel across the instep.","Black, White, Olive","earthside"],
  ["ap-towel","Field Towel","AT-20",38,"Accessory","towel","Quick dry towel with a topographic print.","Navy, Gray","frontier"]
 ];
 app.forEach(([id,name,model,price,type,img,desc,colors,mission])=>T({id,cat:"apparel",type,name,model,price,mission,div:"EXP",kind:"tee",series:EXP,img:I("app-"+img+" app-label app-detail app-life"),desc,materials:"Technical cotton and nylon blends, woven ASTRAEUS labels",dims:"Sizes XS to XXL",weight:"Varies by size",specs:{Colors:colors,Label:"Woven, serial ASN-3206"}}));

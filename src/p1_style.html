@@ -209,6 +209,8 @@ select{appearance:auto}
 .buyrow{display:flex;gap:12px;flex-wrap:wrap}
 .buyrow .btn.primary{flex:1;min-width:200px}
 .spec{width:100%;border-collapse:collapse;font-size:13px}
+.spec.sizes td,.spec.sizes th{width:auto;text-align:left}
+.spec.sizes th{color:var(--silver)}
 .spec th,.spec td{text-align:left;padding:10px 0;border-bottom:1px solid var(--line-soft);vertical-align:top}
 .spec th{font-family:var(--mono);font-weight:400;font-size:10.5px;letter-spacing:.14em;color:var(--silver);width:42%;text-transform:uppercase}
 .tabs{display:flex;gap:22px;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:11px;letter-spacing:.18em}
@@ -247,6 +249,7 @@ select{appearance:auto}
 .div h3{font-size:16px;text-transform:uppercase;letter-spacing:.08em}
 .div p{font-size:13px;color:var(--fg-dim)}
 .prose{max-width:64ch;display:grid;gap:18px;font-size:16px;color:var(--fg-dim);font-weight:300}
+.prose h3{color:var(--fg);font-size:17px;text-transform:uppercase;letter-spacing:.1em;margin-top:10px}
 .prose strong{color:var(--fg);font-weight:500}
 
 /* light surface: cart, checkout, account */
@@ -322,6 +325,8 @@ select{appearance:auto}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* footer */
+footer{display:none}
+body.ready footer{display:block}
 footer{position:relative;z-index:1;border-top:1px solid var(--line-soft);background:rgba(1,19,49,.7);padding-block:48px 32px}
 footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
 footer h4{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:12px}
@@ -339,7 +344,7 @@ footer .brand .logo{width:40px;height:40px}
 .strip .v{font-family:var(--display);font-size:18px}
 .hscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
 .hscroll .card{flex:0 0 250px;scroll-snap-align:start}
-.ph{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.ph{width:100%;height:100%;max-width:100%;object-fit:cover;display:block;transition:transform .6s ease}
 .card:hover .ph{transform:scale(1.04)}
 .cat .art .ph{opacity:.8}
 .cat .art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,19,49,.1) 30%,rgba(1,19,49,.92))}
